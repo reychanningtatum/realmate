@@ -1158,3 +1158,8 @@ html[data-theme="dark"] .match-banner { background: rgba(24,119,242,0.15); color
   background: rgba(0,0,0,0.5); color: #fff; font-size: 13px; font-weight: 600;
   padding: 4px 12px; border-radius: 20px;
 }
+
+@keyframes ytHintPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}

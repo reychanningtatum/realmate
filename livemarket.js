@@ -1019,11 +1019,12 @@ renderMarketReportPdf();
                         if (!autoMute && !isMobile) {
                             try { e.target.unMute(); e.target.setVolume(100); } catch {}
                         }
-                        // On mobile, video autoplays muted — update button icon so user knows to tap it
                         if (isMobile && !autoMute) {
                             _ytMuted = true;
-                            const muteBtn = document.querySelector('[onclick="toggleYtMute(this)"]');
-                            if (muteBtn) muteBtn.innerHTML = '<i class="fas fa-volume-xmark"></i>';
+                            const btn = document.getElementById('ytMuteBtn');
+                            if (btn) btn.innerHTML = '<i class="fas fa-volume-xmark"></i>';
+                            const hint = document.getElementById('ytMuteHint');
+                            if (hint) hint.style.display = 'block';
                         }
                         updateFilterBarTop();
                     },
@@ -1045,6 +1046,10 @@ function toggleYtMute(btn) {
     _ytMuted = !_ytMuted;
     _ytMuted ? _ytPlayer.mute() : (_ytPlayer.unMute(), _ytPlayer.setVolume(100));
     btn.innerHTML = _ytMuted ? '<i class="fas fa-volume-xmark"></i>' : '<i class="fas fa-volume-high"></i>';
+    if (!_ytMuted) {
+        const hint = document.getElementById('ytMuteHint');
+        if (hint) hint.style.display = 'none';
+    }
 }
 function closeYtVideo() {
     document.getElementById('ytEmbedSection').style.display = 'none';
