@@ -437,8 +437,7 @@ function toggleMiniCharts(btn) {
 }
 
 function miniChartOpenAnalytics() {
-    switchMarketTab('analytics');
-    document.getElementById('ledgerView')?.scrollIntoView({ behavior: 'smooth' });
+    location.href = 'analytics.html';
 }
 
 function closeMiniChart() {
@@ -447,7 +446,15 @@ function closeMiniChart() {
     if (_miniChart) { _miniChart.destroy(); _miniChart = null; }
 }
 
+// Auto-init full chart on analytics page
+if (location.pathname.endsWith('analytics.html')) {
+    document.addEventListener('DOMContentLoaded', () => {
+        initCapTracker();
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    if (location.pathname.endsWith('analytics.html')) return; // handled above
     if (localStorage.getItem('rm_show_graphs') === '0') {
         ['miniChartsRow', 'miniChartsToggleBtn', 'tickerSeparator'].forEach(id => {
             const el = document.getElementById(id);
