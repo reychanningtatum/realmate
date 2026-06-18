@@ -235,3 +235,56 @@ function buildChart(project) {
 }
 
 // Chart initializes on first click of Analytics tab, not on page load
+
+/* ── Mini chart in sticky bar ── */
+let _miniChart = null;
+
+function initMiniChart() {
+    const ctx = document.getElementById('miniChartCanvas');
+    if (!ctx || _miniChart) return;
+
+    const project = CAP_PROJECTS[0];
+    const prices  = project.data.map(d => d.price);
+    const labels  = project.data.map(d => String(d.year));
+
+    const chartCtx = ctx.getContext('2d');
+    const gradient = chartCtx.createLinearGradient(0, 0, 0, 126);
+    gradient.addColorStop(0,   'rgba(50,205,50,0.3)');
+    gradient.addColorStop(1,   'rgba(50,205,50,0)');
+
+    _miniChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                data: prices,
+                borderColor: '#32cd32',
+                borderWidth: 1.5,
+                backgroundColor: gradient,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 0,
+                pointHoverRadius: 0,
+            }]
+        },
+        options: {
+            responsive: false,
+            animation: false,
+            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+            scales: {
+                x: { display: false },
+                y: { display: false }
+            }
+        }
+    });
+}
+
+function closeMiniChart() {
+    document.getElementById('miniChartSection').style.display = 'none';
+    if (_miniChart) { _miniChart.destroy(); _miniChart = null; }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // slight delay so Chart.js is ready
+    setTimeout(initMiniChart, 300);
+});

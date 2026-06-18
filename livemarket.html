@@ -64,6 +64,23 @@
           </button>
         </div>
       </div>
+
+      <!-- Mini chart widget (same size as video) -->
+      <div id="miniChartSection" style="flex-shrink:0; position:relative; width:224px; height:126px; border-radius:10px; overflow:hidden; background:#0f172a; box-shadow:0 2px 10px rgba(0,0,0,0.18);">
+        <!-- project label -->
+        <div style="position:absolute;top:6px;left:8px;z-index:5;pointer-events:none;">
+          <div id="miniChartLabel" style="font-size:9px;font-weight:800;color:#fff;letter-spacing:0.3px;line-height:1.2;">Sequoia</div>
+          <div id="miniChartPrice" style="font-size:11px;font-weight:800;color:#32cd32;letter-spacing:-0.3px;">₱295K–315K</div>
+        </div>
+        <!-- gain badge -->
+        <div id="miniChartGain" style="position:absolute;top:6px;right:8px;z-index:5;background:rgba(50,205,50,0.15);border:1px solid rgba(50,205,50,0.3);border-radius:6px;padding:2px 6px;font-size:9px;font-weight:800;color:#32cd32;pointer-events:none;">+172%</div>
+        <canvas id="miniChartCanvas" style="position:absolute;inset:0;width:100%!important;height:100%!important;"></canvas>
+        <!-- close btn -->
+        <button onclick="closeMiniChart()" style="position:absolute;bottom:4px;right:4px;z-index:10;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.12);border:none;color:#fff;cursor:pointer;font-size:9px;display:flex;align-items:center;justify-content:center;">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
       <!-- PDF market report strip -->
       <div id="pdfStripWrap" style="display:none; flex:1; overflow-x:auto; align-items:center; gap:8px; scrollbar-width:thin; padding:4px 0;">
         <div id="pdfPageStrip" style="display:flex; gap:8px; align-items:center;"></div>
