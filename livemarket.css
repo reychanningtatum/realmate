@@ -1251,7 +1251,7 @@ html[data-theme="dark"] .match-banner { background: rgba(24,119,242,0.15); color
     display: flex;
     flex-direction: column;
     align-items: center;
-    line-height: 0.45;
+    line-height: 0.10;
     gap: 0;
     opacity: 0.5;
     transition: transform 0.3s ease;
