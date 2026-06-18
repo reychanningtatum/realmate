@@ -128,34 +128,70 @@ const _isViewingOther = !!_viewUserId;
 async function loadProfile() {
     if (_supabase) {
         try {
-            const targetId = _isViewingOther
-                ? _viewUserId
-                : (await _supabase.auth.getUser()).data.user?.id;
+            const myAuthId = (await _supabase.auth.getUser()).data.user?.id;
+
+            // If the URL param is the current user's own ID, strip it and load normally
+            if (_isViewingOther && _viewUserId === myAuthId) {
+                history.replaceState(null, '', 'dashboard.html');
+                window._isViewingOther_override = false;
+            }
+
+            const effectivelyViewingOther = _isViewingOther && _viewUserId !== myAuthId;
+            const targetId = effectivelyViewingOther ? _viewUserId : myAuthId;
 
             if (targetId) {
-                const { data: profiles } = await _supabase.from('profiles').select('*').eq('id', targetId);
+                const { data: profiles, error: profErr } = await _supabase.from('profiles').select('*').eq('id', targetId);
+                if (profErr) console.error('[loadProfile] profiles query error:', profErr.message);
+
                 if (profiles && profiles.length > 0) {
                     const profile = profiles[0];
+                    if (effectivelyViewingOther) {
+                        // When viewing another user: use ONLY their data, no fallback to current user
+                        user = {
+                            id: targetId,
+                            name: profile.full_name || 'Realmate Member',
+                            image: profile.avatar_url || `https://ui-avatars.com/api/?name=R&background=0f172a&color=32cd32`,
+                            imageOriginal: profile.avatar_original_url || profile.avatar_url || '',
+                            job: profile.job_title || '',
+                            division: profile.division || '',
+                            group: profile.business_group || '',
+                            team: profile.team_name || '',
+                            bio: profile.bio || '',
+                            relationship: profile.relationship_status || ''
+                        };
+                    } else {
+                        user = {
+                            id: targetId,
+                            name: profile.full_name || user.name,
+                            image: profile.avatar_url || user.image,
+                            imageOriginal: profile.avatar_original_url || profile.avatar_url || user.image,
+                            job: profile.job_title || user.job,
+                            division: profile.division || user.division,
+                            group: profile.business_group || user.group,
+                            team: profile.team_name || user.team,
+                            bio: profile.bio || user.bio,
+                            relationship: profile.relationship_status || ''
+                        };
+                        localStorage.setItem("user", JSON.stringify(user));
+                    }
+                } else if (effectivelyViewingOther) {
+                    // Profile row missing — show blank rather than current user's data
                     user = {
                         id: targetId,
-                        name: profile.full_name || user.name,
-                        image: profile.avatar_url || user.image,
-                        imageOriginal: profile.avatar_original_url || profile.avatar_url || user.image,
-                        job: profile.job_title || user.job,
-                        division: profile.division || user.division,
-                        group: profile.business_group || user.group,
-                        team: profile.team_name || user.team,
-                        bio: profile.bio || user.bio,
-                        relationship: profile.relationship_status || ''
+                        name: 'Realmate Member',
+                        image: `https://ui-avatars.com/api/?name=R&background=0f172a&color=32cd32`,
+                        job: '', division: '', group: '', team: '', bio: '', relationship: ''
                     };
-                    if (!_isViewingOther) localStorage.setItem("user", JSON.stringify(user));
+                    console.warn('[loadProfile] No profile row found for user_id:', targetId);
                 }
             }
         } catch (e) { console.log("Cloud sync error", e); }
     }
 
+    const effectivelyViewingOther = _isViewingOther && window._isViewingOther_override !== false;
+
     // Hide edit/post controls when viewing someone else's profile
-    if (_isViewingOther) {
+    if (effectivelyViewingOther) {
         document.querySelectorAll('.edit-only, .post-controls, #postForm, #editProfileBtn, .menu-dots')
             .forEach(el => el && (el.style.display = 'none'));
         const backBtn = document.getElementById('viewingOtherBanner');
@@ -165,7 +201,7 @@ async function loadProfile() {
     updateUI();
 
     // Render Add as Mate button after updateUI() so nameDisplay is populated
-    if (_isViewingOther) {
+    if (effectivelyViewingOther) {
         const mateBtnEl = document.getElementById('profileMateBtn');
         if (mateBtnEl && typeof mateButtonHtml === 'function') {
             await loadMatesCache();
@@ -179,7 +215,7 @@ async function loadProfile() {
     }
 
     // Follower / following counts for the profile being viewed
-    const targetId = _isViewingOther ? _viewUserId : (await _supabase.auth.getUser()).data?.user?.id;
+    const targetId = effectivelyViewingOther ? _viewUserId : (await _supabase.auth.getUser()).data?.user?.id;
     if (targetId && typeof getFollowCounts === 'function') {
         const { followers, following } = await getFollowCounts(targetId);
         const fc = document.getElementById('followersCount');
