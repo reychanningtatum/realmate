@@ -100,6 +100,8 @@
             </div>
           </div>
           <canvas id="miniChartCanvas" style="position:absolute;inset:0;width:100%!important;height:100%!important;"></canvas>
+          <!-- Click overlay — sits above canvas, routes to analytics -->
+          <div onclick="miniChartOpenAnalytics()" style="position:absolute;inset:0;z-index:6;cursor:pointer;"></div>
           <div id="miniChartTooltip" style="display:none;position:absolute;bottom:28px;left:50%;transform:translateX(-50%);background:rgba(15,23,42,0.95);border:1px solid #334155;border-radius:8px;padding:5px 10px;pointer-events:none;z-index:20;white-space:nowrap;text-align:center;">
             <div id="miniTooltipYear" style="font-size:9px;color:#64748b;font-weight:700;"></div>
             <div id="miniTooltipPrice" style="font-size:12px;color:#32cd32;font-weight:800;"></div>
