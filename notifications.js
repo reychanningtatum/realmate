@@ -130,7 +130,8 @@ function renderNotificationsInterface() {
             contextClass = "badge-reply";
         }
 
-        const mateActions = notif.type === 'mate_request' ? `
+        const alreadyHandled = notif.is_read || (typeof getMateStatus === 'function' && getMateStatus(notif.sender_user_name) === 'accepted');
+        const mateActions = (notif.type === 'mate_request' && !alreadyHandled) ? `
             <div class="mate-request-actions">
                 <button class="mate-accept-btn" onclick="handleNotifAcceptMate(this, '${notif.sender_user_name.replace(/'/g, "\\'")}', '${notif.id}')">
                     <i class="fas fa-check"></i> Accept
@@ -138,7 +139,7 @@ function renderNotificationsInterface() {
                 <button class="mate-decline-btn" onclick="handleNotifDeclineMate(this, '${notif.sender_user_name.replace(/'/g, "\\'")}', '${notif.id}')">
                     <i class="fas fa-times"></i> Decline
                 </button>
-            </div>` : '';
+            </div>` : (notif.type === 'mate_request' && alreadyHandled ? `<p class="mate-confirmed-msg"><i class="fas fa-handshake"></i> You are now Realmates!</p>` : '');
 
         row.innerHTML = `
             <div class="hub-avatar-block">
@@ -301,7 +302,9 @@ async function handleNotifAcceptMate(btn, senderName, notifId) {
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     await acceptMateRequest(senderName);
     await markSingleNotificationAsRead(notifId);
-    // Replace action buttons with confirmation
+    // Mark in local cache so re-renders don't show buttons again
+    const cached = localNotificationsCache.find(n => n.id === notifId);
+    if (cached) cached.is_read = true;
     const actions = btn.closest('.mate-request-actions');
     if (actions) actions.outerHTML = `<p class="mate-confirmed-msg"><i class="fas fa-handshake"></i> You are now Realmates!</p>`;
 }
@@ -310,6 +313,8 @@ async function handleNotifDeclineMate(btn, senderName, notifId) {
     btn.disabled = true;
     await declineMateRequest(senderName);
     await markSingleNotificationAsRead(notifId);
+    const cached = localNotificationsCache.find(n => n.id === notifId);
+    if (cached) cached.is_read = true;
     const actions = btn.closest('.mate-request-actions');
     if (actions) actions.outerHTML = `<p class="mate-declined-msg">Request declined.</p>`;
 }
