@@ -55,16 +55,40 @@ const CAP_PROJECTS = [
             { icon: 'fa-building', title: 'Replacement Cost Edge', body: 'New Alveo BGC launches price significantly higher, making Sequoia competitive for immediate cash flow.' },
         ],
         totalGain: null,
+        rentalYield: {
+            unitSqm: 32,
+            monthlyRent: 38000,
+            propertyCost: 9760000,   // purchase price + taxes + furnishing
+            annualCost: 62000,       // RPT + assoc dues + insurance
+            costBreakdown: [
+                { label: 'Purchase Price', value: '₱9,120,000' },
+                { label: 'Taxes & Charges', value: '₱480,000' },
+                { label: 'Furnishing & Renovation', value: '₱160,000' },
+            ],
+            annualCostBreakdown: [
+                { label: 'RPT', value: '₱12,000' },
+                { label: 'Association Dues', value: '₱36,000' },
+                { label: 'Insurance', value: '₱8,000' },
+                { label: "Broker's Commission", value: '₱6,000' },
+            ],
+        },
     }
 ];
 
-// compute total gain and CAGR
+// compute total gain, CAGR, and rental yields
 CAP_PROJECTS.forEach(p => {
     const first = p.data[0];
     const last  = p.data[p.data.length - 1];
     p.totalGain = (((last.price - first.price) / first.price) * 100).toFixed(0);
     const n = last.year - first.year;
     p.cagr = n > 0 ? (((last.price / first.price) ** (1 / n) - 1) * 100).toFixed(1) : null;
+    if (p.rentalYield) {
+        const ry = p.rentalYield;
+        const annualRent = ry.monthlyRent * 12;
+        ry.annualRent = annualRent;
+        ry.grossYield = ((annualRent / ry.propertyCost) * 100).toFixed(2);
+        ry.netYield   = (((annualRent - ry.annualCost) / ry.propertyCost) * 100).toFixed(2);
+    }
 });
 
 let _capChart = null;
@@ -149,7 +173,69 @@ function renderCapProject(project) {
         </div>
     `).join('');
 
+    renderRentalYield(project);
     buildChart(project);
+}
+
+function renderRentalYield(project) {
+    const wrap = document.getElementById('capRentalYield');
+    if (!wrap) return;
+    const ry = project.rentalYield;
+    if (!ry) { wrap.style.display = 'none'; return; }
+    wrap.style.display = 'block';
+    wrap.innerHTML = `
+        <div style="margin-top:24px; border-top:1px solid rgba(255,255,255,0.06); padding-top:20px;">
+            <div style="font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:14px;">
+                <i class="fas fa-house-chimney" style="color:#32cd32;margin-right:6px;"></i>Rental Yield
+            </div>
+
+            <!-- Yield result pills -->
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+                <div style="flex:1;min-width:130px;background:rgba(50,205,50,0.08);border:1px solid rgba(50,205,50,0.2);border-radius:12px;padding:12px 16px;text-align:center;">
+                    <div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Gross Rental Yield</div>
+                    <div style="font-size:22px;font-weight:900;color:#32cd32;margin-top:4px;">${ry.grossYield}%</div>
+                    <div style="font-size:10px;color:#64748b;margin-top:2px;">Annual Rent ÷ Property Cost</div>
+                </div>
+                <div style="flex:1;min-width:130px;background:rgba(50,205,50,0.05);border:1px solid rgba(50,205,50,0.15);border-radius:12px;padding:12px 16px;text-align:center;">
+                    <div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Net Rental Yield</div>
+                    <div style="font-size:22px;font-weight:900;color:#32cd32;margin-top:4px;">${ry.netYield}%</div>
+                    <div style="font-size:10px;color:#64748b;margin-top:2px;">(Rent − Costs) ÷ Property Cost</div>
+                </div>
+            </div>
+
+            <!-- Breakdown tables side by side -->
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <div style="flex:1;min-width:140px;background:rgba(255,255,255,0.04);border-radius:10px;padding:12px 14px;">
+                    <div style="font-size:10px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Property Costs</div>
+                    ${ry.costBreakdown.map(r => `
+                        <div style="display:flex;justify-content:space-between;font-size:11px;color:#cbd5e1;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+                            <span>${r.label}</span><span style="font-weight:700;">${r.value}</span>
+                        </div>`).join('')}
+                    <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0 0;color:#fff;font-weight:800;">
+                        <span>Total</span><span style="color:#32cd32;">₱${ry.propertyCost.toLocaleString()}</span>
+                    </div>
+                </div>
+                <div style="flex:1;min-width:140px;background:rgba(255,255,255,0.04);border-radius:10px;padding:12px 14px;">
+                    <div style="font-size:10px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Annual Costs</div>
+                    ${ry.annualCostBreakdown.map(r => `
+                        <div style="display:flex;justify-content:space-between;font-size:11px;color:#cbd5e1;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+                            <span>${r.label}</span><span style="font-weight:700;">${r.value}</span>
+                        </div>`).join('')}
+                    <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0 0;color:#fff;font-weight:800;">
+                        <span>Total</span><span style="color:#32cd32;">₱${ry.annualCost.toLocaleString()}</span>
+                    </div>
+                    <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);">
+                        <div style="display:flex;justify-content:space-between;font-size:11px;color:#cbd5e1;padding:2px 0;">
+                            <span>Monthly Rent</span><span style="font-weight:700;">₱${ry.monthlyRent.toLocaleString()}</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;font-size:11px;color:#cbd5e1;padding:2px 0;">
+                            <span>Annual Rent</span><span style="font-weight:700;">₱${ry.annualRent.toLocaleString()}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 function buildChart(project) {
