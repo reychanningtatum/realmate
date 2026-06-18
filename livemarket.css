@@ -1239,7 +1239,11 @@ html[data-theme="dark"] .match-banner { background: rgba(24,119,242,0.15); color
   margin-left: -48px;
   margin-right: -48px;
   padding: 8px 48px;
+  overflow: hidden;
+  max-height: 160px;
+  transition: max-height 0.3s ease, padding 0.3s ease;
 }
+.ticker-top-row:not(.open) { max-height: 0; padding: 0; }
 .ticker-separator-wrap {
   margin-left: -48px;
   margin-right: -48px;

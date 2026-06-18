@@ -326,6 +326,14 @@ function initMiniChart() {
     });
 }
 
+function toggleVideoRow(btn) {
+    const row = document.getElementById('videoRow');
+    const chevron = document.getElementById('videoRowChevron');
+    const isOpen = row.classList.toggle('open');
+    chevron.classList.toggle('open', isOpen);
+    btn.classList.toggle('collapsed', !isOpen);
+}
+
 function toggleMiniCharts(btn) {
     const row = document.getElementById('miniChartsRow');
     const chevron = document.getElementById('miniChartsChevron');
