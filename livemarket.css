@@ -1225,3 +1225,6 @@ html[data-theme="dark"] .match-banner { background: rgba(24,119,242,0.15); color
   border-bottom-color: #32cd32;
 }
 .market-tab:hover:not(.active) { color: #475569; }
+
+#miniChartsRow { padding: 8px 0 4px; border-top: 1px solid var(--border, #e2e8f0); }
+#miniChartsRow::-webkit-scrollbar { display: none; }

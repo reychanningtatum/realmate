@@ -43,20 +43,18 @@
   <div id="ledgerView">
 
     <!-- Sticky ticker bar: YouTube + stats -->
-    <div class="sticky-ticker-bar">
+    <div class="sticky-ticker-bar" style="flex-direction:column; gap:0; align-items:stretch;">
 
-      <!-- Video stacked above mini chart -->
-      <div style="flex-shrink:0; display:flex; flex-direction:column; gap:8px;">
+      <!-- Top row: Video | PDF side by side -->
+      <div style="display:flex; gap:12px; align-items:flex-start;">
 
-        <div id="ytEmbedSection" style="display:none; position:relative;">
+        <div id="ytEmbedSection" style="display:none; flex-shrink:0; position:relative;">
           <div style="border-radius:10px; overflow:hidden; background:#000; box-shadow:0 2px 10px rgba(0,0,0,0.18); width:224px; height:126px;">
             <div id="ytEmbedFrame" style="width:224px; height:126px;"></div>
           </div>
-          <!-- Tap-to-unmute hint -->
           <div id="ytMuteHint" style="display:none;position:absolute;bottom:6px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:#fff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;z-index:10;pointer-events:none;animation:ytHintPulse 1.5s ease-in-out infinite;">
             <i class="fas fa-volume-xmark" style="margin-right:4px;"></i>Tap <i class="fas fa-volume-xmark" style="margin:0 2px;font-size:9px;"></i> to unmute
           </div>
-          <!-- Video controls overlay -->
           <div style="position:absolute; top:4px; right:4px; display:flex; gap:4px; z-index:10;">
             <button id="ytMuteBtn" onclick="toggleYtMute(this)" title="Mute/Unmute"
               style="width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;color:#fff;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;">
@@ -69,8 +67,16 @@
           </div>
         </div>
 
-        <!-- Mini chart widget — below the video, same width -->
-        <div id="miniChartSection" style="position:relative; width:224px; height:126px; border-radius:10px; overflow:hidden; background:#0f172a; box-shadow:0 2px 10px rgba(0,0,0,0.18); cursor:pointer;" onclick="miniChartOpenAnalytics()">
+        <!-- PDF market report strip (parallel to video) -->
+        <div id="pdfStripWrap" style="display:none; flex:1; overflow-x:auto; align-items:center; gap:8px; scrollbar-width:thin; padding:4px 0;">
+          <div id="pdfPageStrip" style="display:flex; gap:8px; align-items:center;"></div>
+        </div>
+
+      </div><!-- /top row: video + pdf -->
+
+      <!-- Bottom row: mini project charts side by side -->
+      <div id="miniChartsRow" style="display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch;">
+        <div id="miniChartSection" style="position:relative; flex-shrink:0; width:224px; height:126px; border-radius:10px; overflow:hidden; background:#0f172a; box-shadow:0 2px 10px rgba(0,0,0,0.18); cursor:pointer;" onclick="miniChartOpenAnalytics()">
           <div style="position:absolute;top:6px;left:8px;z-index:5;pointer-events:none;">
             <div id="miniChartLabel" style="font-size:9px;font-weight:800;color:#fff;letter-spacing:0.3px;line-height:1.2;">Sequoia · Two Serendra BGC</div>
             <div id="miniChartPrice" style="font-size:11px;font-weight:800;color:#32cd32;letter-spacing:-0.3px;">₱295K – ₱315K <span style="font-size:8px;color:#64748b;font-weight:600;">/sqm</span></div>
@@ -89,13 +95,8 @@
             <i class="fas fa-times"></i>
           </button>
         </div>
-
-      </div><!-- /video+chart column -->
-
-      <!-- PDF market report strip -->
-      <div id="pdfStripWrap" style="display:none; flex:1; overflow-x:auto; align-items:center; gap:8px; scrollbar-width:thin; padding:4px 0;">
-        <div id="pdfPageStrip" style="display:flex; gap:8px; align-items:center;"></div>
-      </div>
+        <!-- Additional project charts will be appended here by cap-tracker.js -->
+      </div><!-- /mini charts row -->
 
       <!-- PDF lightbox -->
       <div id="pdfLightbox" onclick="closePdfLightbox()" class="pdf-lightbox">
