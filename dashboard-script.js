@@ -2,11 +2,15 @@ function toggleProfileMenu(e) {
     if (e) e.stopPropagation();
     const dropdown = document.getElementById('profileMenuDropdown');
     if (!dropdown) return;
-    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    const isOpen = dropdown.style.display === 'block';
+    dropdown.style.display = isOpen ? 'none' : 'block';
 }
-document.addEventListener('click', () => {
+document.addEventListener('click', (e) => {
+    const btn = document.getElementById('profileMenuBtn');
     const dropdown = document.getElementById('profileMenuDropdown');
-    if (dropdown) dropdown.style.display = 'none';
+    if (dropdown && btn && !btn.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.style.display = 'none';
+    }
 });
 
 // 🔥 SUPABASE SETUP
