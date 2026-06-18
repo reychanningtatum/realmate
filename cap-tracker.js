@@ -252,6 +252,13 @@ function initMiniChart() {
     gradient.addColorStop(0, 'rgba(50,205,50,0.35)');
     gradient.addColorStop(1, 'rgba(50,205,50,0)');
 
+    const annMap = {};
+    project.annotations.forEach(a => { annMap[a.year] = a.color; });
+
+    const pointRadii  = project.data.map(d => annMap[d.year] ? 4 : (d.isCurrent ? 4 : 0));
+    const pointColors = project.data.map(d => annMap[d.year] || (d.isCurrent ? '#32cd32' : 'transparent'));
+    const pointBorder = project.data.map(d => annMap[d.year] ? '#0f172a' : (d.isCurrent ? '#0f172a' : 'transparent'));
+
     _miniChart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -263,9 +270,12 @@ function initMiniChart() {
                 backgroundColor: gradient,
                 fill: true,
                 tension: 0.4,
-                pointRadius: 0,
-                pointHoverRadius: 5,
-                pointHoverBackgroundColor: '#32cd32',
+                pointRadius: pointRadii,
+                pointBackgroundColor: pointColors,
+                pointBorderColor: pointBorder,
+                pointBorderWidth: 1.5,
+                pointHoverRadius: pointRadii.map(r => Math.max(r, 5)),
+                pointHoverBackgroundColor: pointColors,
                 pointHoverBorderColor: '#fff',
                 pointHoverBorderWidth: 1.5,
             }]
