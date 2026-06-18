@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Realmate | Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<!-- ── Password Gate ── -->
+<div id="gateScreen">
+  <div class="gate-card">
+    <img src="images/realmate2.png" class="gate-logo">
+    <h2 class="gate-title">Admin Access</h2>
+    <p class="gate-sub">Enter the admin password to continue.</p>
+    <div class="gate-input-wrap" style="position:relative;">
+      <i class="fas fa-lock"></i>
+      <input type="password" id="gateInput" placeholder="Password" onkeydown="if(event.key==='Enter') attemptLogin()">
+      <i class="fas fa-eye" id="gateEye" onclick="toggleGatePassword()"></i>
+    </div>
+    <div id="gateError" class="gate-error" style="display:none;"><i class="fas fa-circle-exclamation"></i> Incorrect password.</div>
+    <button class="gate-btn" onclick="attemptLogin()">Sign In</button>
+  </div>
+</div>
+
+<!-- ── Admin Dashboard ── -->
+<div id="adminDash" style="display:none;">
+
+  <div class="admin-sidebar">
+    <img src="images/realmate2.png" class="sb-logo">
+    <div class="sb-label">Admin Panel</div>
+    <nav class="sb-nav">
+      <div class="sb-item active" onclick="switchTab('youtube', this)"><i class="fas fa-play-circle"></i> Market Pulse Video</div>
+      <div class="sb-item" onclick="switchTab('report', this)"><i class="fas fa-file-pdf"></i> Market Report PDF</div>
+      <div class="sb-item" onclick="switchTab('producers', this)"><i class="fas fa-trophy"></i> Top Producers</div>
+      <div class="sb-item" onclick="switchTab('security', this)"><i class="fas fa-shield-alt"></i> Change Password</div>
+    </nav>
+    <div class="sb-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Exit Admin</div>
+  </div>
+
+  <div class="admin-main">
+
+    <!-- Mobile top bar -->
+    <div class="mobile-admin-topbar">
+      <span style="font-weight:800; font-size:15px; color:#0f172a;">Admin Panel</span>
+      <div style="display:flex; gap:10px;">
+        <select onchange="switchTab(this.value, null)" class="mobile-tab-select">
+          <option value="youtube">Market Pulse Video</option>
+          <option value="report">Market Report</option>
+          <option value="producers">Top Producers</option>
+          <option value="security">Change Password</option>
+        </select>
+        <button onclick="logout()" style="background:#fee2e2; color:#ef4444; border:none; border-radius:8px; padding:8px 12px; font-weight:700; font-size:13px; cursor:pointer;"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+    </div>
+
+    <!-- YouTube Tab -->
+    <div id="tab-youtube" class="admin-tab active">
+      <div class="tab-header">
+        <h2>Market Pulse Video</h2>
+        <p>Paste any YouTube URL here. It will appear as an embedded video on the Market Pulse page.</p>
+      </div>
+      <div class="admin-card">
+        <label class="field-label">YouTube URL</label>
+        <div class="url-input-row">
+          <input type="text" id="ytUrlInput" placeholder="https://www.youtube.com/watch?v=... or live stream URL">
+          <button class="btn-save" onclick="saveYoutubeUrl()"><i class="fas fa-save"></i> Save</button>
+        </div>
+        <div id="ytStatus" class="status-msg" style="display:none;"></div>
+        <div id="ytPreviewWrap" style="display:none; margin-top:24px;">
+          <div class="field-label" style="margin-bottom:10px;">Preview</div>
+          <div class="yt-preview-frame">
+            <iframe id="ytPreviewIframe" src="" frameborder="0" allowfullscreen
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Market Report Tab -->
+    <div id="tab-report" class="admin-tab">
+      <div class="tab-header">
+        <h2>Market Report PDF</h2>
+        <p>Upload a PDF market report. It will appear as a horizontal slide strip beside the video on Market Pulse.</p>
+      </div>
+      <div class="admin-card">
+        <div class="card-section-title"><i class="fas fa-upload"></i> Upload PDF</div>
+        <div class="pdf-upload-area" id="pdfDropArea" onclick="document.getElementById('pdfFileInput').click()">
+          <i class="fas fa-file-pdf" style="font-size:36px; color:#ef4444; margin-bottom:12px;"></i>
+          <div style="font-weight:700; color:#0f172a; margin-bottom:4px;">Click to choose a PDF file</div>
+          <div style="font-size:12px; color:#64748b;" id="pdfFileName">No file selected</div>
+        </div>
+        <input type="file" id="pdfFileInput" accept="application/pdf" style="display:none" onchange="onPdfSelected(this)">
+        <div style="margin-top:16px; display:flex; gap:12px; align-items:center;">
+          <button class="btn-save" onclick="uploadMarketReport()"><i class="fas fa-cloud-upload-alt"></i> Upload & Save</button>
+          <button class="btn-cancel-sm" onclick="clearMarketReport()" style="display:inline-flex;"><i class="fas fa-trash"></i> Remove Report</button>
+        </div>
+        <div id="pdfStatus" class="status-msg" style="display:none; margin-top:12px;"></div>
+        <div id="pdfProgressWrap" style="display:none; margin-top:14px;">
+          <div style="font-size:12px; font-weight:600; color:#64748b; margin-bottom:6px;">Uploading…</div>
+          <div style="background:#e2e8f0; border-radius:99px; height:6px;">
+            <div id="pdfProgressBar" style="background:#32cd32; height:6px; border-radius:99px; width:0%; transition:width 0.2s;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="admin-card" id="pdfCurrentWrap" style="display:none;">
+        <div class="card-section-title"><i class="fas fa-eye"></i> Current Report</div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <i class="fas fa-file-pdf" style="font-size:28px; color:#ef4444;"></i>
+          <div>
+            <div style="font-weight:700; color:#0f172a; font-size:14px;" id="pdfCurrentName">market-report.pdf</div>
+            <a id="pdfCurrentLink" href="#" target="_blank" style="font-size:12px; color:#32cd32; font-weight:600;">Open PDF ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Producers Tab -->
+    <div id="tab-producers" class="admin-tab">
+      <div class="tab-header">
+        <h2>Top Producers</h2>
+        <p>Add, edit, or remove monthly top producers. Changes appear immediately on the home feed.</p>
+      </div>
+
+      <div class="admin-card" style="margin-bottom:20px;">
+        <div class="card-section-title"><i class="fas fa-plus-circle"></i> Add / Edit Producer</div>
+        <input type="hidden" id="editingId">
+        <div class="form-grid">
+          <div class="form-field">
+            <label class="field-label">Full Name *</label>
+            <input type="text" id="pName" placeholder="e.g. Maria Santos">
+          </div>
+          <div class="form-field">
+            <label class="field-label">Position / Rank</label>
+            <input type="text" id="pPosition" placeholder="e.g. Area Sales Director">
+          </div>
+          <div class="form-field">
+            <label class="field-label">Team / Group</label>
+            <input type="text" id="pTeam" placeholder="e.g. Royals">
+          </div>
+          <div class="form-field">
+            <label class="field-label">Sales Value (₱) *</label>
+            <input type="number" id="pValue" placeholder="e.g. 72000000">
+          </div>
+          <div class="form-field">
+            <label class="field-label">Month</label>
+            <input type="text" id="pMonth" placeholder="e.g. June 2026">
+          </div>
+          <div class="form-field">
+            <label class="field-label">Period Label</label>
+            <input type="text" id="pPeriod" placeholder="e.g. Month to Date">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-save" id="pSaveBtn" onclick="saveProducer()"><i class="fas fa-save"></i> Save Producer</button>
+          <button class="btn-cancel-sm" id="pCancelBtn" onclick="cancelEdit()" style="display:none;">Cancel</button>
+        </div>
+        <div id="pStatus" class="status-msg" style="display:none;"></div>
+      </div>
+
+      <div class="admin-card">
+        <div class="card-section-title"><i class="fas fa-list"></i> Current Producers</div>
+        <div id="producersList"><div class="loading-row"><i class="fas fa-spinner fa-spin"></i> Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- Security Tab -->
+    <div id="tab-security" class="admin-tab">
+      <div class="tab-header">
+        <h2>Change Password</h2>
+        <p>Update the admin password. You'll need to use the new password next time you log in.</p>
+      </div>
+      <div class="admin-card" style="max-width:440px;">
+        <div class="form-field" style="margin-bottom:16px;">
+          <label class="field-label">Current Password</label>
+          <input type="password" id="secCurrent" placeholder="Enter current password">
+        </div>
+        <div class="form-field" style="margin-bottom:16px;">
+          <label class="field-label">New Password</label>
+          <input type="password" id="secNew" placeholder="Enter new password">
+        </div>
+        <div class="form-field" style="margin-bottom:20px;">
+          <label class="field-label">Confirm New Password</label>
+          <input type="password" id="secConfirm" placeholder="Repeat new password">
+        </div>
+        <button class="btn-save" onclick="changePassword()"><i class="fas fa-key"></i> Update Password</button>
+        <div id="secStatus" class="status-msg" style="display:none; margin-top:12px;"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="admin.js"></script>
+</body>
+</html>

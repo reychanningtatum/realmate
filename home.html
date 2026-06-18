@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Realmate | Home</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="home.css">
+  <script src="theme.js"></script>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="brand">
+    <img src="images/realmate2.png" onclick="location.href='home.html'">
+  </div>
+  <div class="nav-item active"><i class="fas fa-house"></i> <span>Home Feed</span></div>
+  <div class="nav-item" id="navPortfolio" onclick="location.href='dashboard.html'"><i class="fas fa-user-tie"></i> <span>Profile</span></div>
+  <div class="nav-item" id="navMatches" onclick="location.href='livemarket.html'"><i class="fas fa-chart-line"></i> <span>Market Pulse</span></div>
+  <div class="nav-item" id="nav-forum" onclick="location.href='forum.html'"><i class="fas fa-people-group"></i> <span>Forum</span></div>
+  <div class="nav-item" onclick="location.href='notifications.html'">
+    <i class="fas fa-bell"></i> <span>Notifications</span>
+  </div>
+  <div class="nav-item" onclick="location.href='settings.html'"><i class="fas fa-cog"></i> <span>Settings</span></div>
+  <div style="margin-top: auto;">
+    <div class="nav-item" id="authBtn" onclick="handleAuth()">
+      <i class="fas fa-sign-out-alt"></i> <span id="authText">Sign Out</span>
+    </div>
+  </div>
+</div>
+
+<div class="main-content">
+
+  <!-- Search preserved -->
+  <div class="home-search-wrap">
+    <input type="text" id="homeSearchInput" class="home-search-input"
+           placeholder="Search people, posts, categories…"
+           oninput="onHomeSearch(this.value)" autocomplete="off">
+    <span class="home-search-clear" id="homeSearchClear" onclick="clearHomeSearch()" style="display:none;">
+      <i class="fas fa-times"></i>
+    </span>
+  </div>
+  <div id="homeSearchResults"></div>
+
+  <!-- Top Producers preserved -->
+  <div class="tp-section" id="topProducersSection">
+    <div class="tp-header">
+      <div class="tp-title-block">
+        <i class="fas fa-trophy"></i>
+        <div>
+          <div class="tp-title">Monthly Top Producers</div>
+          <div class="tp-subtitle" id="tpMonthLabel">Loading…</div>
+        </div>
+      </div>
+      <span class="tp-powered">Alveo Land Corp</span>
+    </div>
+    <div class="tp-grid" id="tpGrid">
+      <div class="tp-loading"><i class="fas fa-spinner fa-spin"></i> Loading producers…</div>
+    </div>
+  </div>
+
+  <!-- Stories Strip -->
+  <div class="stories-wrap" id="storiesWrap">
+    <div class="stories-strip" id="storiesStrip">
+      <!-- Add Story button -->
+      <div class="story-add-btn" onclick="openAddStory()">
+        <div class="story-add-icon"><i class="fas fa-plus"></i></div>
+        <span>Add Story</span>
+      </div>
+      <!-- Stories loaded here -->
+    </div>
+  </div>
+
+  <!-- Main 2-col layout -->
+  <div class="home-layout">
+
+    <!-- Feed Column -->
+    <div class="home-feed-col">
+
+      <!-- Create Post -->
+      <div class="create-post-card" id="createPostCard">
+        <div class="create-post-top">
+          <div class="create-post-avatar" id="createPostAvatar">
+            <i class="fas fa-user-tie" style="font-size:16px;"></i>
+          </div>
+          <div class="create-post-input" onclick="expandCreatePost()">
+            <span id="createPostPlaceholder">What's on your mind?</span>
+          </div>
+        </div>
+        <!-- Expanded composer -->
+        <div class="create-post-expanded" id="createPostExpanded" style="display:none;">
+          <textarea id="homePostText" placeholder="What's on your mind?" rows="3"></textarea>
+          <div id="homePostMediaPreview" class="home-post-media-preview"></div>
+          <div class="create-post-actions">
+            <label class="create-post-media-btn" for="homePostMedia">
+              <i class="fas fa-image"></i> Photo / Video
+            </label>
+            <input type="file" id="homePostMedia" hidden accept="image/*,video/*" multiple onchange="previewHomeMedia(this)">
+            <div style="display:flex; gap:8px; margin-left:auto;">
+              <button class="create-post-cancel" onclick="collapseCreatePost()">Cancel</button>
+              <button class="create-post-submit" onclick="submitHomePost()">
+                <i class="fas fa-paper-plane"></i> Post
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="create-post-shortcuts">
+          <button onclick="expandCreatePost()"><i class="fas fa-image" style="color:#45b649;"></i> Photo/Video</button>
+          <button onclick="expandCreatePost()"><i class="fas fa-trophy" style="color:#f59e0b;"></i> Achievement</button>
+          <button onclick="expandCreatePost()"><i class="fas fa-lightbulb" style="color:#6366f1;"></i> Thought</button>
+        </div>
+      </div>
+
+      <!-- Feed -->
+      <div id="homeFeed"></div>
+
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="home-sidebar-col">
+
+      <!-- Active Members -->
+      <div class="sidebar-widget" id="activeMembersWidget">
+        <div class="sidebar-widget-header">
+          <i class="fas fa-circle" style="color:#22c55e; font-size:10px;"></i> Active Members
+        </div>
+        <div id="activeMembersList">
+          <div class="sidebar-loading"><i class="fas fa-spinner fa-spin"></i></div>
+        </div>
+      </div>
+
+      <!-- Birthdays -->
+      <div class="sidebar-widget" id="birthdaysWidget" style="display:none;">
+        <div class="sidebar-widget-header">
+          <i class="fas fa-cake-candles" style="color:#f59e0b;"></i> Birthdays Today
+        </div>
+        <div id="birthdaysList"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Add Story Modal -->
+<div class="story-modal-overlay" id="storyModalOverlay" onclick="closeAddStory(event)">
+  <div class="story-modal">
+    <div class="story-modal-header">
+      <h3>Add to Your Story</h3>
+      <button onclick="closeAddStory()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="story-modal-body">
+      <label class="story-upload-area" for="storyImageInput" id="storyUploadArea">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <span>Click to select a photo</span>
+        <small>Story expires after 24 hours</small>
+      </label>
+      <input type="file" id="storyImageInput" hidden accept="image/*" onchange="previewStoryImage(this)">
+      <img id="storyPreview" src="" style="display:none; width:100%; border-radius:12px; max-height:300px; object-fit:cover; margin-top:12px;">
+    </div>
+    <div class="story-modal-footer">
+      <span id="storyStatus" style="font-size:13px; color:#64748b;"></span>
+      <button class="story-submit-btn" id="storySubmitBtn" onclick="submitStory()" disabled>
+        <i class="fas fa-paper-plane"></i> Share Story
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Story Viewer -->
+<div class="story-viewer-overlay" id="storyViewerOverlay" onclick="closeStoryViewer()">
+  <div class="story-viewer" onclick="event.stopPropagation()">
+    <button class="story-viewer-close" onclick="closeStoryViewer()"><i class="fas fa-times"></i></button>
+    <div class="story-viewer-user" id="storyViewerUser"></div>
+    <div class="story-viewer-progress" id="storyViewerProgress"></div>
+    <img id="storyViewerImg" src="">
+    <button class="story-viewer-nav prev" id="storyNavPrev" onclick="navigateStory(-1)"><i class="fas fa-chevron-left"></i></button>
+    <button class="story-viewer-nav next" id="storyNavNext" onclick="navigateStory(1)"><i class="fas fa-chevron-right"></i></button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="compress.js"></script>
+<script src="search-overlay.js"></script>
+<script src="auth-guard.js"></script>
+<script src="top-producers.js"></script>
+<script src="home.js"></script>
+<script src="notif-badge.js"></script>
+<!-- Mobile Bottom Navigation -->
+<nav class="mobile-bottom-nav">
+  <a class="mob-nav-item active" href="home.html"><i class="fas fa-house"></i><span>Home</span></a>
+  <a class="mob-nav-item" href="forum.html"><i class="fas fa-people-group"></i><span>Forum</span></a>
+  <a class="mob-nav-item" href="livemarket.html"><i class="fas fa-chart-line"></i><span>Market</span></a>
+  <a class="mob-nav-item" href="notifications.html"><i class="fas fa-bell"></i><span>Notifications</span></a>
+  <div class="mob-nav-item mob-nav-avatar-wrap" onclick="toggleNavMenu(event)">
+    <div class="mob-nav-avatar" id="navAvatar"><i class="fas fa-user-tie" style="font-size:13px;"></i></div>
+    <span>Me</span>
+    <div class="mob-nav-menu" id="navMenu">
+      <a href="dashboard.html"><i class="fas fa-user-tie"></i> Profile</a>
+      <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+      <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+  </div>
+</nav>
+<script src="nav-menu.js"></script>
+</body>
+</html>
