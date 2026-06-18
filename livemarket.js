@@ -1014,6 +1014,10 @@ renderMarketReportPdf();
                 playerVars: { autoplay: 1, mute: 1, rel: 0, modestbranding: 1, playsinline: 1 },
                 events: {
                     onReady: function(e) {
+                        // Unmute after load unless user has auto-mute enabled in settings
+                        if (localStorage.getItem('rm_automute_video') !== '1') {
+                            try { e.target.unMute(); e.target.setVolume(100); } catch {}
+                        }
                         updateFilterBarTop();
                     },
                     onStateChange: function(e) {

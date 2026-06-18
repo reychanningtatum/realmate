@@ -179,6 +179,17 @@
                         </label>
                     </div>
 
+                    <div style="display:flex; align-items:center; justify-content:space-between; background:#f8fafc; border:1px solid var(--border); border-radius:14px; padding:16px 18px;">
+                        <div>
+                            <div style="font-size:14px; font-weight:700; color:var(--text-main);">Auto-mute Video</div>
+                            <div style="font-size:12px; color:var(--text-sub); margin-top:3px;">Start the Market video muted. Turn off to play with sound (requires a tap on mobile).</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleAutoMuteSetting" onchange="saveMarketPref('rm_automute_video', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
                 </div>
             </div>
 

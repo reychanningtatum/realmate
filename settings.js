@@ -258,10 +258,12 @@ function highlightThemeBtn(theme) {
 }
 
 function initMarketPrefToggles() {
-    const videoToggle = document.getElementById('toggleVideoSetting');
-    const tickerToggle = document.getElementById('toggleTickerSetting');
-    if (videoToggle)  videoToggle.checked  = localStorage.getItem('rm_hide_video')  !== '1';
-    if (tickerToggle) tickerToggle.checked = localStorage.getItem('rm_hide_ticker') !== '1';
+    const videoToggle     = document.getElementById('toggleVideoSetting');
+    const tickerToggle    = document.getElementById('toggleTickerSetting');
+    const autoMuteToggle  = document.getElementById('toggleAutoMuteSetting');
+    if (videoToggle)    videoToggle.checked    = localStorage.getItem('rm_hide_video')     !== '1';
+    if (tickerToggle)   tickerToggle.checked   = localStorage.getItem('rm_hide_ticker')    !== '1';
+    if (autoMuteToggle) autoMuteToggle.checked = localStorage.getItem('rm_automute_video') === '1';
 }
 
 function saveMarketPref(key, hide) {
