@@ -306,7 +306,20 @@ function initMiniChart() {
                 }
             },
             scales: {
-                x: { display: false },
+                x: {
+                    display: true,
+                    grid: { display: false },
+                    border: { display: false },
+                    ticks: {
+                        color: '#475569',
+                        font: { size: 8, weight: '700' },
+                        maxRotation: 0,
+                        callback: function(val, idx) {
+                            const year = parseInt(this.getLabelForValue(val));
+                            return [2012, 2018, 2021, 2026].includes(year) ? year : '';
+                        }
+                    }
+                },
                 y: { display: false }
             }
         }
