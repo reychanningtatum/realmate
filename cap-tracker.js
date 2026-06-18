@@ -58,11 +58,13 @@ const CAP_PROJECTS = [
     }
 ];
 
-// compute total gain
+// compute total gain and CAGR
 CAP_PROJECTS.forEach(p => {
-    const first = p.data[0].price;
-    const last  = p.data[p.data.length - 1].price;
-    p.totalGain = (((last - first) / first) * 100).toFixed(0);
+    const first = p.data[0];
+    const last  = p.data[p.data.length - 1];
+    p.totalGain = (((last.price - first.price) / first.price) * 100).toFixed(0);
+    const n = last.year - first.year;
+    p.cagr = n > 0 ? (((last.price / first.price) ** (1 / n) - 1) * 100).toFixed(1) : null;
 });
 
 let _capChart = null;
@@ -111,6 +113,10 @@ function renderCapProject(project) {
         <div style="background:rgba(255,255,255,0.06);border-radius:10px;padding:8px 14px;">
             <div style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Total Appreciation</div>
             <div style="font-size:15px;font-weight:800;color:#32cd32;margin-top:2px;">+${project.totalGain}%</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.06);border-radius:10px;padding:8px 14px;">
+            <div style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">CAGR</div>
+            <div style="font-size:15px;font-weight:800;color:#32cd32;margin-top:2px;">${project.cagr ? '+' + project.cagr + '%' : '—'}<span style="font-size:10px;font-weight:500;color:#64748b;margin-left:3px;">/yr</span></div>
         </div>
         <div style="background:rgba(255,255,255,0.06);border-radius:10px;padding:8px 14px;">
             <div style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Timeline</div>
@@ -366,5 +372,10 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         initMiniChart();
         document.getElementById('tickerSeparator').style.display = 'block';
+        const p = CAP_PROJECTS[0];
+        if (p.cagr) {
+            const badge = document.getElementById('miniChartGain');
+            if (badge) badge.innerHTML = `+${p.totalGain}% <span style="font-size:8px;color:#a3e635;font-weight:600;">· ${p.cagr}%/yr</span>`;
+        }
     }, 300);
 });
