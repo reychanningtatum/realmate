@@ -111,7 +111,7 @@ function renderCapProject(project) {
             <div style="font-size:15px;font-weight:800;color:#fff;margin-top:2px;">₱${(first.price/1000).toFixed(0)}K<span style="font-size:10px;font-weight:500;color:#64748b;margin-left:3px;">/sqm</span></div>
         </div>
         <div style="background:rgba(255,255,255,0.06);border-radius:10px;padding:8px 14px;">
-            <div style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Total Appreciation</div>
+            <div style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Capital Appreciation</div>
             <div style="font-size:15px;font-weight:800;color:#32cd32;margin-top:2px;">+${project.totalGain}%</div>
         </div>
         <div style="background:rgba(255,255,255,0.06);border-radius:10px;padding:8px 14px;">
