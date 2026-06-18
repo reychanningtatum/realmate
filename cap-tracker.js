@@ -348,6 +348,13 @@ function closeMiniChart() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('rm_show_graphs') === '0') {
+        ['miniChartsRow', 'miniChartsToggleBtn', 'tickerSeparator'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        });
+        return;
+    }
     setTimeout(() => {
         initMiniChart();
         document.getElementById('tickerSeparator').style.display = 'block';

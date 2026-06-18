@@ -190,6 +190,17 @@
                         </label>
                     </div>
 
+                    <div style="display:flex; align-items:center; justify-content:space-between; background:#f8fafc; border:1px solid var(--border); border-radius:14px; padding:16px 18px;">
+                        <div>
+                            <div style="font-size:14px; font-weight:700; color:var(--text-main);">Show Project Graphs</div>
+                            <div style="font-size:12px; color:var(--text-sub); margin-top:3px;">Display the capital appreciation mini charts below the video on Market Pulse. Turn off to hide them permanently.</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleShowGraphsSetting" onchange="this.checked ? localStorage.removeItem('rm_show_graphs') : localStorage.setItem('rm_show_graphs','0'); showSettingsNotificationToast('Preference saved.', 'success')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
                 </div>
             </div>
 
