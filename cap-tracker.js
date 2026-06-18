@@ -333,10 +333,13 @@ function miniChartOpenAnalytics() {
 
 function closeMiniChart() {
     document.getElementById('miniChartSection').style.display = 'none';
+    document.getElementById('tickerSeparator').style.display = 'none';
     if (_miniChart) { _miniChart.destroy(); _miniChart = null; }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // slight delay so Chart.js is ready
-    setTimeout(initMiniChart, 300);
+    setTimeout(() => {
+        initMiniChart();
+        document.getElementById('tickerSeparator').style.display = 'block';
+    }, 300);
 });
