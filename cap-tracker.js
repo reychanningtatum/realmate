@@ -326,6 +326,16 @@ function initMiniChart() {
     });
 }
 
+function toggleMiniCharts(btn) {
+    const row = document.getElementById('miniChartsRow');
+    const chevron = document.getElementById('miniChartsChevron');
+    const sep = document.getElementById('tickerSeparator');
+    const isOpen = row.classList.toggle('open');
+    chevron.classList.toggle('open', isOpen);
+    btn.classList.toggle('collapsed', !isOpen);
+    sep.style.display = isOpen ? 'block' : 'none';
+}
+
 function miniChartOpenAnalytics() {
     switchMarketTab('analytics');
     document.getElementById('ledgerView')?.scrollIntoView({ behavior: 'smooth' });
