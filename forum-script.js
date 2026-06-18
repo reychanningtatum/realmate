@@ -839,9 +839,10 @@ async function dispatchNotificationTrigger({ recipientName, type, postId, commen
         console.error("Notification system offline:", err);
     }
 }
-function toggleCircleInsights(header) {
+function toggleCircleInsights(btn) {
     if (window.innerWidth > 768) return;
     const body = document.getElementById("trendingTopicsList");
     const isOpen = body.classList.toggle("open");
-    header.classList.toggle("open", isOpen);
+    const chevron = btn.querySelector(".circle-insights-chevron");
+    if (chevron) chevron.classList.toggle("open", isOpen);
 }

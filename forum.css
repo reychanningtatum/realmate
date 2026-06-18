@@ -915,12 +915,27 @@ input:checked + .slider:before {
         max-height: 600px;
         padding: revert !important;
     }
-    .circle-insights-chevron {
-        transition: transform 0.3s ease;
-        transform: rotate(180deg);
+    .circle-insights-toggle-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 6px 0 10px;
+        cursor: pointer;
+        user-select: none;
     }
-    .circle-insights-header.open .circle-insights-chevron {
+
+    .circle-insights-chevron {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        line-height: 0.65;
+        opacity: 0.5;
+        transition: transform 0.3s ease;
         transform: rotate(0deg);
+    }
+
+    .circle-insights-chevron.open {
+        transform: rotate(180deg);
     }
 }
 

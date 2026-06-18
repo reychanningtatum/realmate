@@ -64,19 +64,21 @@
         <div class="trending-sidebar">
             
             <div class="trending-card-right" style="margin-bottom: 20px;">
-                <div class="market-pulse-header circle-insights-header open" onclick="toggleCircleInsights(this)">
+                <div class="market-pulse-header circle-insights-header open">
                     <div class="market-pulse-subtitle">Group Intelligence</div>
                     <div class="market-pulse-title">
                         <i class="fas fa-users-viewfinder"></i>
                         Circle Insights
-                        <span class="circle-insights-chevron" style="margin-left:auto; display:flex; flex-direction:column; gap:-4px; opacity:0.6; line-height:0.7;">
-                            <i class="fas fa-chevron-up" style="font-size:11px;"></i>
-                            <i class="fas fa-chevron-up" style="font-size:11px;"></i>
-                        </span>
                     </div>
                 </div>
                 <div id="trendingTopicsList" class="circle-insights-body open">
                     <p style="color: var(--text-sub); font-size: 13px; padding: 12px;">Analyzing current pulse...</p>
+                </div>
+                <div class="circle-insights-toggle-btn" onclick="toggleCircleInsights(this)">
+                    <span class="circle-insights-chevron open">
+                        <i class="fas fa-chevron-up" style="font-size:11px;"></i>
+                        <i class="fas fa-chevron-up" style="font-size:11px;"></i>
+                    </span>
                 </div>
             </div>
             
