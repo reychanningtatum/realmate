@@ -249,8 +249,8 @@ function initMiniChart() {
 
     const chartCtx = ctx.getContext('2d');
     const gradient = chartCtx.createLinearGradient(0, 0, 0, 126);
-    gradient.addColorStop(0,   'rgba(50,205,50,0.3)');
-    gradient.addColorStop(1,   'rgba(50,205,50,0)');
+    gradient.addColorStop(0, 'rgba(50,205,50,0.35)');
+    gradient.addColorStop(1, 'rgba(50,205,50,0)');
 
     _miniChart = new Chart(ctx, {
         type: 'line',
@@ -259,24 +259,53 @@ function initMiniChart() {
             datasets: [{
                 data: prices,
                 borderColor: '#32cd32',
-                borderWidth: 1.5,
+                borderWidth: 2,
                 backgroundColor: gradient,
                 fill: true,
                 tension: 0.4,
                 pointRadius: 0,
-                pointHoverRadius: 0,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: '#32cd32',
+                pointHoverBorderColor: '#fff',
+                pointHoverBorderWidth: 1.5,
             }]
         },
         options: {
             responsive: false,
             animation: false,
-            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    enabled: false,
+                    external: function(context) {
+                        const tooltip = document.getElementById('miniChartTooltip');
+                        if (!tooltip) return;
+                        if (context.tooltip.opacity === 0) {
+                            tooltip.style.display = 'none';
+                            return;
+                        }
+                        const idx = context.tooltip.dataPoints?.[0]?.dataIndex;
+                        if (idx === undefined) return;
+                        const d = project.data[idx];
+                        document.getElementById('miniTooltipYear').textContent  = d.year;
+                        document.getElementById('miniTooltipPrice').textContent = '₱' + Number(d.price).toLocaleString() + ' /sqm';
+                        document.getElementById('miniTooltipPhase').textContent = d.phase;
+                        tooltip.style.display = 'block';
+                    }
+                }
+            },
             scales: {
                 x: { display: false },
                 y: { display: false }
             }
         }
     });
+}
+
+function miniChartOpenAnalytics() {
+    switchMarketTab('analytics');
+    document.getElementById('ledgerView')?.scrollIntoView({ behavior: 'smooth' });
 }
 
 function closeMiniChart() {
