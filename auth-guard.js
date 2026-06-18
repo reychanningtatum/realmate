@@ -1,3 +1,17 @@
+// Global logout — available on every page via the mobile nav
+function logout() {
+    const SUPABASE_URL = 'https://wmegpgrfrtprhuzmgjma.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Rm_fIBDUfu3DEyLj0_bWZw_qEqo8cd4';
+    try {
+        const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        _sb.auth.signOut();
+    } catch(e) {}
+    localStorage.removeItem('user');
+    localStorage.removeItem('posts');
+    localStorage.removeItem('isGuest');
+    location.href = 'index.html';
+}
+
 // 🔐 AUTH GUARD — runs on every protected page
 (async function () {
     const SUPABASE_URL = 'https://wmegpgrfrtprhuzmgjma.supabase.co';
