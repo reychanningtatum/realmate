@@ -48,8 +48,13 @@
         <div style="border-radius:10px; overflow:hidden; background:#000; box-shadow:0 2px 10px rgba(0,0,0,0.18); width:224px; height:126px;">
           <div id="ytEmbedFrame" style="width:224px; height:126px;"></div>
         </div>
+        <!-- Tap-to-unmute overlay (iOS Safari requires a user gesture) -->
+        <div id="ytUnmuteOverlay" onclick="ytUnmuteByUser()" style="display:none;position:absolute;inset:0;z-index:20;cursor:pointer;background:rgba(0,0,0,0.35);border-radius:10px;align-items:center;justify-content:center;flex-direction:column;gap:4px;">
+          <i class="fas fa-volume-xmark" style="font-size:22px;color:#fff;"></i>
+          <span style="font-size:10px;font-weight:700;color:#fff;letter-spacing:0.5px;">Tap to unmute</span>
+        </div>
         <!-- Video controls overlay -->
-        <div style="position:absolute; top:4px; right:4px; display:flex; gap:4px; z-index:10;">
+        <div style="position:absolute; top:4px; right:4px; display:flex; gap:4px; z-index:30;">
           <button onclick="toggleYtMute(this)" title="Mute/Unmute"
             style="width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;color:#fff;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;">
             <i class="fas fa-volume-high"></i>

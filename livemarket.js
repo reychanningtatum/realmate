@@ -1014,9 +1014,16 @@ renderMarketReportPdf();
                 playerVars: { autoplay: 1, mute: 1, rel: 0, modestbranding: 1, playsinline: 1 },
                 events: {
                     onReady: function(e) {
-                        // Unmute after load unless user has auto-mute enabled in settings
-                        if (localStorage.getItem('rm_automute_video') !== '1') {
-                            try { e.target.unMute(); e.target.setVolume(100); } catch {}
+                        const autoMute = localStorage.getItem('rm_automute_video') === '1';
+                        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                        if (!autoMute) {
+                            if (isMobile) {
+                                // iOS requires a user gesture — show tap-to-unmute overlay
+                                const overlay = document.getElementById('ytUnmuteOverlay');
+                                if (overlay) overlay.style.display = 'flex';
+                            } else {
+                                try { e.target.unMute(); e.target.setVolume(100); } catch {}
+                            }
                         }
                         updateFilterBarTop();
                     },
@@ -1033,11 +1040,26 @@ renderMarketReportPdf();
 
 // ── Video controls ──
 let _ytMuted = false;
+function ytUnmuteByUser() {
+    if (!_ytPlayer) return;
+    try { _ytPlayer.unMute(); _ytPlayer.setVolume(100); } catch {}
+    _ytMuted = false;
+    const overlay = document.getElementById('ytUnmuteOverlay');
+    if (overlay) overlay.style.display = 'none';
+    const muteBtn = document.querySelector('[onclick="toggleYtMute(this)"] i');
+    if (muteBtn) muteBtn.className = 'fas fa-volume-high';
+}
+
 function toggleYtMute(btn) {
     if (!_ytPlayer) return;
     _ytMuted = !_ytMuted;
     _ytMuted ? _ytPlayer.mute() : (_ytPlayer.unMute(), _ytPlayer.setVolume(100));
     btn.innerHTML = _ytMuted ? '<i class="fas fa-volume-xmark"></i>' : '<i class="fas fa-volume-high"></i>';
+    // Hide the tap-to-unmute overlay if user manually unmuted
+    if (!_ytMuted) {
+        const overlay = document.getElementById('ytUnmuteOverlay');
+        if (overlay) overlay.style.display = 'none';
+    }
 }
 function closeYtVideo() {
     document.getElementById('ytEmbedSection').style.display = 'none';
