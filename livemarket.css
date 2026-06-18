@@ -1235,7 +1235,7 @@ html[data-theme="dark"] .match-banner { background: rgba(24,119,242,0.15); color
     justify-content: center;
     align-items: center;
     gap: 6px;
-    padding: 4px 0 6px;
+    padding: 2px 0 2px;
     cursor: pointer;
     user-select: none;
 }
