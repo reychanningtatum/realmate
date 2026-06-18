@@ -707,7 +707,12 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
     margin-right: -16px;
     padding-left: 16px;
     padding-right: 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
+  .sticky-ticker-bar::-webkit-scrollbar { display: none; }
+  #miniChartSection { flex-shrink: 0; }
 
   .filter-bar {
     padding: 8px 16px 6px;
