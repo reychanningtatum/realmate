@@ -1200,7 +1200,7 @@ html[data-theme="dark"] .match-banner { background: rgba(24,119,242,0.15); color
   margin-left: -48px;
   margin-right: -48px;
   border-bottom: 1px solid var(--border, #e2e8f0);
-  background: var(--white, #fff);
+  background: #f1f5f9;
   position: sticky;
   top: 0;
   z-index: 50;
@@ -1235,9 +1235,34 @@ html[data-theme="dark"] .match-banner { background: rgba(24,119,242,0.15); color
 }
 .market-tab:hover:not(.active) { color: #475569; }
 
-#miniChartsRow { padding: 8px 0 4px; overflow: hidden; max-height: 160px; transition: max-height 0.3s ease, padding 0.3s ease; }
+.ticker-top-row {
+  margin-left: -48px;
+  margin-right: -48px;
+  padding: 8px 48px;
+}
+#miniChartsRow {
+  padding: 8px 48px 4px;
+  margin-left: -48px;
+  margin-right: -48px;
+  overflow: hidden;
+  max-height: 160px;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
 #miniChartsRow:not(.open) { max-height: 0; padding: 0; }
 #miniChartsRow::-webkit-scrollbar { display: none; }
+
+@media (max-width: 768px) {
+  .ticker-top-row {
+    margin-left: -16px;
+    margin-right: -16px;
+    padding: 8px 16px;
+  }
+  #miniChartsRow {
+    padding: 8px 16px 4px;
+    margin-left: -16px;
+    margin-right: -16px;
+  }
+}
 
 .mini-charts-toggle-btn {
     display: flex;
