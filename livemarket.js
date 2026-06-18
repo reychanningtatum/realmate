@@ -1063,12 +1063,22 @@ function closeYtVideo() {
 
 // ── Apply user preferences from settings ──
 (function applyMarketPrefs() {
-    if (localStorage.getItem('rm_hide_video') === '1') {
+    const hideVideo  = localStorage.getItem('rm_hide_video')  === '1';
+    const hidePdf    = localStorage.getItem('rm_hide_pdf')    === '1';
+    const hideGraphs = localStorage.getItem('rm_show_graphs') === '0';
+
+    if (hideVideo) {
         document.getElementById('ytEmbedSection').style.display = 'none';
     }
     if (localStorage.getItem('rm_hide_ticker') === '1') {
         const t = document.getElementById('tickerWrap');
         if (t) t.style.display = 'none';
+    }
+
+    // If video, PDF and graphs are all hidden, collapse the entire sticky bar
+    if (hideVideo && hidePdf && hideGraphs) {
+        const bar = document.querySelector('.sticky-ticker-bar');
+        if (bar) bar.style.display = 'none';
     }
 })();
 
