@@ -1011,18 +1011,12 @@ renderMarketReportPdf();
         window.onYouTubeIframeAPIReady = function() {
             _ytPlayer = new YT.Player('ytEmbedFrame', {
                 videoId,
-                playerVars: { autoplay: 1, mute: 1, rel: 0, modestbranding: 1 },
+                playerVars: { autoplay: 1, mute: 1, rel: 0, modestbranding: 1, playsinline: 1 },
                 events: {
                     onReady: function(e) {
-                        e.target.unMute();
-                        e.target.setVolume(100);
                         updateFilterBarTop();
                     },
                     onStateChange: function(e) {
-                        // Keep unmuted if user hasn't touched controls
-                        if (e.data === YT.PlayerState.PLAYING) {
-                            try { e.target.unMute(); e.target.setVolume(100); } catch {}
-                        }
                     }
                 }
             });
