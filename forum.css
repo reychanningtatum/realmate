@@ -919,9 +919,22 @@ input:checked + .slider:before {
         display: flex;
         justify-content: center;
         align-items: center;
+        gap: 6px;
         padding: 6px 0 10px;
         cursor: pointer;
         user-select: none;
+    }
+
+    .circle-insights-collapsed-label {
+        display: none;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--primary, #32cd32);
+        letter-spacing: 0.3px;
+    }
+
+    .circle-insights-toggle-btn.collapsed .circle-insights-collapsed-label {
+        display: inline;
     }
 
     .circle-insights-chevron {

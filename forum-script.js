@@ -845,4 +845,5 @@ function toggleCircleInsights(btn) {
     const isOpen = body.classList.toggle("open");
     const chevron = btn.querySelector(".circle-insights-chevron");
     if (chevron) chevron.classList.toggle("open", isOpen);
+    btn.classList.toggle("collapsed", !isOpen);
 }
