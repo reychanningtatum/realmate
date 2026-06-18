@@ -676,23 +676,24 @@ html[data-theme="light"] .nav-item.active { background: rgba(50,205,50,0.10); co
 /* Raised center Home button */
 .mob-nav-item.mob-nav-center {
   position: relative;
-  top: -10px;
+  top: -5px;
   width: 52px;
   height: 52px;
   min-width: 52px;
   padding: 0;
   border-radius: 50%;
-  background: #94a3b8;
-  color: #fff !important;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.10);
+  background: #fff;
+  color: #94a3b8 !important;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15), 0 1px 4px rgba(0,0,0,0.08);
   justify-content: center;
   flex: none;
-  border: 3px solid #fff;
+  border: 3px solid #e2e8f0;
 }
-.mob-nav-item.mob-nav-center i { font-size: 20px; color: #fff; }
-.mob-nav-item.mob-nav-center span { font-size: 9px; color: #fff; font-weight: 700; }
-.mob-nav-item.mob-nav-center.active { background: #32cd32 !important; box-shadow: 0 4px 14px rgba(50,205,50,0.4), 0 2px 6px rgba(0,0,0,0.10); }
-.mob-nav-item.mob-nav-center:hover { background: #64748b; }
+.mob-nav-item.mob-nav-center i { font-size: 20px; color: #94a3b8; }
+.mob-nav-item.mob-nav-center span { font-size: 9px; color: #94a3b8; font-weight: 700; }
+.mob-nav-item.mob-nav-center.active { background: #32cd32 !important; border-color: #32cd32; box-shadow: 0 4px 14px rgba(50,205,50,0.4), 0 2px 6px rgba(0,0,0,0.10); }
+.mob-nav-item.mob-nav-center.active i { color: #fff; }
+.mob-nav-item.mob-nav-center.active span { color: #fff; }
 .mob-nav-item.mob-nav-center.active:hover { background: #28a428 !important; }
 .mob-nav-avatar-wrap { position: relative; cursor: pointer; }
 .mob-nav-avatar {
