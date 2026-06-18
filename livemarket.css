@@ -1240,6 +1240,11 @@ html[data-theme="dark"] .match-banner { background: rgba(24,119,242,0.15); color
   margin-right: -48px;
   padding: 8px 48px;
 }
+.ticker-separator-wrap {
+  margin-left: -48px;
+  margin-right: -48px;
+  padding: 0 48px;
+}
 #miniChartsRow {
   padding: 8px 48px 4px;
   margin-left: -48px;
@@ -1257,6 +1262,11 @@ html[data-theme="dark"] .match-banner { background: rgba(24,119,242,0.15); color
     margin-right: -16px;
     padding: 8px 16px;
   }
+  .ticker-separator-wrap {
+    margin-left: -16px;
+    margin-right: -16px;
+    padding: 0 16px;
+  }
   #miniChartsRow {
     padding: 8px 16px 4px;
     margin-left: -16px;
@@ -1272,6 +1282,15 @@ html[data-theme="dark"] .match-banner { background: rgba(24,119,242,0.15); color
     padding: 2px 0 2px;
     cursor: pointer;
     user-select: none;
+    background: #fff;
+    margin-left: -48px;
+    margin-right: -48px;
+}
+@media (max-width: 768px) {
+  .mini-charts-toggle-btn {
+    margin-left: -16px;
+    margin-right: -16px;
+  }
 }
 .mini-charts-collapsed-label {
     display: none;
