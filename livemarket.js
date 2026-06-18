@@ -1079,6 +1079,8 @@ function closeYtVideo() {
     if (hideVideo && hidePdf && hideGraphs) {
         const bar = document.querySelector('.sticky-ticker-bar');
         if (bar) bar.style.display = 'none';
+        const tabs = document.querySelector('.market-main-tabs');
+        if (tabs) tabs.style.top = '40px';
     }
 })();
 
