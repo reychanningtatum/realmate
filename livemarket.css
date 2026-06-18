@@ -1196,12 +1196,21 @@ html[data-theme="dark"] .match-banner { background: rgba(24,119,242,0.15); color
 .market-main-tabs {
   display: flex;
   gap: 6px;
-  padding: 2px 16px 0;
+  padding: 2px 48px 0;
+  margin-left: -48px;
+  margin-right: -48px;
   border-bottom: 1px solid var(--border, #e2e8f0);
   background: var(--white, #fff);
   position: sticky;
   top: 0;
   z-index: 50;
+}
+@media (max-width: 768px) {
+  .market-main-tabs {
+    padding: 2px 16px 0;
+    margin-left: -16px;
+    margin-right: -16px;
+  }
 }
 .market-tab {
   padding: 10px 20px;
