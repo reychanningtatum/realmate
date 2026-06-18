@@ -931,11 +931,11 @@ input:checked + .slider:before {
         line-height: 0.65;
         opacity: 0.5;
         transition: transform 0.3s ease;
-        transform: rotate(0deg);
+        transform: rotate(180deg);
     }
 
     .circle-insights-chevron.open {
-        transform: rotate(180deg);
+        transform: rotate(0deg);
     }
 }
 
