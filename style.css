@@ -402,7 +402,76 @@
     .purpose-footer { gap: 15px; flex-direction: row; padding: 12px 10px; }
   }
 
-  @media(max-width:480px){
-    .container { padding: 32px 24px; border-radius: 20px; }
-    .logo { width: 140px; }
+  @media(max-width:600px){
+    body {
+      overflow-y: auto;
+      height: auto;
+      min-height: 100vh;
+      background: #fff;
+    }
+    .app-main {
+      flex-direction: column;
+      min-height: calc(100vh - 42px);
+      overflow: visible;
+    }
+    .left-panel { display: none; }
+    .right-panel {
+      flex: 1;
+      background: #080f1a;
+      align-items: flex-start;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 0;
+      position: relative;
+    }
+    /* Glow overlay — absolute so it's out of flex flow */
+    .right-panel::after {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 200px;
+      background: radial-gradient(ellipse at 50% 60%, rgba(50,205,50,0.14) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Brand tagline — first flex item, sits in the dark header */
+    .right-panel::before {
+      content: "Connect. Match. Close Deals.";
+      display: block;
+      width: 100%;
+      text-align: center;
+      color: rgba(50,205,50,0.75);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      padding-top: 28px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 100%;
+      width: 100%;
+      border-radius: 28px 28px 0 0;
+      padding: 32px 24px 44px;
+      box-shadow: none;
+      border: none;
+      margin-top: 100px;
+      z-index: 1;
+      position: relative;
+      flex: 1;
+    }
+
+    /* Hide subtitle inside card since it's in the header now */
+    .subtitle { display: none; }
+
+    .logo { width: 130px; }
+
+    .purpose-footer {
+      background: #0f172a;
+      position: relative;
+      z-index: 1;
+    }
   }
