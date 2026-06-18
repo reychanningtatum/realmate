@@ -158,14 +158,7 @@ async function fetchForumPosts() {
 
     const { data: posts, error } = await _supabase
         .from('forum_posts')
-        .select(`
-            *,
-            forum_likes (id, user_name),
-            forum_comments (
-                *,
-                comment_likes (id, user_name)
-            )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
     if (error) {
@@ -173,6 +166,28 @@ async function fetchForumPosts() {
         if (trendingList) trendingList.innerHTML = `<p style="color: var(--text-sub); font-size: 13px; padding: 10px;">Connection issue. Retrying...</p>`;
         return;
     }
+
+    // Fetch likes and comments separately to avoid needing FK relationships
+    const postIds = (posts || []).map(p => p.id);
+    let likesMap = {}, commentsMap = {};
+    if (postIds.length) {
+        const [{ data: likes }, { data: comments }, { data: commentLikes }] = await Promise.all([
+            _supabase.from('forum_likes').select('id, post_id, user_name').in('post_id', postIds),
+            _supabase.from('forum_comments').select('*').in('post_id', postIds).order('created_at', { ascending: true }),
+            _supabase.from('comment_likes').select('id, comment_id, user_name')
+        ]);
+        (likes || []).forEach(l => { (likesMap[l.post_id] = likesMap[l.post_id] || []).push(l); });
+        const clMap = {};
+        (commentLikes || []).forEach(cl => { (clMap[cl.comment_id] = clMap[cl.comment_id] || []).push(cl); });
+        (comments || []).forEach(c => {
+            c.comment_likes = clMap[c.id] || [];
+            (commentsMap[c.post_id] = commentsMap[c.post_id] || []).push(c);
+        });
+    }
+    (posts || []).forEach(post => {
+        post.forum_likes    = likesMap[post.id]    || [];
+        post.forum_comments = commentsMap[post.id] || [];
+    });
 
     // Batch-fetch latest profiles so post author names/avatars are always current
     const nonAnonPosts = (posts || []).filter(p => !p.is_anonymous);
@@ -368,14 +383,20 @@ async function buildCommentsUI(postId) {
 
     const { data: comments, error } = await _supabase
         .from('forum_comments')
-        .select(`
-            *,
-            comment_likes (id, user_name)
-        `)
+        .select('*')
         .eq('post_id', postId)
         .order('created_at', { ascending: true });
 
     if (error) return console.error(error);
+
+    // Attach comment likes separately
+    if (comments && comments.length) {
+        const cIds = comments.map(c => c.id);
+        const { data: clikes } = await _supabase.from('comment_likes').select('id, comment_id, user_name').in('comment_id', cIds);
+        const clMap = {};
+        (clikes || []).forEach(cl => { (clMap[cl.comment_id] = clMap[cl.comment_id] || []).push(cl); });
+        comments.forEach(c => { c.comment_likes = clMap[c.id] || []; });
+    }
 
     if (comments) {
         // Overlay live profile data on comments and replies
@@ -491,7 +512,7 @@ async function createForumPost() {
         }
 
         // ✅ FIXED: was supabase.from('forumposts')
-        await _supabase.from('forum_posts').insert([{
+        const { error: insertErr } = await _supabase.from('forum_posts').insert([{
             user_id: isAnon ? null : user.id,
             user_name: isAnon ? anonNickname : user.name,
             user_img: isAnon ? `https://ui-avatars.com/api/?name=${encodeURIComponent(anonNickname)}&background=0f172a&color=fff` : (user.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`),
@@ -502,6 +523,8 @@ async function createForumPost() {
             is_anonymous: isAnon,
             created_at: new Date()
         }]);
+
+        if (insertErr) throw new Error(insertErr.message);
 
         textInput.value = "";
         subjectInput.value = "";
