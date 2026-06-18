@@ -250,30 +250,27 @@ async function fetchForumPosts() {
         };
     });
 
+    // Sort by engagement score; fall back to most recent for posts with no activity yet
     const topTrends = [...rankedPosts]
-        .sort((a, b) => b.engagementScore - a.engagementScore)
-        .filter(p => (p.uniqueLikes >= 1 || p.uniqueComments >= 1) && p.subject && p.subject.trim() !== "")
+        .sort((a, b) => b.engagementScore - a.engagementScore || new Date(b.created_at) - new Date(a.created_at))
         .slice(0, 5);
 
     if (trendingList) {
-        if (topTrends.length === 0) {
-            trendingList.innerHTML = `<p style="color: var(--text-sub); font-size: 13px; padding: 10px;">Circle insights will populate dynamically.</p>`;
-        } else {
-            trendingList.innerHTML = topTrends.map((t, index) => {
-                const currentSettings = JSON.parse(localStorage.getItem("userSettings")) || { anonName: "" };
-                const isMine = t.user_name === user.name || (t.is_anonymous && t.user_name === currentSettings.anonName);
-                return `
-                <div class="trending-topic-item ${isMine ? 'my-post-trending' : ''}" onclick="scrollToPost(${t.id})"
-                     style="cursor: pointer;">
-                    <div class="trend-rank">${index + 1}</div>
-                    <div class="trend-info">
-                        ${isMine ? '<span class="my-post-badge">MY POST</span>' : ''}
-                        <p class="trend-subject">${cleanTextFormatting(t.subject)}</p>
-                        <p class="trend-stats">${t.totalLikes} marks • ${t.totalComments} comments</p>
-                    </div>
-                </div>`;
-            }).join('');
-        }
+        trendingList.innerHTML = topTrends.map((t, index) => {
+            const currentSettings = JSON.parse(localStorage.getItem("userSettings")) || { anonName: "" };
+            const isMine = t.user_name === user.name || (t.is_anonymous && t.user_name === currentSettings.anonName);
+            const title = (t.subject && t.subject.trim()) || (t.content || '').slice(0, 60) + ((t.content || '').length > 60 ? '…' : '');
+            return `
+            <div class="trending-topic-item ${isMine ? 'my-post-trending' : ''}" onclick="scrollToPost(${t.id})"
+                 style="cursor: pointer;">
+                <div class="trend-rank">${index + 1}</div>
+                <div class="trend-info">
+                    ${isMine ? '<span class="my-post-badge">MY POST</span>' : ''}
+                    <p class="trend-subject">${cleanTextFormatting(title)}</p>
+                    <p class="trend-stats">${t.totalLikes} likes • ${t.totalComments} comments</p>
+                </div>
+            </div>`;
+        }).join('');
     }
 
     const trendingIds = topTrends.map(t => t.id);
