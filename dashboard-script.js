@@ -200,13 +200,33 @@ async function loadProfile() {
 
     updateUI();
 
-    // Render Add as Mate button after updateUI() so nameDisplay is populated
+    // Render Add as Mate / Realmates button when viewing another user
     if (effectivelyViewingOther) {
         const mateBtnEl = document.getElementById('profileMateBtn');
-        if (mateBtnEl && typeof mateButtonHtml === 'function') {
-            await loadMatesCache();
-            const viewedName = document.getElementById('nameDisplay')?.textContent?.trim() || user.name;
-            if (viewedName) mateBtnEl.innerHTML = mateButtonHtml(viewedName, 'btn-mate-profile');
+        if (mateBtnEl && _supabase) {
+            try {
+                const { data: authData } = await _supabase.auth.getUser();
+                const myId = authData?.user?.id;
+                // Check by user_id — name-based lookup breaks when names differ between tables
+                const { data: mateRows } = await _supabase
+                    .from('mates')
+                    .select('status, requester_id, recipient_id')
+                    .or(`and(requester_id.eq.${myId},recipient_id.eq.${_viewUserId}),and(requester_id.eq.${_viewUserId},recipient_id.eq.${myId})`)
+                    .limit(1);
+                const mateRow = mateRows?.[0];
+                const viewedName = user.name;
+                if (mateRow?.status === 'accepted') {
+                    mateBtnEl.innerHTML = `<button class="btn-mate-profile mate-status-mates" disabled><i class="fas fa-handshake"></i> Realmates</button>`;
+                } else if (mateRow?.status === 'pending' && mateRow.requester_id === myId) {
+                    mateBtnEl.innerHTML = `<button class="btn-mate-profile mate-status-pending" disabled><i class="fas fa-clock"></i> Request Sent</button>`;
+                } else if (mateRow?.status === 'pending' && mateRow.requester_id === _viewUserId) {
+                    mateBtnEl.innerHTML = `<button class="btn-mate-profile" onclick="handleAcceptMate(this, '${viewedName.replace(/'/g,"\\'")}')"><i class="fas fa-check"></i> Accept Request</button>`;
+                } else {
+                    mateBtnEl.innerHTML = `<button class="btn-mate-profile" onclick="handleAddMate(this, '${viewedName.replace(/'/g,"\\'")}')"><i class="fas fa-user-plus"></i> Add as Mate</button>`;
+                }
+            } catch(e) {
+                console.warn('[mateBtn]', e.message);
+            }
         }
         // Follow button
         if (typeof renderFollowButton === 'function') {
