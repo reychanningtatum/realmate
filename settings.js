@@ -262,10 +262,12 @@ function initMarketPrefToggles() {
     const tickerToggle    = document.getElementById('toggleTickerSetting');
     const autoMuteToggle  = document.getElementById('toggleAutoMuteSetting');
     const showGraphsToggle = document.getElementById('toggleShowGraphsSetting');
+    const pdfToggle        = document.getElementById('togglePdfSetting');
     if (videoToggle)      videoToggle.checked      = localStorage.getItem('rm_hide_video')     !== '1';
     if (tickerToggle)     tickerToggle.checked     = localStorage.getItem('rm_hide_ticker')    !== '1';
     if (autoMuteToggle)   autoMuteToggle.checked   = localStorage.getItem('rm_automute_video') === '1';
-    if (showGraphsToggle) showGraphsToggle.checked = localStorage.getItem('rm_show_graphs') !== '0';
+    if (showGraphsToggle) showGraphsToggle.checked = localStorage.getItem('rm_show_graphs')    !== '0';
+    if (pdfToggle)        pdfToggle.checked        = localStorage.getItem('rm_hide_pdf')       !== '1';
 }
 
 function saveMarketPref(key, hide) {
