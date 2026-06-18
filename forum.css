@@ -1091,3 +1091,24 @@ html[data-theme="dark"] .anon-icon { background: #0f172a !important; color: #94a
 .mob-nav-menu a:hover { background: #f8fafc; }
 .mob-nav-menu a:last-child { color: #ef4444; }
 .mob-nav-menu a i { width: 14px; }
+
+/* Raised center Home button */
+.mob-nav-item.mob-nav-center {
+  position: relative;
+  top: -18px;
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  padding: 0;
+  border-radius: 50%;
+  background: #32cd32;
+  color: #fff !important;
+  box-shadow: 0 4px 16px rgba(50,205,50,0.45), 0 2px 6px rgba(0,0,0,0.12);
+  justify-content: center;
+  flex: none;
+  border: 3px solid #fff;
+}
+.mob-nav-item.mob-nav-center i { font-size: 22px; color: #fff; }
+.mob-nav-item.mob-nav-center span { font-size: 9px; color: #fff; font-weight: 700; }
+.mob-nav-item.mob-nav-center.active,
+.mob-nav-item.mob-nav-center:hover { color: #fff !important; background: #28a428; }

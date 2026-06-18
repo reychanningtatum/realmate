@@ -1163,3 +1163,24 @@ html[data-theme="dark"] .match-banner { background: rgba(24,119,242,0.15); color
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
 }
+
+/* Raised center Home button */
+.mob-nav-item.mob-nav-center {
+  position: relative;
+  top: -18px;
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  padding: 0;
+  border-radius: 50%;
+  background: #32cd32;
+  color: #fff !important;
+  box-shadow: 0 4px 16px rgba(50,205,50,0.45), 0 2px 6px rgba(0,0,0,0.12);
+  justify-content: center;
+  flex: none;
+  border: 3px solid #fff;
+}
+.mob-nav-item.mob-nav-center i { font-size: 22px; color: #fff; }
+.mob-nav-item.mob-nav-center span { font-size: 9px; color: #fff; font-weight: 700; }
+.mob-nav-item.mob-nav-center.active,
+.mob-nav-item.mob-nav-center:hover { color: #fff !important; background: #28a428; }
