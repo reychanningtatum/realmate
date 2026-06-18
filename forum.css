@@ -917,9 +917,10 @@ input:checked + .slider:before {
     }
     .circle-insights-chevron {
         transition: transform 0.3s ease;
+        transform: rotate(180deg);
     }
     .circle-insights-header.open .circle-insights-chevron {
-        transform: rotate(180deg);
+        transform: rotate(0deg);
     }
 }
 
