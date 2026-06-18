@@ -81,6 +81,19 @@
 
     </div>
 
+    <!-- ── Main tab switcher ── -->
+    <div class="market-main-tabs">
+      <button class="market-tab active" id="tabListings" onclick="switchMarketTab('listings')">
+        <i class="fas fa-list-ul"></i> Listings
+      </button>
+      <button class="market-tab" id="tabAnalytics" onclick="switchMarketTab('analytics')">
+        <i class="fas fa-chart-area"></i> Analytics
+      </button>
+    </div>
+
+    <!-- ── LISTINGS TAB ── -->
+    <div id="listingsTabPane">
+
     <!-- Filter bar -->
     <div class="filter-bar">
       <h2 class="market-pulse-title">Market Pulse</h2>
@@ -146,6 +159,49 @@
         <p>Loading listings…</p>
       </div>
     </div>
+
+    </div><!-- /#listingsTabPane -->
+
+    <!-- ── ANALYTICS TAB ── -->
+    <div id="analyticsTabPane" style="display:none; padding:0 0 40px;">
+
+      <div id="capAppSection" style="max-width:1200px; margin:24px auto 0; padding:0 16px;">
+
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:#64748b; margin-bottom:4px;">
+              <i class="fas fa-chart-area" style="color:#32cd32; margin-right:6px;"></i>Capital Appreciation Tracker
+            </div>
+            <h2 style="font-size:22px; font-weight:800; color:var(--text-main,#0f172a); margin:0; letter-spacing:-0.5px;">Project Price History</h2>
+          </div>
+          <div id="capProjectTabs" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+        </div>
+
+        <!-- Chart card -->
+        <div style="background:#0f172a; border-radius:20px; padding:28px 28px 20px; position:relative; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.18);">
+          <div style="position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(50,205,50,0.12) 0%,transparent 70%);pointer-events:none;"></div>
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+            <div>
+              <div id="capProjectName" style="font-size:18px; font-weight:800; color:#fff; letter-spacing:-0.3px;">Sequoia — Two Serendra, BGC</div>
+              <div id="capProjectSub" style="font-size:12px; color:#64748b; margin-top:3px;">Alveo Land · Condominium · BGC, Taguig</div>
+            </div>
+            <div style="text-align:right;">
+              <div id="capCurrentPrice" style="font-size:22px; font-weight:800; color:#32cd32; letter-spacing:-0.5px;">₱295K – ₱315K</div>
+              <div id="capCurrentLabel" style="font-size:11px; color:#64748b; margin-top:2px;">per sqm · 2026 (Current)</div>
+            </div>
+          </div>
+          <div id="capStatPills" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;"></div>
+          <div style="position:relative; height:260px;">
+            <canvas id="capChartCanvas"></canvas>
+          </div>
+          <div id="capAnnotations" style="display:flex; gap:12px; flex-wrap:wrap; margin-top:16px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.06);"></div>
+        </div>
+
+        <!-- Key takeaways -->
+        <div id="capTakeaways" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; margin-top:16px;"></div>
+
+      </div>
+    </div><!-- /#analyticsTabPane -->
 
   </div>
 
@@ -250,51 +306,6 @@
 </div>
 
 <!-- ═══ CAPITAL APPRECIATION TRACKER ═══ -->
-<div id="capAppSection" style="max-width:1200px; margin:32px auto 0; padding:0 16px 40px;">
-
-  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
-    <div>
-      <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:#64748b; margin-bottom:4px;">
-        <i class="fas fa-chart-area" style="color:#32cd32; margin-right:6px;"></i>Capital Appreciation Tracker
-      </div>
-      <h2 style="font-size:22px; font-weight:800; color:var(--text-main,#0f172a); margin:0; letter-spacing:-0.5px;">Project Price History</h2>
-    </div>
-    <div id="capProjectTabs" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
-  </div>
-
-  <!-- Chart card -->
-  <div style="background:#0f172a; border-radius:20px; padding:28px 28px 20px; position:relative; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.18);">
-    <!-- Glow -->
-    <div style="position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(50,205,50,0.12) 0%,transparent 70%);pointer-events:none;"></div>
-
-    <!-- Header row -->
-    <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
-      <div>
-        <div id="capProjectName" style="font-size:18px; font-weight:800; color:#fff; letter-spacing:-0.3px;">Sequoia — Two Serendra, BGC</div>
-        <div id="capProjectSub" style="font-size:12px; color:#64748b; margin-top:3px;">Alveo Land · Condominium · BGC, Taguig</div>
-      </div>
-      <div style="text-align:right;">
-        <div id="capCurrentPrice" style="font-size:22px; font-weight:800; color:#32cd32; letter-spacing:-0.5px;">₱295K – ₱315K</div>
-        <div id="capCurrentLabel" style="font-size:11px; color:#64748b; margin-top:2px;">per sqm · 2026 (Current)</div>
-      </div>
-    </div>
-
-    <!-- Stat pills -->
-    <div id="capStatPills" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;"></div>
-
-    <!-- Chart canvas -->
-    <div style="position:relative; height:260px;">
-      <canvas id="capChartCanvas"></canvas>
-    </div>
-
-    <!-- Annotation legend -->
-    <div id="capAnnotations" style="display:flex; gap:12px; flex-wrap:wrap; margin-top:16px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.06);"></div>
-  </div>
-
-  <!-- Key takeaways -->
-  <div id="capTakeaways" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; margin-top:16px;"></div>
-</div>
-
 <!-- Mobile nav -->
 <nav class="mobile-bottom-nav">
   <a class="mob-nav-item active" href="livemarket.html"><i class="fas fa-chart-line"></i><span>Market</span></a>

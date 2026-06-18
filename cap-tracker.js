@@ -1,3 +1,25 @@
+function switchMarketTab(tab) {
+    const listings  = document.getElementById('listingsTabPane');
+    const analytics = document.getElementById('analyticsTabPane');
+    const btnL = document.getElementById('tabListings');
+    const btnA = document.getElementById('tabAnalytics');
+
+    if (tab === 'analytics') {
+        listings.style.display  = 'none';
+        analytics.style.display = 'block';
+        btnL.classList.remove('active');
+        btnA.classList.add('active');
+        // Init chart when tab first opens (canvas must be visible for sizing)
+        if (!_capChart) initCapTracker();
+        else { _capChart.resize(); }
+    } else {
+        analytics.style.display = 'none';
+        listings.style.display  = 'block';
+        btnA.classList.remove('active');
+        btnL.classList.add('active');
+    }
+}
+
 const CAP_PROJECTS = [
     {
         id: 'sequoia',
@@ -212,4 +234,4 @@ function buildChart(project) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', initCapTracker);
+// Chart initializes on first click of Analytics tab, not on page load

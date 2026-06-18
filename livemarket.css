@@ -1186,3 +1186,37 @@ html[data-theme="dark"] .match-banner { background: rgba(24,119,242,0.15); color
 .mob-nav-item.mob-nav-center.active i { color: #fff; }
 .mob-nav-item.mob-nav-center.active span { color: #fff; }
 .mob-nav-item.mob-nav-center.active:hover { background: #28a428 !important; }
+
+/* ── Market main tabs (Listings / Analytics) ── */
+.market-main-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 12px 16px 0;
+  border-bottom: 1px solid var(--border, #e2e8f0);
+  background: var(--white, #fff);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.market-tab {
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  background: none;
+  color: #94a3b8;
+  cursor: pointer;
+  border-bottom: 2.5px solid transparent;
+  margin-bottom: -1px;
+  border-radius: 0;
+  transition: color 0.2s, border-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'Inter', sans-serif;
+}
+.market-tab.active {
+  color: #32cd32;
+  border-bottom-color: #32cd32;
+}
+.market-tab:hover:not(.active) { color: #475569; }
