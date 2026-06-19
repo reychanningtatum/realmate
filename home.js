@@ -303,6 +303,22 @@ function expandCreatePost(type) {
     textarea.focus();
 }
 
+function setPostType(type) {
+    _homePostType = (_homePostType === type) ? '' : type;
+    const textarea = document.getElementById('homePostText');
+    const badge = document.getElementById('postTypeBadge');
+    const cfg = _postTypeConfig[_homePostType];
+    if (cfg) {
+        textarea.placeholder = cfg.placeholder;
+        badge.innerHTML = `<span style="display:inline-flex;align-items:center;font-size:12px;font-weight:700;padding:5px 12px;border-radius:50px;background:${cfg.badgeBg};border:1px solid ${cfg.badgeBorder};color:${cfg.badgeColor};">${cfg.badge} <i class="fas fa-times" style="margin-left:8px;font-size:10px;cursor:pointer;opacity:0.6;" onclick="setPostType('${_homePostType}')"></i></span>`;
+        badge.style.display = 'block';
+    } else {
+        textarea.placeholder = "What's on your mind?";
+        badge.style.display = 'none';
+    }
+    textarea.focus();
+}
+
 function collapseCreatePost() {
     _homePostType = '';
     document.getElementById('createPostExpanded').style.display = 'none';

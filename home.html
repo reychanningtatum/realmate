@@ -96,9 +96,15 @@
           <div id="homePostMediaPreview" class="home-post-media-preview"></div>
           <div class="create-post-actions">
             <label class="create-post-media-btn" for="homePostMedia">
-              <i class="fas fa-image"></i> Photo / Video
+              <i class="fas fa-image" style="color:#45b649;"></i> Photo / Video
             </label>
             <input type="file" id="homePostMedia" hidden accept="image/*,video/*" multiple onchange="previewHomeMedia(this)">
+            <button class="create-post-media-btn" onclick="setPostType('achievement')">
+              <i class="fas fa-trophy" style="color:#f59e0b;"></i> Achievement
+            </button>
+            <button class="create-post-media-btn" onclick="setPostType('thought')">
+              <i class="fas fa-lightbulb" style="color:#6366f1;"></i> Thought
+            </button>
             <div style="display:flex; gap:8px; margin-left:auto;">
               <button class="create-post-cancel" onclick="collapseCreatePost()">Cancel</button>
               <button class="create-post-submit" onclick="submitHomePost()">
