@@ -258,12 +258,14 @@ function closeStoryViewer() {
 let _homePostFiles = [];
 
 function expandCreatePost() {
+    document.getElementById('createPostPlaceholder').style.display = 'none';
     document.getElementById('createPostExpanded').style.display = 'block';
     document.getElementById('homePostText').focus();
 }
 
 function collapseCreatePost() {
     document.getElementById('createPostExpanded').style.display = 'none';
+    document.getElementById('createPostPlaceholder').style.display = '';
     document.getElementById('homePostText').value = '';
     document.getElementById('homePostMediaPreview').innerHTML = '';
     _homePostFiles = [];
