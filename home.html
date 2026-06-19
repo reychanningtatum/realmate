@@ -61,18 +61,6 @@
     </div>
   </div>
 
-  <!-- Stories Strip -->
-  <div class="stories-wrap" id="storiesWrap">
-    <div class="stories-strip" id="storiesStrip">
-      <!-- Add Story button -->
-      <div class="story-add-btn" onclick="openAddStory()">
-        <div class="story-add-icon"><i class="fas fa-plus"></i></div>
-        <span>Add Story</span>
-      </div>
-      <!-- Stories loaded here -->
-    </div>
-  </div>
-
   <!-- Main 2-col layout -->
   <div class="home-layout">
 
@@ -150,30 +138,6 @@
   </div>
 </div>
 
-<!-- Add Story Modal -->
-<div class="story-modal-overlay" id="storyModalOverlay" onclick="closeAddStory(event)">
-  <div class="story-modal">
-    <div class="story-modal-header">
-      <h3>Add to Your Story</h3>
-      <button onclick="closeAddStory()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="story-modal-body">
-      <label class="story-upload-area" for="storyImageInput" id="storyUploadArea">
-        <i class="fas fa-cloud-upload-alt"></i>
-        <span>Click to select a photo</span>
-        <small>Story expires after 24 hours</small>
-      </label>
-      <input type="file" id="storyImageInput" hidden accept="image/*" onchange="previewStoryImage(this)">
-      <img id="storyPreview" src="" style="display:none; width:100%; border-radius:12px; max-height:300px; object-fit:cover; margin-top:12px;">
-    </div>
-    <div class="story-modal-footer">
-      <span id="storyStatus" style="font-size:13px; color:#64748b;"></span>
-      <button class="story-submit-btn" id="storySubmitBtn" onclick="submitStory()" disabled>
-        <i class="fas fa-paper-plane"></i> Share Story
-      </button>
-    </div>
-  </div>
-</div>
 
 <!-- Story Viewer -->
 <div class="story-viewer-overlay" id="storyViewerOverlay" onclick="closeStoryViewer()">
