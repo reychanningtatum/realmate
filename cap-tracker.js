@@ -367,13 +367,48 @@ function buildChart(project) {
 /* ── Mini chart in sticky bar ── */
 let _miniChart = null;
 
-function initMiniChart() {
-    const ctx = document.getElementById('miniChartCanvas');
-    if (!ctx || _miniChart) return;
+const _miniCharts = {};
 
-    const project = CAP_PROJECTS[0];
-    const prices  = project.data.map(d => d.price);
-    const labels  = project.data.map(d => String(d.year));
+function buildMiniChartCard(project) {
+    const id = project.id;
+    const tooltipId = `miniTip_${id}`;
+
+    // Create card element
+    const card = document.createElement('div');
+    card.id = `miniCard_${id}`;
+    card.style.cssText = 'position:relative;flex-shrink:0;width:224px;height:126px;border-radius:10px;overflow:hidden;background:#0f172a;box-shadow:0 2px 10px rgba(0,0,0,0.18);cursor:pointer;';
+    card.innerHTML = `
+        <div style="position:absolute;top:6px;left:8px;right:8px;z-index:5;pointer-events:none;">
+            <div style="font-size:9px;font-weight:800;color:#fff;letter-spacing:0.3px;line-height:1.2;">${project.name} · ${project.sub.split('·')[1]?.trim()}</div>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:2px;">
+                <div style="font-size:11px;font-weight:800;color:#32cd32;letter-spacing:-0.3px;">${project.currentPrice} <span style="font-size:8px;color:#64748b;font-weight:600;">/sqm</span></div>
+                <div id="miniGain_${id}" style="background:rgba(50,205,50,0.15);border:1px solid rgba(50,205,50,0.3);border-radius:6px;padding:2px 6px;font-size:9px;font-weight:800;color:#32cd32;">+${project.totalGain}%</div>
+            </div>
+        </div>
+        <canvas id="miniCanvas_${id}" style="position:absolute;inset:0;width:100%!important;height:100%!important;"></canvas>
+        <div onclick="miniChartOpenAnalytics()" style="position:absolute;inset:0;z-index:6;cursor:pointer;"></div>
+        <div id="${tooltipId}" style="display:none;position:absolute;bottom:28px;left:50%;transform:translateX(-50%);background:rgba(15,23,42,0.95);border:1px solid #334155;border-radius:8px;padding:5px 10px;pointer-events:none;z-index:20;white-space:nowrap;text-align:center;">
+            <div class="mty_${id}" style="font-size:9px;color:#64748b;font-weight:700;"></div>
+            <div class="mtp_${id}" style="font-size:12px;color:#32cd32;font-weight:800;"></div>
+            <div class="mph_${id}" style="font-size:9px;color:#94a3b8;font-weight:600;"></div>
+        </div>
+        <div style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);pointer-events:none;">
+            <span style="font-size:8px;color:rgba(255,255,255,0.3);font-weight:600;white-space:nowrap;">Tap for full analytics</span>
+        </div>
+    `;
+    return card;
+}
+
+function buildMiniChartCanvas(project) {
+    const id = project.id;
+    const ctx = document.getElementById(`miniCanvas_${id}`);
+    if (!ctx || _miniCharts[id]) return;
+
+    const prices = project.data.map(d => d.price);
+    const labels = project.data.map(d => String(d.year));
+    const firstYear = project.data[0].year;
+    const lastYear  = project.data[project.data.length - 1].year;
+    const midYear   = Math.round((firstYear + lastYear) / 2);
 
     const chartCtx = ctx.getContext('2d');
     const gradient = chartCtx.createLinearGradient(0, 0, 0, 126);
@@ -386,8 +421,9 @@ function initMiniChart() {
     const pointRadii  = project.data.map(d => annMap[d.year] ? 4 : (d.isCurrent ? 4 : 0));
     const pointColors = project.data.map(d => annMap[d.year] || (d.isCurrent ? '#32cd32' : 'transparent'));
     const pointBorder = project.data.map(d => annMap[d.year] ? '#0f172a' : (d.isCurrent ? '#0f172a' : 'transparent'));
+    const tooltipId   = `miniTip_${id}`;
 
-    _miniChart = new Chart(ctx, {
+    _miniCharts[id] = new Chart(ctx, {
         type: 'line',
         data: {
             labels,
@@ -417,19 +453,16 @@ function initMiniChart() {
                 tooltip: {
                     enabled: false,
                     external: function(context) {
-                        const tooltip = document.getElementById('miniChartTooltip');
-                        if (!tooltip) return;
-                        if (context.tooltip.opacity === 0) {
-                            tooltip.style.display = 'none';
-                            return;
-                        }
+                        const tip = document.getElementById(tooltipId);
+                        if (!tip) return;
+                        if (context.tooltip.opacity === 0) { tip.style.display = 'none'; return; }
                         const idx = context.tooltip.dataPoints?.[0]?.dataIndex;
                         if (idx === undefined) return;
                         const d = project.data[idx];
-                        document.getElementById('miniTooltipYear').textContent  = d.year;
-                        document.getElementById('miniTooltipPrice').textContent = '₱' + Number(d.price).toLocaleString() + ' /sqm';
-                        document.getElementById('miniTooltipPhase').textContent = d.phase;
-                        tooltip.style.display = 'block';
+                        tip.querySelector(`.mty_${id}`).textContent = d.year;
+                        tip.querySelector(`.mtp_${id}`).textContent = '₱' + Number(d.price).toLocaleString() + ' /sqm';
+                        tip.querySelector(`.mph_${id}`).textContent = d.phase;
+                        tip.style.display = 'block';
                     }
                 }
             },
@@ -442,15 +475,38 @@ function initMiniChart() {
                         color: '#475569',
                         font: { size: 8, weight: '700' },
                         maxRotation: 0,
-                        callback: function(val, idx) {
+                        callback: function(val) {
                             const year = parseInt(this.getLabelForValue(val));
-                            return [2012, 2018, 2021, 2026].includes(year) ? year : '';
+                            return [firstYear, midYear, lastYear].includes(year) ? year : '';
                         }
                     }
                 },
                 y: { display: false }
             }
         }
+    });
+}
+
+function initMiniChart() {
+    const row = document.getElementById('miniChartsRow');
+    if (!row) return;
+
+    // Clear existing static card (Sequoia was hardcoded in HTML)
+    const staticCard = document.getElementById('miniChartSection');
+    if (staticCard) staticCard.remove();
+
+    CAP_PROJECTS.forEach(project => {
+        if (_miniCharts[project.id]) return;
+        const card = buildMiniChartCard(project);
+        row.appendChild(card);
+        // Update gain badge with CAGR
+        setTimeout(() => {
+            buildMiniChartCanvas(project);
+            if (project.cagr) {
+                const badge = document.getElementById(`miniGain_${project.id}`);
+                if (badge) badge.innerHTML = `+${project.totalGain}% <span style="font-size:8px;color:#a3e635;font-weight:600;">· ${project.cagr}%/yr</span>`;
+            }
+        }, 50);
     });
 }
 
@@ -477,9 +533,14 @@ function miniChartOpenAnalytics() {
 }
 
 function closeMiniChart() {
-    document.getElementById('miniChartSection').style.display = 'none';
-    document.getElementById('tickerSeparator').style.display = 'none';
-    if (_miniChart) { _miniChart.destroy(); _miniChart = null; }
+    const row = document.getElementById('miniChartsRow');
+    if (row) row.style.display = 'none';
+    const sep = document.getElementById('tickerSeparator');
+    if (sep) sep.style.display = 'none';
+    const btn = document.getElementById('miniChartsToggleBtn');
+    if (btn) btn.style.display = 'none';
+    Object.values(_miniCharts).forEach(c => c.destroy());
+    Object.keys(_miniCharts).forEach(k => delete _miniCharts[k]);
 }
 
 // Auto-init full chart on analytics page
@@ -501,10 +562,5 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         initMiniChart();
         document.getElementById('tickerSeparator').style.display = 'block';
-        const p = CAP_PROJECTS[0];
-        if (p.cagr) {
-            const badge = document.getElementById('miniChartGain');
-            if (badge) badge.innerHTML = `+${p.totalGain}% <span style="font-size:8px;color:#a3e635;font-weight:600;">· ${p.cagr}%/yr</span>`;
-        }
     }, 300);
 });
