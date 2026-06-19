@@ -110,11 +110,12 @@ async function renderFollowButton(containerId, targetUserId, targetName) {
     if (!myId || myId === targetUserId) { el.innerHTML = ''; return; }
 
     const already = await isFollowing(targetUserId);
+    const safeName = targetName.replace(/'/g,"\\'");
     el.innerHTML = already
-        ? `<button class="btn-follow btn-follow-ing" onclick="handleUnfollow(this,'${targetUserId}')">
+        ? `<button class="btn-follow btn-follow-ing" data-target-name="${targetName}" onclick="handleUnfollow(this,'${targetUserId}')">
                <i class="fas fa-user-check"></i> Following
            </button>`
-        : `<button class="btn-follow" onclick="handleFollow(this,'${targetUserId}','${targetName.replace(/'/g,"\\'")}')">
+        : `<button class="btn-follow" data-target-name="${targetName}" onclick="handleFollow(this,'${targetUserId}','${safeName}')">
                <i class="fas fa-user-plus"></i> Follow
            </button>`;
 }
@@ -147,7 +148,8 @@ async function handleUnfollow(btn, targetUserId) {
     if (result.success) {
         btn.className = 'btn-follow';
         btn.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
-        btn.onclick = null; // re-set inline via renderFollowButton approach is simpler
+        const name = btn.dataset.targetName || '';
+        btn.onclick = () => handleFollow(btn, targetUserId, name);
         btn.disabled = false;
         ['followersCount', 'followersCountHero'].forEach(id => {
             const el = document.getElementById(id);
