@@ -94,7 +94,7 @@
           <div id="postTypeBadge" style="display:none; margin-bottom:8px;"></div>
           <textarea id="homePostText" placeholder="What's on your mind?" rows="3"></textarea>
           <div id="homePostMediaPreview" class="home-post-media-preview"></div>
-          <div class="create-post-actions">
+          <div class="create-post-type-row">
             <label class="create-post-media-btn" for="homePostMedia">
               <i class="fas fa-image" style="color:#45b649;"></i> Photo / Video
             </label>
@@ -105,12 +105,12 @@
             <button class="create-post-media-btn" onclick="setPostType('thought')">
               <i class="fas fa-lightbulb" style="color:#6366f1;"></i> Thought
             </button>
-            <div style="display:flex; gap:8px; margin-left:auto;">
-              <button class="create-post-cancel" onclick="collapseCreatePost()">Cancel</button>
-              <button class="create-post-submit" onclick="submitHomePost()">
-                <i class="fas fa-paper-plane"></i> Post
-              </button>
-            </div>
+          </div>
+          <div class="create-post-actions">
+            <button class="create-post-cancel" onclick="collapseCreatePost()">Cancel</button>
+            <button class="create-post-submit" onclick="submitHomePost()">
+              <i class="fas fa-paper-plane"></i> Post
+            </button>
           </div>
         </div>
         <div class="create-post-shortcuts">
