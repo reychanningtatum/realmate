@@ -91,6 +91,7 @@
         </div>
         <!-- Expanded composer -->
         <div class="create-post-expanded" id="createPostExpanded" style="display:none;">
+          <div id="postTypeBadge" style="display:none; margin-bottom:8px;"></div>
           <textarea id="homePostText" placeholder="What's on your mind?" rows="3"></textarea>
           <div id="homePostMediaPreview" class="home-post-media-preview"></div>
           <div class="create-post-actions">
@@ -107,9 +108,9 @@
           </div>
         </div>
         <div class="create-post-shortcuts">
-          <button onclick="expandCreatePost()"><i class="fas fa-image" style="color:#45b649;"></i> Photo/Video</button>
-          <button onclick="expandCreatePost()"><i class="fas fa-trophy" style="color:#f59e0b;"></i> Achievement</button>
-          <button onclick="expandCreatePost()"><i class="fas fa-lightbulb" style="color:#6366f1;"></i> Thought</button>
+          <button onclick="expandCreatePost('photo')"><i class="fas fa-image" style="color:#45b649;"></i> Photo/Video</button>
+          <button onclick="expandCreatePost('achievement')"><i class="fas fa-trophy" style="color:#f59e0b;"></i> Achievement</button>
+          <button onclick="expandCreatePost('thought')"><i class="fas fa-lightbulb" style="color:#6366f1;"></i> Thought</button>
         </div>
       </div>
 

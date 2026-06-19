@@ -257,15 +257,56 @@ function closeStoryViewer() {
 
 let _homePostFiles = [];
 
-function expandCreatePost() {
+let _homePostType = '';
+
+const _postTypeConfig = {
+    achievement: {
+        subject: 'Achievement',
+        placeholder: 'Share your win — closed a deal, hit a target, earned recognition…',
+        badge: '<i class="fas fa-trophy" style="color:#f59e0b;margin-right:6px;"></i> Achievement Post',
+        badgeBg: '#fffbeb',
+        badgeBorder: '#fde68a',
+        badgeColor: '#92400e'
+    },
+    thought: {
+        subject: 'Thought',
+        placeholder: 'Share an insight, opinion, or industry observation…',
+        badge: '<i class="fas fa-lightbulb" style="color:#6366f1;margin-right:6px;"></i> Thought Post',
+        badgeBg: '#eef2ff',
+        badgeBorder: '#c7d2fe',
+        badgeColor: '#3730a3'
+    }
+};
+
+function expandCreatePost(type) {
+    _homePostType = type || '';
+    const textarea = document.getElementById('homePostText');
+    const badge = document.getElementById('postTypeBadge');
+    const cfg = _postTypeConfig[_homePostType];
+
+    if (cfg) {
+        textarea.placeholder = cfg.placeholder;
+        badge.innerHTML = `<span style="display:inline-flex;align-items:center;font-size:12px;font-weight:700;padding:5px 12px;border-radius:50px;background:${cfg.badgeBg};border:1px solid ${cfg.badgeBorder};color:${cfg.badgeColor};">${cfg.badge}</span>`;
+        badge.style.display = 'block';
+    } else {
+        textarea.placeholder = "What's on your mind?";
+        badge.style.display = 'none';
+    }
+
+    if (type === 'photo') {
+        document.getElementById('homePostMedia')?.click();
+    }
+
     document.querySelector('.create-post-top').style.display = 'none';
     document.querySelector('.create-post-shortcuts').style.display = 'none';
     document.getElementById('createPostExpanded').style.display = 'block';
-    document.getElementById('homePostText').focus();
+    textarea.focus();
 }
 
 function collapseCreatePost() {
+    _homePostType = '';
     document.getElementById('createPostExpanded').style.display = 'none';
+    document.getElementById('postTypeBadge').style.display = 'none';
     document.querySelector('.create-post-top').style.display = '';
     document.querySelector('.create-post-shortcuts').style.display = '';
     document.getElementById('homePostText').value = '';
@@ -330,11 +371,13 @@ async function submitHomePost() {
             else imageUrls.push(url);
         }
 
+        const postSubject = _postTypeConfig[_homePostType]?.subject || '';
+
         const { error: insertErr } = await _supaHome.from('forum_posts').insert({
             user_id:   authData?.user?.id,
             user_name: user.name,
             user_img:  user.image || '',
-            subject:   '',
+            subject:   postSubject,
             content:   text,
             image_url: imageUrls[0] || null,
             video_url: videoUrl || null,
@@ -445,7 +488,9 @@ function buildHomePostCard(post, likeCount, userLiked, commentCount) {
                 <div onclick="deleteHomePost('${post.id}')"><i class="fas fa-trash"></i> Delete</div>
             </div>` : ''}
         </div>
-        ${post.subject ? `<div class="hf-post-subject">${safeText(post.subject)}</div>` : ''}
+        ${post.subject === 'Achievement' ? `<div style="margin:6px 0 4px;"><span style="display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:4px 10px;border-radius:50px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;"><i class="fas fa-trophy" style="color:#f59e0b;margin-right:5px;"></i>Achievement</span></div>`
+            : post.subject === 'Thought' ? `<div style="margin:6px 0 4px;"><span style="display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:4px 10px;border-radius:50px;background:#eef2ff;border:1px solid #c7d2fe;color:#3730a3;"><i class="fas fa-lightbulb" style="color:#6366f1;margin-right:5px;"></i>Thought</span></div>`
+            : post.subject ? `<div class="hf-post-subject">${safeText(post.subject)}</div>` : ''}
         ${post.content ? `<div class="hf-post-text">${safeText(post.content)}</div>` : ''}
         ${mediaHtml}
         <div class="hf-post-stats">
