@@ -325,6 +325,15 @@ async function registerUser(){
         showRegToast("Username already taken — choose another.", "error");
         return;
       }
+      const { data: alveoCheck } = await window.supabaseClient
+        .from('profiles')
+        .select('id')
+        .eq('alveo_id', alveo)
+        .limit(1);
+      if (alveoCheck?.length > 0) {
+        showRegToast("This Alveo ID is already registered. Please use a different one.", "error");
+        return;
+      }
       const { error } = await window.supabaseClient.auth.signUp({
         email, password,
         options: { data: { username, first_name: firstName, last_name: lastName, phone_number: phone, birthday, gender, alveo_id: alveo } }
