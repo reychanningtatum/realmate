@@ -46,7 +46,26 @@
     <!-- Sticky ticker bar: YouTube + stats -->
     <div class="sticky-ticker-bar" style="flex-direction:column; gap:0; align-items:stretch;">
 
-      <!-- Top row: Video | PDF side by side -->
+      <!-- Top row: mini project charts side by side -->
+      <div id="miniChartsRow" class="open" style="display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; background:#fff;">
+        <!-- Mini chart cards are injected dynamically by cap-tracker.js -->
+      </div><!-- /mini charts row -->
+
+      <!-- Mini charts chevron toggle -->
+      <div id="miniChartsToggleBtn" class="mini-charts-toggle-btn" onclick="toggleMiniCharts(this)">
+        <span class="mini-charts-collapsed-label"><i class="fas fa-chart-line" style="color:#32cd32;"></i> Project Graphs</span>
+        <span id="miniChartsChevron" class="mini-charts-chevron open">
+          <i class="fas fa-chevron-up" style="font-size:11px; display:block;"></i>
+          <i class="fas fa-chevron-up" style="font-size:11px; display:block; margin-top:-6px;"></i>
+        </span>
+      </div>
+
+      <!-- Separator -->
+      <div id="tickerSeparator" class="ticker-separator-wrap" style="display:none; background:#fff;">
+        <div style="height:1px; background:linear-gradient(to right, transparent, rgba(100,116,139,0.3), transparent);"></div>
+      </div>
+
+      <!-- Bottom row: Video | PDF side by side -->
       <div id="videoRow" class="ticker-top-row open" style="display:flex; gap:12px; align-items:flex-start; background:#fff;">
 
         <div id="ytEmbedSection" style="display:none; flex-shrink:0; position:relative;">
@@ -73,31 +92,12 @@
           <div id="pdfPageStrip" style="display:flex; gap:8px; align-items:center;"></div>
         </div>
 
-      </div><!-- /top row: video + pdf -->
+      </div><!-- /bottom row: video + pdf -->
 
       <!-- Video/PDF row chevron toggle -->
       <div id="videoRowToggleBtn" class="mini-charts-toggle-btn" onclick="toggleVideoRow(this)">
         <span class="mini-charts-collapsed-label"><i class="fas fa-play-circle" style="color:#32cd32;"></i> Video &amp; PDF</span>
         <span id="videoRowChevron" class="mini-charts-chevron open">
-          <i class="fas fa-chevron-up" style="font-size:11px; display:block;"></i>
-          <i class="fas fa-chevron-up" style="font-size:11px; display:block; margin-top:-6px;"></i>
-        </span>
-      </div>
-
-      <!-- Separator -->
-      <div id="tickerSeparator" class="ticker-separator-wrap" style="display:none; background:#fff;">
-        <div style="height:1px; background:linear-gradient(to right, transparent, rgba(100,116,139,0.3), transparent);"></div>
-      </div>
-
-      <!-- Bottom row: mini project charts side by side -->
-      <div id="miniChartsRow" class="open" style="display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; background:#fff;">
-        <!-- Mini chart cards are injected dynamically by cap-tracker.js -->
-      </div><!-- /mini charts row -->
-
-      <!-- Mini charts chevron toggle -->
-      <div id="miniChartsToggleBtn" class="mini-charts-toggle-btn" onclick="toggleMiniCharts(this)">
-        <span class="mini-charts-collapsed-label"><i class="fas fa-chart-line" style="color:#32cd32;"></i> Project Graphs</span>
-        <span id="miniChartsChevron" class="mini-charts-chevron open">
           <i class="fas fa-chevron-up" style="font-size:11px; display:block;"></i>
           <i class="fas fa-chevron-up" style="font-size:11px; display:block; margin-top:-6px;"></i>
         </span>
