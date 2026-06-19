@@ -259,6 +259,7 @@ let _homePostFiles = [];
 
 function expandCreatePost() {
     document.querySelector('.create-post-top').style.display = 'none';
+    document.querySelector('.create-post-shortcuts').style.display = 'none';
     document.getElementById('createPostExpanded').style.display = 'block';
     document.getElementById('homePostText').focus();
 }
@@ -266,6 +267,7 @@ function expandCreatePost() {
 function collapseCreatePost() {
     document.getElementById('createPostExpanded').style.display = 'none';
     document.querySelector('.create-post-top').style.display = '';
+    document.querySelector('.create-post-shortcuts').style.display = '';
     document.getElementById('homePostText').value = '';
     document.getElementById('homePostMediaPreview').innerHTML = '';
     _homePostFiles = [];
