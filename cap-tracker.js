@@ -107,6 +107,39 @@ const CAP_PROJECTS = [
         ],
         totalGain: null,
         rentalYield: null,
+    },
+    {
+        id: 'verve2',
+        name: 'Verve Tower 2',
+        sub: 'Alveo Land · High Street South, BGC, Taguig',
+        currentPrice: '₱278K – ₱298K',
+        currentLabel: 'per sqm · 2026 (Current)',
+        data: [
+            { year: 2015, price: 150000, phase: 'Launch Phase' },
+            { year: 2016, price: 162000, phase: 'Preselling' },
+            { year: 2017, price: 178000, phase: 'Mid-Construction' },
+            { year: 2018, price: 198000, phase: 'Structural Completion' },
+            { year: 2019, price: 225000, phase: 'Initial Turnover' },
+            { year: 2020, price: 230000, phase: 'Pandemic Lockdown' },
+            { year: 2021, price: 220000, phase: 'Pandemic Correction' },
+            { year: 2022, price: 240000, phase: 'Rebound Phase' },
+            { year: 2023, price: 258000, phase: 'Post-Pandemic Adjustment' },
+            { year: 2024, price: 268000, phase: 'Stabilized Asset Phase' },
+            { year: 2025, price: 275000, phase: 'Established RFO' },
+            { year: 2026, price: 288000, phase: 'Mature Market Reality', isCurrent: true },
+        ],
+        annotations: [
+            { year: 2019, label: 'Turnover', color: '#f59e0b' },
+            { year: 2020, label: 'Pandemic', color: '#ef4444' },
+            { year: 2022, label: 'Rebound', color: '#32cd32' },
+        ],
+        takeaways: [
+            { icon: 'fa-triangle-exclamation', title: 'Pandemic Turnover Timing', body: 'Turnover crashed directly into the pandemic onset, stretching RFO timelines and temporarily depressing secondary market values in 2021.' },
+            { icon: 'fa-building-columns', title: 'BGC Scarcity Premium', body: 'Absolute scarcity of raw land in the district protects value — replacement cost for new launches far exceeds current secondary market pricing.' },
+            { icon: 'fa-arrow-trend-up', title: 'Rapid Post-Pandemic Recovery', body: 'Reopening of BGC corporate hubs drove rental demand sharply back, recovering all pandemic losses and pushing beyond pre-pandemic highs by 2022.' },
+        ],
+        totalGain: null,
+        rentalYield: null,
     }
 ];
 
