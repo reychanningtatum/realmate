@@ -140,6 +140,42 @@ const CAP_PROJECTS = [
         ],
         totalGain: null,
         rentalYield: null,
+    },
+    {
+        id: 'onemaridien',
+        name: 'One Maridien',
+        sub: 'Alveo Land · High Street South, BGC, Taguig',
+        currentPrice: '₱285K – ₱310K',
+        currentLabel: 'per sqm · 2026 (Current)',
+        data: [
+            { year: 2012, price: 122000, phase: 'Launch Phase' },
+            { year: 2013, price: 132000, phase: 'Preselling' },
+            { year: 2014, price: 144000, phase: 'Preselling' },
+            { year: 2015, price: 158000, phase: 'Mid-Construction' },
+            { year: 2016, price: 175000, phase: 'Initial Turnover' },
+            { year: 2017, price: 195000, phase: 'Full Operations' },
+            { year: 2018, price: 220000, phase: 'Peak RFO Growth' },
+            { year: 2019, price: 245000, phase: 'Pre-Pandemic High' },
+            { year: 2020, price: 240000, phase: 'Pandemic Flatline' },
+            { year: 2021, price: 232000, phase: 'Pandemic Correction' },
+            { year: 2022, price: 248000, phase: 'Rebound Phase' },
+            { year: 2023, price: 265000, phase: 'Post-Pandemic Adjustment' },
+            { year: 2024, price: 275000, phase: 'Premium Parkside Asset' },
+            { year: 2025, price: 282000, phase: 'Matured Holding' },
+            { year: 2026, price: 297500, phase: 'Stabilized Market', isCurrent: true },
+        ],
+        annotations: [
+            { year: 2016, label: 'Turnover', color: '#f59e0b' },
+            { year: 2020, label: 'Pandemic', color: '#ef4444' },
+            { year: 2022, label: 'Rebound', color: '#32cd32' },
+        ],
+        takeaways: [
+            { icon: 'fa-arrow-trend-up', title: 'Early Turnover Advantage', body: 'RFO status by late 2016–2017 let One Maridien fully ride the pre-pandemic corporate rental boom, locking in strong tenancy before the market freeze.' },
+            { icon: 'fa-tree', title: 'Permanent Park Premium', body: 'Park-facing units command an explicit premium as the adjacent green space is a permanent, irreplaceable asset — a rare feature in BGC\'s dense urban fabric.' },
+            { icon: 'fa-lock', title: 'High Retention Supply Lock', body: 'A high owner-retention rate limits active secondary market supply, keeping price floors firm and giving sellers strong negotiating leverage.' },
+        ],
+        totalGain: null,
+        rentalYield: null,
     }
 ];
 
