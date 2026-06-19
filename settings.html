@@ -92,9 +92,14 @@
                         <div style="display: flex; flex-direction: column; gap: 8px;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <label style="font-size: 14px; font-weight: 700; color: var(--text-main);">Configure Handle Nickname</label>
-                                <button id="anonEditTriggerBtn" class="action-btn upload-trigger" style="padding: 6px 14px; font-size: 12px;" onclick="enableAnonymousEditingMode()">
-                                    <i class="fas fa-edit"></i> Edit Identity
-                                </button>
+                                <div style="display:flex; gap:8px;">
+                                    <button class="action-btn upload-trigger" style="padding: 6px 14px; font-size: 12px;" onclick="fillRandomAnonName()">
+                                        <i class="fas fa-dice"></i> Generate Random
+                                    </button>
+                                    <button id="anonEditTriggerBtn" class="action-btn upload-trigger" style="padding: 6px 14px; font-size: 12px;" onclick="enableAnonymousEditingMode()">
+                                        <i class="fas fa-edit"></i> Edit Identity
+                                    </button>
+                                </div>
                             </div>
                             <input type="text" id="globalAnonNickname" placeholder="Specify unique user alias moniker..." maxlength="25" disabled
                                    style="width: 100%; background: #edf2f7; padding: 16px; border-radius: 14px; border: 2px solid transparent; font-size: 14px; font-weight: 600; font-family: inherit; color: var(--text-sub); cursor: not-allowed;"
@@ -233,6 +238,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="search-overlay.js"></script>
 <script src="auth-guard.js"></script>
+<script src="anon-generator.js"></script>
 <script src="settings.js"></script>
 <script src="notif-badge.js"></script>
 <!-- Mobile Bottom Navigation -->

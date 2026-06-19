@@ -44,6 +44,17 @@ function showSettingsNotificationToast(message, type = "success") {
 /**
  * 🚀 ACTIVE FLOW COMPONENT EDITING STATES
  */
+function fillRandomAnonName() {
+    enableAnonymousEditingMode();
+    const field = document.getElementById("globalAnonNickname");
+    if (field) {
+        field.value = generateAnonName();
+        updateLiveIdentityCardPreview();
+        const counter = document.getElementById("nicknameCharCount");
+        if (counter) counter.textContent = `${field.value.length}/25`;
+    }
+}
+
 function enableAnonymousEditingMode() {
     const field = document.getElementById("globalAnonNickname");
     const tray = document.getElementById("anonActionControlTray");
