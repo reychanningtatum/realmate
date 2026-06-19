@@ -420,7 +420,7 @@ function buildTicker(listings) {
 // ── State ─────────────────────────────────────────
 let allListings = [];
 let myListings = [];
-let activeCategory = 'MATCHES'; // default: show relevant matches
+let activeCategory = 'ALL'; // default: show all listings
 let myListingsSubCat = 'ALL';
 
 function selectCat(btn) {
