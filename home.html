@@ -151,6 +151,19 @@
   </div>
 </div>
 
+<!-- Delete Post Modal -->
+<div id="homeDeleteModal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.45); display:none; align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:20px; padding:32px 28px; max-width:340px; width:90%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+    <i class="fas fa-exclamation-triangle" style="font-size:40px; color:#ef4444; margin-bottom:16px;"></i>
+    <h3 style="font-size:18px; font-weight:800; color:#0f172a; margin:0 0 8px;">Delete this post?</h3>
+    <p style="color:#64748b; font-size:13px; margin:0 0 24px;">This action cannot be undone.</p>
+    <div style="display:flex; gap:10px;">
+      <button onclick="closeHomeDeleteModal()" style="flex:1; padding:12px; border-radius:10px; border:1px solid #e2e8f0; background:#fff; font-size:14px; font-weight:600; cursor:pointer;">Cancel</button>
+      <button id="homeDeleteConfirmBtn" style="flex:1; padding:12px; border-radius:10px; border:none; background:#ef4444; color:#fff; font-size:14px; font-weight:700; cursor:pointer;">Delete</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="compress.js"></script>
 <script src="search-overlay.js"></script>

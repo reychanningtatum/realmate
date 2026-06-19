@@ -564,8 +564,24 @@ function togglePostMenu(postId) {
     setTimeout(() => document.addEventListener('click', close), 10);
 }
 
-async function deleteHomePost(postId) {
-    if (!confirm('Delete this post?')) return;
+let _pendingDeletePostId = null;
+
+function deleteHomePost(postId) {
+    _pendingDeletePostId = postId;
+    const modal = document.getElementById('homeDeleteModal');
+    modal.style.display = 'flex';
+    document.getElementById('homeDeleteConfirmBtn').onclick = confirmHomeDelete;
+}
+
+function closeHomeDeleteModal() {
+    document.getElementById('homeDeleteModal').style.display = 'none';
+    _pendingDeletePostId = null;
+}
+
+async function confirmHomeDelete() {
+    if (!_pendingDeletePostId) return;
+    const postId = _pendingDeletePostId;
+    closeHomeDeleteModal();
     await _supaHome.from('forum_posts').delete().eq('id', postId);
     document.getElementById(`hfpost-${postId}`)?.remove();
 }
