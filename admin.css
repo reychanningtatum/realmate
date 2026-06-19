@@ -58,7 +58,7 @@ body {
 }
 .gate-input-wrap input {
     width: 100%;
-    padding: 14px 42px 14px 42px;
+    padding: 14px 42px 14px 46px;
     border: 2px solid #e2e8f0;
     border-radius: 14px;
     font-size: 14px;
