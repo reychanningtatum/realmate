@@ -601,6 +601,18 @@ async function toggleHomelike(postId, btn) {
         await _supaHome.from('forum_likes').insert({ post_id: postId, user_name: user.name });
         btn.classList.add('liked');
         btn.querySelector('i').className = 'fas fa-thumbs-up';
+        const post = _homePosts.find(p => p.id == postId);
+        if (post && post.user_name && post.user_name !== user.name) {
+            await _supaHome.from('notifications').insert({
+                recipient_user_name: post.user_name,
+                sender_user_name: user.name,
+                sender_profile_picture: user.image || '',
+                type: 'post_like',
+                target_post_id: postId,
+                message: 'liked your post.',
+                is_read: false
+            });
+        }
     }
     // Refresh like count in stats
     const { data } = await _supaHome.from('forum_likes').select('id', { count: 'exact' }).eq('post_id', postId);
@@ -687,6 +699,18 @@ async function submitHomeComment(postId) {
         content:   text,
         parent_id: null
     });
+    const post = _homePosts.find(p => p.id == postId);
+    if (post && post.user_name && post.user_name !== user.name) {
+        await _supaHome.from('notifications').insert({
+            recipient_user_name: post.user_name,
+            sender_user_name: user.name,
+            sender_profile_picture: user.image || '',
+            type: 'comment_reply',
+            target_post_id: postId,
+            message: `commented on your post: "${text.substring(0, 30)}"`,
+            is_read: false
+        });
+    }
     await loadHomeComments(postId);
     // Update comment count in stats
     const { data } = await _supaHome.from('forum_comments').select('id', { count: 'exact' }).eq('post_id', postId);
