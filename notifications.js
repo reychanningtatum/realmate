@@ -272,7 +272,15 @@ async function handleNotificationRowClick(id) {
                 .eq('id', notif.target_post_id)
                 .limit(1);
             const source = postRows?.[0]?.source;
-            location.href = source === 'home' ? 'home.html' : 'forum.html';
+            if (source === 'home') {
+                // Override anchor ID for home page comment format
+                if (notif.target_comment_id) {
+                    localStorage.setItem("route_target_anchor_id", `hf-comment-${notif.target_comment_id}`);
+                }
+                location.href = 'home.html';
+            } else {
+                location.href = 'forum.html';
+            }
         } catch {
             location.href = 'forum.html';
         }

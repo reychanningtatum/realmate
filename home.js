@@ -704,7 +704,7 @@ async function loadHomeComments(postId) {
 function buildCommentHtml(c, postId) {
     const img = c.user_img || avatarUrl(c.user_name);
     return `
-        <div class="hf-comment">
+        <div class="hf-comment" id="hf-comment-${c.id}">
             <img class="hf-comment-avatar-img" src="${img}" onerror="this.src='${avatarUrl(c.user_name)}'">
             <div class="hf-comment-body">
                 <div class="hf-comment-name">${safeText(c.user_name || 'Member')}</div>
@@ -722,14 +722,14 @@ async function submitHomeComment(postId) {
     if (!text) return;
     input.value = '';
     const { data: authData } = await _supaHome.auth.getUser();
-    await _supaHome.from('forum_comments').insert({
+    const { data: inserted } = await _supaHome.from('forum_comments').insert({
         post_id:   postId,
         user_id:   authData?.user?.id,
         user_name: user.name,
         user_img:  user.image || '',
         content:   text,
         parent_id: null
-    });
+    }).select('id').single();
     const post = _homePosts.find(p => p.id == postId);
     if (post && post.user_name && post.user_name !== user.name) {
         await _supaHome.from('notifications').insert({
@@ -738,6 +738,7 @@ async function submitHomeComment(postId) {
             sender_profile_picture: user.image || '',
             type: 'comment_reply',
             target_post_id: postId,
+            target_comment_id: inserted?.id || null,
             message: `commented on your post: "${text.substring(0, 30)}"`,
             is_read: false
         });
