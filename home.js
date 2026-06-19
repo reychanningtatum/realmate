@@ -473,6 +473,37 @@ async function loadHomeFeed() {
             feed.appendChild(card);
         });
 
+        // Deep link from notification
+        const targetPostId = localStorage.getItem('route_target_post_id');
+        const targetAnchorId = localStorage.getItem('route_target_anchor_id');
+        if (targetPostId) {
+            localStorage.removeItem('route_target_post_id');
+            localStorage.removeItem('route_target_anchor_id');
+            const postEl = document.getElementById(`hfpost-${targetPostId}`);
+            if (postEl) {
+                // Open comments section
+                const commSection = document.getElementById(`hfcomments-${targetPostId}`);
+                if (commSection && commSection.style.display === 'none') {
+                    commSection.style.display = 'block';
+                    initCommentAvatar(parseInt(targetPostId));
+                    await loadHomeComments(parseInt(targetPostId));
+                }
+                setTimeout(() => {
+                    const scrollTarget = targetAnchorId ? document.getElementById(targetAnchorId) : postEl;
+                    if (scrollTarget) {
+                        scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        scrollTarget.style.transition = 'all 0.5s ease-in-out';
+                        scrollTarget.style.boxShadow = '0 0 0 4px #32cd32';
+                        scrollTarget.style.backgroundColor = 'rgba(50, 205, 50, 0.05)';
+                        setTimeout(() => {
+                            scrollTarget.style.boxShadow = '';
+                            scrollTarget.style.backgroundColor = '';
+                        }, 3000);
+                    }
+                }, 300);
+            }
+        }
+
     } catch (err) {
         console.error('Home feed error:', err);
         feed.innerHTML = `<div class="hf-empty">
