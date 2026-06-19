@@ -58,8 +58,8 @@ const CAP_PROJECTS = [
         rentalYield: {
             unitSqm: 32,
             monthlyRent: 38000,
-            propertyCost: 9760000,   // purchase price + taxes + furnishing
-            annualCost: 62000,       // RPT + assoc dues + insurance
+            propertyCost: 9760000,
+            annualCost: 62000,
             costBreakdown: [
                 { label: 'Purchase Price', value: '₱9,120,000' },
                 { label: 'Taxes & Charges', value: '₱480,000' },
@@ -72,8 +72,44 @@ const CAP_PROJECTS = [
                 { label: "Broker's Commission", value: '₱6,000' },
             ],
         },
+    },
+    {
+        id: 'verve1',
+        name: 'Verve Tower 1',
+        sub: 'Alveo Land · High Street South, BGC, Taguig',
+        currentPrice: '₱280K – ₱305K',
+        currentLabel: 'per sqm · 2026 (Current)',
+        data: [
+            { year: 2013, price: 135000, phase: 'Launch Phase' },
+            { year: 2014, price: 145000, phase: 'Preselling' },
+            { year: 2015, price: 158000, phase: 'Preselling' },
+            { year: 2016, price: 172000, phase: 'Mid-Construction' },
+            { year: 2017, price: 190000, phase: 'Topping Out' },
+            { year: 2018, price: 215000, phase: 'Initial Turnover' },
+            { year: 2019, price: 240000, phase: 'Full Operations' },
+            { year: 2020, price: 245000, phase: 'Pandemic Flatline' },
+            { year: 2021, price: 235000, phase: 'Pandemic Correction' },
+            { year: 2022, price: 250000, phase: 'Recovery Window' },
+            { year: 2023, price: 262000, phase: 'Post-Pandemic Resurgence' },
+            { year: 2024, price: 270000, phase: 'Stabilized Yield Asset' },
+            { year: 2025, price: 278000, phase: 'Established High-Street Footprint' },
+            { year: 2026, price: 292500, phase: 'Mature Market Reality', isCurrent: true },
+        ],
+        annotations: [
+            { year: 2018, label: 'Turnover', color: '#f59e0b' },
+            { year: 2020, label: 'Pandemic', color: '#ef4444' },
+            { year: 2022, label: 'Recovery', color: '#32cd32' },
+        ],
+        takeaways: [
+            { icon: 'fa-building', title: 'Corporate Demand Driver', body: 'Rental demand anchored by multinational corporate tenants in High Street South, providing a strong price floor even during downturns.' },
+            { icon: 'fa-shield-halved', title: 'Pandemic Resilience', body: 'High-density corporate area saw a temporary freeze in 2020 but recovered quickly as hybrid office setups revitalized demand by 2022.' },
+            { icon: 'fa-arrow-trend-up', title: 'Low Inventory Advantage', body: 'Very few new inventory additions nearby keep valuations elevated and support steady appreciation into 2025–2026.' },
+        ],
+        totalGain: null,
+        rentalYield: null,
     }
 ];
+
 
 // compute total gain, CAGR, and rental yields
 CAP_PROJECTS.forEach(p => {
