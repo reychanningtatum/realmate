@@ -265,9 +265,19 @@ async function handleNotificationRowClick(id) {
     }
 
     if (notif.target_post_id) {
-        location.href = `forum.html`;
+        try {
+            const { data: postRows } = await _supabase
+                .from('forum_posts')
+                .select('source')
+                .eq('id', notif.target_post_id)
+                .limit(1);
+            const source = postRows?.[0]?.source;
+            location.href = source === 'home' ? 'home.html' : 'forum.html';
+        } catch {
+            location.href = 'forum.html';
+        }
     } else {
-        location.href = `forum.html`;
+        location.href = 'forum.html';
     }
 }
 
