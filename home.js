@@ -395,8 +395,8 @@ async function submitHomePost() {
             user_img:  user.image || '',
             subject:   postSubject,
             content:   text,
-            image_url: imageUrls[0] || null,
-            video_url: videoUrl || null,
+            media_url: videoUrl || imageUrls[0] || null,
+            media_type: videoUrl ? 'video' : (imageUrls[0] ? 'image' : null),
             is_anonymous: false
         });
         if (insertErr) throw insertErr;
@@ -425,7 +425,7 @@ async function loadHomeFeed() {
     try {
         const { data: posts, error } = await _supaHome
             .from('forum_posts')
-            .select('id, user_id, user_name, user_img, subject, content, image_url, video_url, created_at, is_anonymous')
+            .select('id, user_id, user_name, user_img, subject, content, media_url, media_type, created_at, is_anonymous')
             .order('created_at', { ascending: false })
             .limit(40);
 
@@ -537,15 +537,14 @@ function buildHomePostCard(post, likeCount, userLiked, commentCount) {
 }
 
 function buildPostMedia(post) {
-    const imgs = [];
-    if (post.image_url) imgs.push(post.image_url);
-    if (!imgs.length && !post.video_url) return '';
+    if (!post.media_url) return '';
 
-    if (post.video_url) {
+    if (post.media_type === 'video') {
         return `<div class="hf-post-media">
-            <video controls src="${post.video_url}" style="width:100%;border-radius:12px;max-height:400px;"></video>
+            <video controls src="${post.media_url}" style="width:100%;border-radius:12px;max-height:400px;"></video>
         </div>`;
     }
+    const imgs = [post.media_url];
     if (imgs.length === 1) {
         return `<div class="hf-post-media">
             <img src="${imgs[0]}" style="width:100%;border-radius:12px;max-height:500px;object-fit:cover;cursor:pointer;"
