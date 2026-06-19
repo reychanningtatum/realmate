@@ -397,7 +397,8 @@ async function submitHomePost() {
             content:   text,
             media_url: videoUrl || imageUrls[0] || null,
             media_type: videoUrl ? 'video' : (imageUrls[0] ? 'image' : null),
-            is_anonymous: false
+            is_anonymous: false,
+            source: 'home'
         });
         if (insertErr) throw insertErr;
 
@@ -426,6 +427,7 @@ async function loadHomeFeed() {
         const { data: posts, error } = await _supaHome
             .from('forum_posts')
             .select('id, user_id, user_name, user_img, subject, content, media_url, media_type, created_at, is_anonymous')
+            .eq('source', 'home')
             .order('created_at', { ascending: false })
             .limit(40);
 

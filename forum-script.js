@@ -158,6 +158,7 @@ async function fetchForumPosts() {
     const { data: posts, error } = await _supabase
         .from('forum_posts')
         .select('*')
+        .or('source.eq.forum,source.is.null')
         .order('created_at', { ascending: false });
 
     if (error) {
@@ -517,6 +518,7 @@ async function createForumPost() {
             media_url: mediaUrl,
             media_type: mediaType,
             is_anonymous: isAnon,
+            source: 'forum',
             created_at: new Date()
         }]);
 
