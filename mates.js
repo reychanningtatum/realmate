@@ -135,21 +135,38 @@ async function sendMateRequest(recipientName, recipientImg) {
     const me = _localUser();
     if (!me) return { error: 'Not logged in' };
 
-    const existing = getMateStatus(recipientName);
-    if (existing !== 'none') return { error: 'Already connected or pending' };
-
     try {
         const { data: authData } = await _matesDb.auth.getUser();
         const myId = authData?.user?.id;
         if (!myId) return { error: 'Not authenticated' };
 
-        // Find recipient id by name from listings
-        const { data: recipientRows } = await _matesDb
-            .from('listings')
-            .select('user_id')
-            .eq('user_name', recipientName)
+        // Check DB for existing connection (cache may be stale)
+        const { data: existingRows } = await _matesDb
+            .from('mates')
+            .select('status')
+            .or(`and(requester_name.eq.${me.name},recipient_name.eq.${recipientName}),and(requester_name.eq.${recipientName},recipient_name.eq.${me.name})`)
             .limit(1);
-        const recipientId = recipientRows?.[0]?.user_id || null;
+        if (existingRows?.length > 0) {
+            const st = existingRows[0].status;
+            return { error: st === 'accepted' ? 'Already Realmates' : 'Request already pending' };
+        }
+
+        // Find recipient id from profiles first, fall back to listings
+        let recipientId = null;
+        const { data: profileRows } = await _matesDb
+            .from('profiles')
+            .select('id')
+            .eq('full_name', recipientName)
+            .limit(1);
+        recipientId = profileRows?.[0]?.id || null;
+        if (!recipientId) {
+            const { data: listingRows } = await _matesDb
+                .from('listings')
+                .select('user_id')
+                .eq('user_name', recipientName)
+                .limit(1);
+            recipientId = listingRows?.[0]?.user_id || null;
+        }
 
         const { error } = await _matesDb.from('mates').insert({
             requester_id:   myId,
@@ -183,13 +200,14 @@ async function sendMateRequest(recipientName, recipientImg) {
 
 async function acceptMateRequest(requesterName) {
     const me = _localUser();
-    if (!me) return;
+    if (!me) return { error: 'Not logged in' };
     try {
         const { data: authData } = await _matesDb.auth.getUser();
         const myId = authData?.user?.id;
 
+        // Also backfill recipient_id if it was null
         await _matesDb.from('mates')
-            .update({ status: 'accepted' })
+            .update({ status: 'accepted', recipient_id: myId })
             .eq('requester_name', requesterName)
             .eq('recipient_name', me.name);
 

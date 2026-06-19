@@ -207,12 +207,21 @@ async function loadProfile() {
             try {
                 const { data: authData } = await _supabase.auth.getUser();
                 const myId = authData?.user?.id;
-                // Check by user_id — name-based lookup breaks when names differ between tables
-                const { data: mateRows } = await _supabase
+                const myName = JSON.parse(localStorage.getItem('user'))?.name || '';
+                // Check by user_id first, fall back to name-based lookup
+                let { data: mateRows } = await _supabase
                     .from('mates')
                     .select('status, requester_id, recipient_id')
                     .or(`and(requester_id.eq.${myId},recipient_id.eq.${_viewUserId}),and(requester_id.eq.${_viewUserId},recipient_id.eq.${myId})`)
                     .limit(1);
+                if (!mateRows?.length && user.name) {
+                    const res = await _supabase
+                        .from('mates')
+                        .select('status, requester_id, recipient_id, requester_name, recipient_name')
+                        .or(`and(requester_name.eq.${myName},recipient_name.eq.${user.name}),and(requester_name.eq.${user.name},recipient_name.eq.${myName})`)
+                        .limit(1);
+                    mateRows = res.data;
+                }
                 const mateRow = mateRows?.[0];
                 const viewedName = user.name;
                 if (mateRow?.status === 'accepted') {
