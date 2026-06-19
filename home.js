@@ -909,7 +909,6 @@ function scrollToPost(id) {
 document.addEventListener('DOMContentLoaded', () => {
     initGuestUI();
     initCreatePost();
-    loadStories();
     loadHomeFeed();
     loadActiveMembers();
     loadBirthdays();
