@@ -17,8 +17,8 @@
     <h2 class="gate-title">Admin Access</h2>
     <p class="gate-sub">Enter the admin password to continue.</p>
     <div class="gate-input-wrap" style="position:relative;">
-      <i class="fas fa-lock"></i>
-      <input type="password" id="gateInput" placeholder="Password" onkeydown="if(event.key==='Enter') attemptLogin()" autocomplete="off">
+      <i class="fas fa-lock" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:14px;pointer-events:none;z-index:2;"></i>
+      <input type="password" id="gateInput" placeholder="Password" style="padding-left:44px;" onkeydown="if(event.key==='Enter') attemptLogin()" autocomplete="off">
       <i class="fas fa-eye" id="gateEye" onclick="toggleGatePassword()"></i>
     </div>
     <div id="gateError" class="gate-error" style="display:none;"><i class="fas fa-circle-exclamation"></i> Incorrect password.</div>
