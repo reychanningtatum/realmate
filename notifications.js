@@ -239,8 +239,8 @@ async function handleNotificationRowClick(id) {
         localStorage.setItem("route_target_post_id", String(notif.target_post_id));
     }
 
-    // Mate notifications → go to sender's profile
-    if (notif.type === 'mate_request' || notif.type === 'mate_accepted') {
+    // Mate/follow notifications → go to sender's profile
+    if (notif.type === 'mate_request' || notif.type === 'mate_accepted' || notif.type === 'follow') {
         try {
             const { data: profiles } = await _supabase
                 .from('profiles')
