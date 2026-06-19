@@ -6,7 +6,7 @@
   <title>Realmate | Admin</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="admin.css?v=2">
+  <link rel="stylesheet" href="admin.css?v=3">
 </head>
 <body>
 
@@ -18,7 +18,7 @@
     <p class="gate-sub">Enter the admin password to continue.</p>
     <div class="gate-input-wrap" style="position:relative;">
       <i class="fas fa-lock"></i>
-      <input type="password" id="gateInput" placeholder="Password" onkeydown="if(event.key==='Enter') attemptLogin()">
+      <input type="password" id="gateInput" placeholder="Password" onkeydown="if(event.key==='Enter') attemptLogin()" autocomplete="off">
       <i class="fas fa-eye" id="gateEye" onclick="toggleGatePassword()"></i>
     </div>
     <div id="gateError" class="gate-error" style="display:none;"><i class="fas fa-circle-exclamation"></i> Incorrect password.</div>
