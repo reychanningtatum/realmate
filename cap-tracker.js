@@ -176,6 +176,48 @@ const CAP_PROJECTS = [
         ],
         totalGain: null,
         rentalYield: null,
+    },
+    {
+        id: 'twomaridien',
+        name: 'Two Maridien',
+        sub: 'Alveo Land · High Street South, BGC, Taguig',
+        currentPrice: '₱285K – ₱310K',
+        currentLabel: 'per sqm · 2026 (Current)',
+        launchLayouts: [
+            { type: 'Studio', sqm: '36–38 sqm', range: '₱4.4M – ₱5.0M' },
+            { type: '1-Bedroom', sqm: '64–69 sqm', range: '₱7.8M – ₱9.2M' },
+            { type: '2-Bedroom', sqm: '93–97 sqm', range: '₱11.5M – ₱13.0M' },
+            { type: '3-Bedroom', sqm: '~128 sqm', range: '₱16.0M – ₱18.5M' },
+        ],
+        data: [
+            { year: 2012, price: 125000, phase: 'Launch Phase' },
+            { year: 2013, price: 135000, phase: 'Preselling' },
+            { year: 2014, price: 146000, phase: 'Preselling' },
+            { year: 2015, price: 160000, phase: 'Mid-Construction' },
+            { year: 2016, price: 178000, phase: 'Structural Completion' },
+            { year: 2017, price: 200000, phase: 'Initial Turnover' },
+            { year: 2018, price: 225000, phase: 'Full Operations' },
+            { year: 2019, price: 248000, phase: 'Pre-Pandemic High' },
+            { year: 2020, price: 242000, phase: 'Pandemic Flattening' },
+            { year: 2021, price: 235000, phase: 'Pandemic Correction' },
+            { year: 2022, price: 250000, phase: 'Rebound Phase' },
+            { year: 2023, price: 268000, phase: 'Post-Pandemic Adjustment' },
+            { year: 2024, price: 276000, phase: 'Matured High-Street Asset' },
+            { year: 2025, price: 284000, phase: 'Stabilized RFO' },
+            { year: 2026, price: 297500, phase: 'Mature Market Reality', isCurrent: true },
+        ],
+        annotations: [
+            { year: 2017, label: 'Turnover', color: '#f59e0b' },
+            { year: 2020, label: 'Pandemic', color: '#ef4444' },
+            { year: 2022, label: 'Rebound', color: '#32cd32' },
+        ],
+        takeaways: [
+            { icon: 'fa-arrow-trend-up', title: 'Peak Expat Absorption', body: 'Turnover aligned perfectly with the 2017–2019 expat and corporate relocation boom, driving immediate strong secondary market velocity.' },
+            { icon: 'fa-shield-halved', title: 'Pandemic Resilience', body: 'Values dipped only 5.2% from peak to trough — one of the narrowest corrections among BGC RFO assets during 2020–2021.' },
+            { icon: 'fa-city', title: 'Land Scarcity Floor', body: 'Complete absence of new land blocks nearby means no new supply can compete — supporting a permanent structural floor on valuations.' },
+        ],
+        totalGain: null,
+        rentalYield: null,
     }
 ];
 
