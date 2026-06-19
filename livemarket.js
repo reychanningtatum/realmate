@@ -1080,5 +1080,6 @@ function closeYtVideo() {
         const tabs = document.querySelector('.market-main-tabs');
         if (tabs) tabs.style.top = '40px';
     }
+    setTimeout(updateFilterBarTop, 100);
 })();
 

@@ -627,6 +627,7 @@ function toggleVideoRow(btn) {
     const isOpen = row.classList.toggle('open');
     chevron.classList.toggle('open', isOpen);
     btn.classList.toggle('collapsed', !isOpen);
+    setTimeout(() => { if (typeof updateFilterBarTop === 'function') updateFilterBarTop(); }, 320);
 }
 
 function toggleMiniCharts(btn) {
@@ -637,6 +638,7 @@ function toggleMiniCharts(btn) {
     chevron.classList.toggle('open', isOpen);
     btn.classList.toggle('collapsed', !isOpen);
     sep.style.display = isOpen ? 'block' : 'none';
+    setTimeout(() => { if (typeof updateFilterBarTop === 'function') updateFilterBarTop(); }, 320);
 }
 
 function miniChartOpenAnalytics() {
