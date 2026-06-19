@@ -74,9 +74,8 @@ function handleGlobalAnonToggle() {
 
     if (isEnabled) {
         if (!userSettings.anonName) {
-            alert("No configured identity found. Please specify and save an anonymous nickname inside your Account Preferences Hub settings panel.");
-            toggleEl.checked = false;
-            return;
+            userSettings.anonName = generateAnonName();
+            localStorage.setItem('userSettings', JSON.stringify(userSettings));
         }
         if (label) {
             label.innerText = "Incognito Mode Enabled";
@@ -488,8 +487,8 @@ async function createForumPost() {
     if (!content) return;
 
     if (isAnon && !anonNickname) {
-        alert("Please completely configure your unique nickname identifier inside the Account Preferences Hub.");
-        return;
+        userSettings.anonName = generateAnonName();
+        localStorage.setItem('userSettings', JSON.stringify(userSettings));
     }
 
     postBtn.disabled = true;
@@ -588,8 +587,8 @@ window.addComment = async function(postId, parentId = null) {
 
     if (isAnonymous) {
         if (!userSettings.anonName) {
-            alert("Please configure your unique incognito identity inside your account dashboard configuration settings hub first.");
-            return;
+            userSettings.anonName = generateAnonName();
+            localStorage.setItem('userSettings', JSON.stringify(userSettings));
         }
         finalName = userSettings.anonName;
         finalImg = `https://ui-avatars.com/api/?name=${encodeURIComponent(userSettings.anonName)}&background=0f172a&color=fff`;

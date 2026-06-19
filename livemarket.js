@@ -740,9 +740,8 @@ function toggleLMAnonMode() {
     const settings = JSON.parse(localStorage.getItem('userSettings')) || {};
     if (toggle.checked) {
         if (!settings.anonName) {
-            toggle.checked = false;
-            alert('No anonymous nickname set. Please configure one in Settings → Anonymous Settings first.');
-            return;
+            settings.anonName = generateAnonName();
+            localStorage.setItem('userSettings', JSON.stringify(settings));
         }
         row.classList.add('active');
         sub.textContent = `Posting as "${settings.anonName}"`;
@@ -765,9 +764,8 @@ async function submitLMPost() {
     const isAnon   = document.getElementById('lmAnonToggle')?.checked || false;
     const settings = JSON.parse(localStorage.getItem('userSettings')) || {};
     if (isAnon && !settings.anonName) {
-        status.className = 'lm-post-status error';
-        status.textContent = 'No anonymous nickname configured.';
-        return;
+        settings.anonName = generateAnonName();
+        localStorage.setItem('userSettings', JSON.stringify(settings));
     }
 
     const btn = document.getElementById('lmSubmitBtn');

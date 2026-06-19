@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Realmate | My Realmates</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="forum.css">
+  <script src="theme.js"></script>
+  <style>
+    .rm-page { max-width: 760px; margin: 0 auto; padding: 28px 20px 60px; }
+    .rm-page-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; }
+    .rm-page-sub { font-size: 13px; color: var(--text-sub); margin-bottom: 28px; }
+
+    /* Section headers */
+    .rm-section-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.2px; color: #94a3b8; margin: 0 0 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .rm-section-label i { font-size: 13px; }
+    .rm-section { margin-bottom: 32px; }
+
+    /* Mate card */
+    .rm-card {
+      display: flex; align-items: center; gap: 14px;
+      background: #fff; border: 1px solid #e2e8f0; border-radius: 14px;
+      padding: 14px 16px; margin-bottom: 10px;
+      transition: box-shadow 0.15s, transform 0.15s;
+    }
+    .rm-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.07); transform: translateY(-1px); }
+    .rm-card-avatar {
+      width: 46px; height: 46px; border-radius: 12px;
+      object-fit: cover; flex-shrink: 0; background: #f1f5f9;
+    }
+    .rm-card-info { flex: 1; min-width: 0; }
+    .rm-card-name { font-size: 14px; font-weight: 700; color: var(--text-main); }
+    .rm-card-job { font-size: 12px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .rm-card-badge {
+      font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 50px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .rm-badge-mates { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+    .rm-badge-pending { background: #fefce8; color: #ca8a04; border: 1px solid #fde68a; }
+    .rm-badge-sent { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+
+    /* Action buttons on pending received cards */
+    .rm-card-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .rm-btn-accept {
+      font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 50px;
+      border: 1.5px solid #32cd32; background: #f0fdf4; color: #16a34a;
+      cursor: pointer; transition: all 0.15s; font-family: inherit;
+    }
+    .rm-btn-accept:hover { background: #32cd32; color: #fff; }
+    .rm-btn-decline {
+      font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 50px;
+      border: 1.5px solid #e2e8f0; background: #f8fafc; color: #94a3b8;
+      cursor: pointer; transition: all 0.15s; font-family: inherit;
+    }
+    .rm-btn-decline:hover { background: #fef2f2; border-color: #fca5a5; color: #ef4444; }
+
+    /* Empty state */
+    .rm-empty {
+      text-align: center; padding: 36px 20px;
+      color: var(--text-sub); font-size: 13px;
+    }
+    .rm-empty i { font-size: 32px; color: #cbd5e1; display: block; margin-bottom: 10px; }
+    .rm-empty strong { display: block; font-size: 15px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; }
+
+    /* Loading */
+    .rm-loading { text-align: center; padding: 48px 20px; color: #94a3b8; }
+    .rm-loading i { font-size: 24px; }
+
+    /* Stats bar */
+    .rm-stats {
+      display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px;
+    }
+    .rm-stat {
+      flex: 1; min-width: 120px; background: #fff; border: 1px solid #e2e8f0;
+      border-radius: 14px; padding: 16px 18px;
+    }
+    .rm-stat-num { font-size: 26px; font-weight: 800; color: var(--text-main); line-height: 1; }
+    .rm-stat-label { font-size: 11px; color: var(--text-sub); margin-top: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; }
+
+    html[data-theme="dark"] .rm-card { background: #1e293b; border-color: #334155; }
+    html[data-theme="dark"] .rm-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
+    html[data-theme="dark"] .rm-stat { background: #1e293b; border-color: #334155; }
+    html[data-theme="dark"] .rm-badge-mates { background: rgba(50,205,50,0.1); border-color: rgba(50,205,50,0.25); }
+    html[data-theme="dark"] .rm-badge-pending { background: rgba(234,179,8,0.1); border-color: rgba(234,179,8,0.25); }
+    html[data-theme="dark"] .rm-badge-sent { background: #0f172a; border-color: #334155; }
+    html[data-theme="dark"] .rm-btn-accept { background: rgba(50,205,50,0.12); }
+    html[data-theme="dark"] .rm-btn-decline { background: #0f172a; border-color: #334155; }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="brand"><img src="images/realmate2.png" onclick="location.href='home.html'"></div>
+  <div class="nav-item" onclick="location.href='home.html'"><i class="fas fa-house"></i> <span>Home Feed</span></div>
+  <div class="nav-item" onclick="location.href='dashboard.html'"><i class="fas fa-user-tie"></i> <span>Profile</span></div>
+  <div class="nav-item" onclick="location.href='livemarket.html'"><i class="fas fa-chart-line"></i> <span>Live Market</span></div>
+  <div class="nav-item" onclick="location.href='analytics.html'"><i class="fas fa-chart-area"></i> <span>Analytics</span></div>
+  <div class="nav-item" onclick="location.href='forum.html'"><i class="fas fa-people-group"></i> <span>Forum</span></div>
+  <div class="nav-item" onclick="location.href='notifications.html'"><i class="fas fa-bell"></i> <span>Notifications</span></div>
+  <div class="nav-item active"><i class="fas fa-handshake"></i> <span>Realmates</span></div>
+  <div class="nav-item" onclick="location.href='settings.html'"><i class="fas fa-cog"></i> <span>Settings</span></div>
+  <div style="margin-top:auto">
+    <div class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Sign Out</span></div>
+  </div>
+</div>
+
+<div class="main-content">
+  <div class="rm-page">
+
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+      <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#32cd32,#16a34a);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="fas fa-handshake" style="color:#fff;font-size:18px;"></i>
+      </div>
+      <div>
+        <div class="rm-page-title">My Realmates</div>
+        <div class="rm-page-sub">Your network of trusted Alveo professionals</div>
+      </div>
+    </div>
+
+    <div id="rmLoading" class="rm-loading">
+      <i class="fas fa-spinner fa-spin"></i>
+    </div>
+
+    <div id="rmContent" style="display:none;">
+
+      <!-- Stats -->
+      <div class="rm-stats" id="rmStats"></div>
+
+      <!-- Pending Received -->
+      <div class="rm-section" id="rmPendingSection" style="display:none;">
+        <div class="rm-section-label" style="color:#ca8a04;">
+          <i class="fas fa-user-clock"></i> Mate Requests Received
+          <span id="rmPendingCount" style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:50px;font-size:10px;"></span>
+        </div>
+        <div id="rmPendingList"></div>
+      </div>
+
+      <!-- Accepted Mates -->
+      <div class="rm-section">
+        <div class="rm-section-label" style="color:#16a34a;">
+          <i class="fas fa-handshake"></i> Realmates
+        </div>
+        <div id="rmAcceptedList"></div>
+      </div>
+
+      <!-- Pending Sent -->
+      <div class="rm-section" id="rmSentSection" style="display:none;">
+        <div class="rm-section-label">
+          <i class="fas fa-paper-plane"></i> Requests Sent
+        </div>
+        <div id="rmSentList"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Mobile Bottom Navigation -->
+<nav class="mobile-bottom-nav">
+  <a class="mob-nav-item" href="livemarket.html"><i class="fas fa-chart-line"></i><span>Live Market</span></a>
+  <a class="mob-nav-item" href="forum.html"><i class="fas fa-people-group"></i><span>Forum</span></a>
+  <a class="mob-nav-item mob-nav-center" href="home.html"><i class="fas fa-house"></i><span>Home</span></a>
+  <a class="mob-nav-item" href="notifications.html"><i class="fas fa-bell"></i><span>Notifications</span></a>
+  <div class="mob-nav-item mob-nav-avatar-wrap" onclick="toggleNavMenu(event)">
+    <div class="mob-nav-avatar" id="navAvatar"><i class="fas fa-user-tie" style="font-size:13px;"></i></div>
+    <span>Me</span>
+    <div class="mob-nav-menu" id="navMenu">
+      <a href="dashboard.html"><i class="fas fa-user-tie"></i> Profile</a>
+      <a href="realmates.html" class="active"><i class="fas fa-handshake"></i> Realmates</a>
+      <a href="analytics.html"><i class="fas fa-chart-area"></i> Analytics</a>
+      <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+      <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+  </div>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="search-overlay.js"></script>
+<script src="auth-guard.js"></script>
+<script src="mates.js"></script>
+<script src="nav-menu.js"></script>
+<script src="notif-badge.js"></script>
+<script>
+function avatarFallback(name) {
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || '?')}&background=random&color=fff`;
+}
+
+async function loadRealmates() {
+  const { accepted, pendingReceived, pendingSent } = await getMatesList();
+
+  document.getElementById('rmLoading').style.display = 'none';
+  document.getElementById('rmContent').style.display = 'block';
+
+  // Stats
+  document.getElementById('rmStats').innerHTML = `
+    <div class="rm-stat">
+      <div class="rm-stat-num">${accepted.length}</div>
+      <div class="rm-stat-label"><i class="fas fa-handshake" style="color:#32cd32;margin-right:4px;"></i>Realmates</div>
+    </div>
+    <div class="rm-stat">
+      <div class="rm-stat-num">${pendingReceived.length}</div>
+      <div class="rm-stat-label"><i class="fas fa-user-clock" style="color:#f59e0b;margin-right:4px;"></i>Requests In</div>
+    </div>
+    <div class="rm-stat">
+      <div class="rm-stat-num">${pendingSent.length}</div>
+      <div class="rm-stat-label"><i class="fas fa-paper-plane" style="color:#64748b;margin-right:4px;"></i>Requests Out</div>
+    </div>
+  `;
+
+  // Pending received
+  if (pendingReceived.length > 0) {
+    document.getElementById('rmPendingSection').style.display = 'block';
+    document.getElementById('rmPendingCount').textContent = pendingReceived.length;
+    document.getElementById('rmPendingList').innerHTML = pendingReceived.map(m => `
+      <div class="rm-card" id="rm-pending-${m.rowId}">
+        <img class="rm-card-avatar" src="${m.img || avatarFallback(m.name)}" onerror="this.src='${avatarFallback(m.name)}'">
+        <div class="rm-card-info">
+          <div class="rm-card-name">${m.name}</div>
+          <div class="rm-card-job">Sent you a mate request</div>
+        </div>
+        <div class="rm-card-actions">
+          <button class="rm-btn-accept" onclick="acceptFromPage('${m.name}', '${m.rowId}')">
+            <i class="fas fa-check"></i> Accept
+          </button>
+          <button class="rm-btn-decline" onclick="declineFromPage('${m.name}', '${m.rowId}')">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Accepted
+  const acceptedList = document.getElementById('rmAcceptedList');
+  if (accepted.length === 0) {
+    acceptedList.innerHTML = `
+      <div class="rm-empty">
+        <i class="fas fa-handshake"></i>
+        <strong>No Realmates yet</strong>
+        Browse the Live Market and connect with fellow agents.
+      </div>`;
+  } else {
+    acceptedList.innerHTML = accepted.map(m => `
+      <div class="rm-card">
+        <img class="rm-card-avatar" src="${m.img || avatarFallback(m.name)}" onerror="this.src='${avatarFallback(m.name)}'">
+        <div class="rm-card-info">
+          <div class="rm-card-name">${m.name}</div>
+          <div class="rm-card-job">Realmate</div>
+        </div>
+        <span class="rm-card-badge rm-badge-mates"><i class="fas fa-handshake" style="margin-right:4px;"></i>Connected</span>
+      </div>
+    `).join('');
+  }
+
+  // Pending sent
+  if (pendingSent.length > 0) {
+    document.getElementById('rmSentSection').style.display = 'block';
+    document.getElementById('rmSentList').innerHTML = pendingSent.map(m => `
+      <div class="rm-card">
+        <div style="width:46px;height:46px;border-radius:12px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fas fa-user" style="color:#cbd5e1;font-size:20px;"></i>
+        </div>
+        <div class="rm-card-info">
+          <div class="rm-card-name">${m.name}</div>
+          <div class="rm-card-job">Pending response</div>
+        </div>
+        <span class="rm-card-badge rm-badge-sent"><i class="fas fa-clock" style="margin-right:4px;"></i>Pending</span>
+      </div>
+    `).join('');
+  }
+}
+
+async function acceptFromPage(requesterName, rowId) {
+  const card = document.getElementById(`rm-pending-${rowId}`);
+  if (card) card.style.opacity = '0.5';
+  const result = await acceptMateRequest(requesterName);
+  if (result.success) {
+    loadRealmates(); // refresh entire view
+  } else {
+    if (card) card.style.opacity = '1';
+    alert('Could not accept: ' + (result.error || 'Unknown error'));
+  }
+}
+
+async function declineFromPage(requesterName, rowId) {
+  const card = document.getElementById(`rm-pending-${rowId}`);
+  if (card) card.style.opacity = '0.5';
+  const result = await declineMateRequest(requesterName);
+  if (result && result.success !== false) {
+    loadRealmates();
+  } else {
+    if (card) card.style.opacity = '1';
+    alert('Could not decline: ' + ((result && result.error) || 'Unknown error'));
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadRealmates);
+</script>
+</body>
+</html>

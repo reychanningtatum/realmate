@@ -326,7 +326,7 @@
 }
 .mob-nav-menu a:hover { background: #f8fafc; }
 .mob-nav-menu a:last-child { color: #ef4444; }
-.mob-nav-menu a i { width: 14px; }
+.mob-nav-menu a i { min-width: 18px; text-align: center; flex-shrink: 0; }
 
 /* Raised center Home button */
 .mob-nav-item.mob-nav-center {
