@@ -105,7 +105,27 @@
         applyBadge(count);
     }
 
-    // Run on load then every 30 seconds
+    // Run on load then every 60 seconds as fallback
     await refresh();
-    setInterval(refresh, 30000);
+    setInterval(refresh, 60000);
+
+    // Realtime subscription for instant notifications
+    try {
+        const _notifSupa = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        _notifSupa
+            .channel('notif-badge')
+            .on('postgres_changes',
+                { event: 'INSERT', schema: 'public', table: 'notifications' },
+                (payload) => {
+                    const row = payload.new;
+                    if (row.recipient_user_name === user.name ||
+                        (userSettings.anonName && row.recipient_user_name === userSettings.anonName)) {
+                        refresh();
+                    }
+                }
+            )
+            .subscribe();
+    } catch (e) {
+        console.warn('Realtime notif subscription failed:', e);
+    }
 })();
