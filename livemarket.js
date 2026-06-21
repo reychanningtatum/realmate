@@ -1012,6 +1012,8 @@ renderMarketReportPdf();
         window.onYouTubeIframeAPIReady = function() {
             _ytPlayer = new YT.Player('ytEmbedFrame', {
                 videoId,
+                width: '100%',
+                height: '100%',
                 playerVars: { autoplay: 1, mute: 1, rel: 0, modestbranding: 1, playsinline: 1 },
                 events: {
                     onReady: function(e) {
