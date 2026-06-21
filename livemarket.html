@@ -30,18 +30,17 @@
 <!-- Main -->
 <div class="main-content">
 
-  <!-- ═══ MARKET PRICE TICKER ═══ -->
-  <div class="ticker-wrap" id="tickerWrap">
-    <div class="ticker-label"><i class="fas fa-chart-line"></i> MARKET</div>
-    <div class="ticker-track">
-      <div class="ticker-content" id="tickerContent">
-        <span class="ticker-loading">Analyzing market prices…</span>
+  <!-- ═══ FIXED TOP: TICKER + FILTER BAR ═══ -->
+  <div class="top-fixed-wrap">
+    <div class="ticker-wrap" id="tickerWrap">
+      <div class="ticker-label"><i class="fas fa-chart-line"></i> MARKET</div>
+      <div class="ticker-track">
+        <div class="ticker-content" id="tickerContent">
+          <span class="ticker-loading">Analyzing market prices…</span>
+        </div>
       </div>
     </div>
-  </div>
-
-  <!-- Filter bar (sticks below ticker) -->
-  <div class="filter-bar">
+    <div class="filter-bar">
     <h2 class="market-pulse-title">Live Market</h2>
     <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
       <div class="search-wrap" style="flex:1; min-width:160px;">
@@ -96,6 +95,7 @@
       <button class="chip chip-sub" data-sub="WILLING TO LEASE" onclick="selectSubCat(this)">Willing to Lease</button>
     </div>
   </div>
+  </div><!-- /top-fixed-wrap -->
 
   <!-- ═══ LEDGER VIEW ═══ -->
   <div id="ledgerView">
