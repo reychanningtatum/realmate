@@ -1040,6 +1040,17 @@ renderMarketReportPdf();
     } catch {}
 })();
 
+// Spacer for fixed filter bar
+(function() {
+    const fb = document.querySelector('.filter-bar');
+    const sp = document.getElementById('filterBarSpacer');
+    if (!fb || !sp) return;
+    function syncSpacer() { sp.style.height = fb.offsetHeight + 'px'; }
+    syncSpacer();
+    window.addEventListener('resize', syncSpacer);
+    new MutationObserver(syncSpacer).observe(fb, { childList: true, subtree: true, attributes: true });
+})();
+
 // ── Video controls ──
 let _ytMuted = false;
 function toggleYtMute(btn) {
