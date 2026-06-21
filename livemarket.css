@@ -773,8 +773,10 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
   .ledger-two-col { display: flex; flex-direction: column-reverse; }
   .ledger-right { width: 100%; position: relative; top: 0; max-height: none; overflow-y: visible; }
   #miniChartsRow { flex-direction: row !important; overflow-x: auto; }
-  .video-pdf-row { flex-direction: row; align-items: flex-start; gap: 8px; margin-top: 8px; }
-  .yt-embed-wrap { width: 140px; height: 100px; flex-shrink: 0; }
+  .video-pdf-row { flex-direction: row; align-items: stretch; gap: 8px; margin-top: 8px; }
+  .yt-embed-wrap { flex-shrink: 0; width: auto; height: auto; }
+  .yt-embed-wrap > div:first-child { height: 100%; }
+  #ytEmbedFrame { min-width: 180px; }
   #pdfStripWrap { min-width: 0; }
   .listings-grid { grid-template-columns: 1fr; gap: 14px; }
 
