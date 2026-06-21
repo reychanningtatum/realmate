@@ -43,7 +43,64 @@
   <!-- ═══ LEDGER VIEW ═══ -->
   <div id="ledgerView">
 
-    <!-- Sticky ticker bar: YouTube + stats -->
+    <!-- Filter bar (sticks to top) -->
+    <div class="filter-bar">
+      <h2 class="market-pulse-title">Live Market</h2>
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <div class="search-wrap" style="flex:1; min-width:160px;">
+          <i class="fas fa-search"></i>
+          <input type="text" id="searchInput" placeholder="Search listings, agents…" oninput="applyFilters()">
+        </div>
+        <div class="location-wrap">
+          <i class="fas fa-map-marker-alt"></i>
+          <select id="locationInput" onchange="applyLocationFilter()">
+            <option value="">All Locations</option>
+            <option value="BGC">BGC</option>
+            <option value="Makati">Makati</option>
+            <option value="Pasig">Pasig</option>
+            <option value="Quezon City">Quezon City</option>
+            <option value="Mandaluyong">Mandaluyong</option>
+            <option value="Pasay">Pasay</option>
+            <option value="Taguig">Taguig</option>
+            <option value="Muntinlupa">Muntinlupa</option>
+            <option value="Las Piñas">Las Piñas</option>
+            <option value="Parañaque">Parañaque</option>
+            <option value="Alabang">Alabang</option>
+            <option value="Laguna">Laguna</option>
+            <option value="Cavite">Cavite</option>
+            <option value="Rizal">Rizal</option>
+            <option value="Bulacan">Bulacan</option>
+            <option value="Pampanga">Pampanga</option>
+            <option value="Cebu">Cebu</option>
+          </select>
+        </div>
+        <button class="btn-post-listing" onclick="openPostModal()">
+          <i class="fas fa-plus"></i> Post Listing
+        </button>
+      </div>
+      <div class="filter-chips" id="filterChips">
+        <button class="chip chip-match" data-cat="MATCHES" onclick="selectCat(this)"><i class="fas fa-bolt"></i> My Matches</button>
+        <button class="chip chip-mine" data-cat="MY_LISTINGS" onclick="selectCat(this)"><i class="fas fa-user"></i> My Listings</button>
+        <button class="chip active" data-cat="ALL" onclick="selectCat(this)">All Listings</button>
+        <button class="chip" data-cat="FOR SALE" onclick="selectCat(this)">For Sale</button>
+        <button class="chip" data-cat="FOR RENT" onclick="selectCat(this)">For Rent</button>
+        <button class="chip" data-cat="FOR LEASE" onclick="selectCat(this)">For Lease</button>
+        <button class="chip" data-cat="WILLING TO BUY" onclick="selectCat(this)">Willing to Buy</button>
+        <button class="chip" data-cat="WILLING TO RENT" onclick="selectCat(this)">Willing to Rent</button>
+        <button class="chip" data-cat="WILLING TO LEASE" onclick="selectCat(this)">Willing to Lease</button>
+      </div>
+      <div class="filter-chips my-listings-subfilter" id="myListingsSubfilter" style="display:none;">
+        <button class="chip chip-sub active" data-sub="ALL" onclick="selectSubCat(this)">All</button>
+        <button class="chip chip-sub" data-sub="FOR SALE" onclick="selectSubCat(this)">For Sale</button>
+        <button class="chip chip-sub" data-sub="FOR RENT" onclick="selectSubCat(this)">For Rent</button>
+        <button class="chip chip-sub" data-sub="FOR LEASE" onclick="selectSubCat(this)">For Lease</button>
+        <button class="chip chip-sub" data-sub="WILLING TO BUY" onclick="selectSubCat(this)">Willing to Buy</button>
+        <button class="chip chip-sub" data-sub="WILLING TO RENT" onclick="selectSubCat(this)">Willing to Rent</button>
+        <button class="chip chip-sub" data-sub="WILLING TO LEASE" onclick="selectSubCat(this)">Willing to Lease</button>
+      </div>
+    </div>
+
+    <!-- Graphs + Video/PDF (scrolls with page) -->
     <div class="sticky-ticker-bar" style="flex-direction:column; gap:0; align-items:stretch;">
 
       <!-- Top row: mini project charts side by side -->
@@ -100,64 +157,6 @@
 
     <!-- ── LISTINGS ── -->
     <div id="listingsTabPane">
-
-    <!-- Filter bar -->
-    <div class="filter-bar">
-      <h2 class="market-pulse-title">Live Market</h2>
-      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-        <div class="search-wrap" style="flex:1; min-width:160px;">
-          <i class="fas fa-search"></i>
-          <input type="text" id="searchInput" placeholder="Search listings, agents…" oninput="applyFilters()">
-        </div>
-        <div class="location-wrap">
-          <i class="fas fa-map-marker-alt"></i>
-          <select id="locationInput" onchange="applyLocationFilter()">
-            <option value="">All Locations</option>
-            <option value="BGC">BGC</option>
-            <option value="Makati">Makati</option>
-            <option value="Pasig">Pasig</option>
-            <option value="Quezon City">Quezon City</option>
-            <option value="Mandaluyong">Mandaluyong</option>
-            <option value="Pasay">Pasay</option>
-            <option value="Taguig">Taguig</option>
-            <option value="Muntinlupa">Muntinlupa</option>
-            <option value="Las Piñas">Las Piñas</option>
-            <option value="Parañaque">Parañaque</option>
-            <option value="Alabang">Alabang</option>
-            <option value="Laguna">Laguna</option>
-            <option value="Cavite">Cavite</option>
-            <option value="Rizal">Rizal</option>
-            <option value="Bulacan">Bulacan</option>
-            <option value="Pampanga">Pampanga</option>
-            <option value="Cebu">Cebu</option>
-          </select>
-        </div>
-<button class="btn-post-listing" onclick="openPostModal()">
-          <i class="fas fa-plus"></i> Post Listing
-        </button>
-      </div>
-<div class="filter-chips" id="filterChips">
-        <button class="chip chip-match" data-cat="MATCHES" onclick="selectCat(this)"><i class="fas fa-bolt"></i> My Matches</button>
-        <button class="chip chip-mine" data-cat="MY_LISTINGS" onclick="selectCat(this)"><i class="fas fa-user"></i> My Listings</button>
-        <button class="chip active" data-cat="ALL" onclick="selectCat(this)">All Listings</button>
-        <button class="chip" data-cat="FOR SALE" onclick="selectCat(this)">For Sale</button>
-        <button class="chip" data-cat="FOR RENT" onclick="selectCat(this)">For Rent</button>
-        <button class="chip" data-cat="FOR LEASE" onclick="selectCat(this)">For Lease</button>
-        <button class="chip" data-cat="WILLING TO BUY" onclick="selectCat(this)">Willing to Buy</button>
-        <button class="chip" data-cat="WILLING TO RENT" onclick="selectCat(this)">Willing to Rent</button>
-        <button class="chip" data-cat="WILLING TO LEASE" onclick="selectCat(this)">Willing to Lease</button>
-      </div>
-      <!-- My Listings sub-filter (visible only when My Listings chip is active) -->
-      <div class="filter-chips my-listings-subfilter" id="myListingsSubfilter" style="display:none;">
-        <button class="chip chip-sub active" data-sub="ALL" onclick="selectSubCat(this)">All</button>
-        <button class="chip chip-sub" data-sub="FOR SALE" onclick="selectSubCat(this)">For Sale</button>
-        <button class="chip chip-sub" data-sub="FOR RENT" onclick="selectSubCat(this)">For Rent</button>
-        <button class="chip chip-sub" data-sub="FOR LEASE" onclick="selectSubCat(this)">For Lease</button>
-        <button class="chip chip-sub" data-sub="WILLING TO BUY" onclick="selectSubCat(this)">Willing to Buy</button>
-        <button class="chip chip-sub" data-sub="WILLING TO RENT" onclick="selectSubCat(this)">Willing to Rent</button>
-        <button class="chip chip-sub" data-sub="WILLING TO LEASE" onclick="selectSubCat(this)">Willing to Lease</button>
-      </div>
-    </div>
 
     <!-- Listings grid -->
     <div class="listings-grid" id="listingsGrid">
