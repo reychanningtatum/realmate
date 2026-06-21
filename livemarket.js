@@ -1040,15 +1040,16 @@ renderMarketReportPdf();
     } catch {}
 })();
 
-// Spacer for fixed filter bar
+// Sync top padding on mobile for fixed header
 (function() {
-    const fb = document.querySelector('.filter-bar');
-    const sp = document.getElementById('filterBarSpacer');
-    if (!fb || !sp) return;
-    function syncSpacer() { sp.style.height = fb.offsetHeight + 'px'; }
-    syncSpacer();
-    window.addEventListener('resize', syncSpacer);
-    new MutationObserver(syncSpacer).observe(fb, { childList: true, subtree: true, attributes: true });
+    const wrap = document.querySelector('.top-fixed-wrap');
+    if (!wrap) return;
+    function sync() {
+        document.documentElement.style.setProperty('--top-fixed-height', wrap.offsetHeight + 'px');
+    }
+    sync();
+    window.addEventListener('resize', sync);
+    setTimeout(sync, 500);
 })();
 
 // ── Video controls ──
