@@ -390,6 +390,9 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 .video-pdf-row {
   display: flex; flex-direction: column; gap: 12px; margin-top: 12px;
 }
+#miniChartsRow {
+  display: flex; flex-direction: column; gap: 10px;
+}
 .yt-embed-wrap {
   width: 100%; height: 158px;
 }
