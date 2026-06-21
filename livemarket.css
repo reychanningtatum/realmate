@@ -64,6 +64,7 @@ h1,h2,h3 { font-family: 'Playfair Display', serif; }
   z-index: 100;
   margin-left: -48px;
   margin-right: -48px;
+  overflow: visible;
 }
 .ticker-wrap {
   display: flex;
