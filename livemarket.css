@@ -778,7 +778,7 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
   #miniChartsRow { flex-direction: row !important; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
   #miniChartsRow::-webkit-scrollbar { display: none; }
   #miniChartsRow > * { flex-shrink: 0; }
-  .video-pdf-row { flex-direction: row; align-items: flex-start; gap: 8px; margin-top: 8px; }
+  .video-pdf-row { flex-direction: row; align-items: center; gap: 8px; margin-top: 8px; }
   .yt-embed-wrap { flex-shrink: 0; width: 224px; height: 126px; }
   .yt-embed-wrap > div:first-child { height: 100%; }
   #ytEmbedFrame { width: 100% !important; height: 100% !important; }
