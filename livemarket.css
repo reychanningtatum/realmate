@@ -373,9 +373,9 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
    ========================================= */
 .listings-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
-  max-width: 1300px;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  max-width: 680px;
   align-items: start;
   /* contain card stacking contexts so they never bleed above sticky bars */
   isolation: isolate;
