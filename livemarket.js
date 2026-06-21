@@ -881,7 +881,7 @@ async function renderMarketReportPdf() {
 
         const pdf = await lib.getDocument({ data: arrayBuffer }).promise;
         _pdfDoc = pdf;
-        const PAGE_H = 118;
+        const PAGE_H = 126;
 
         loader.remove();
 
