@@ -764,8 +764,9 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
   .location-wrap { flex: 1; width: auto; }
   .btn-location-ok { padding: 11px 14px; }
 
-  .ledger-two-col { display: block; }
-  .ledger-right { display: none; }
+  .ledger-two-col { display: flex; flex-direction: column-reverse; }
+  .ledger-right { width: 100%; position: relative; top: 0; max-height: none; overflow-y: visible; }
+  #miniChartsRow { flex-direction: row !important; overflow-x: auto; }
   .listings-grid { grid-template-columns: 1fr; gap: 14px; }
 
   .listing-card-images img.single-img { height: 180px; }
