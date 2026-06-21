@@ -99,25 +99,8 @@
   <!-- ═══ LEDGER VIEW ═══ -->
   <div id="ledgerView" class="ledger-two-col">
 
-    <!-- Left: Listings -->
+    <!-- Left: Video/PDF + Listings -->
     <div class="ledger-left">
-      <div id="listingsTabPane">
-        <div class="listings-grid" id="listingsGrid">
-          <div class="empty-state" id="listingsLoader">
-            <i class="fas fa-spinner fa-spin"></i>
-            <p>Loading listings…</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Right: Graphs + Video/PDF -->
-    <div class="ledger-right">
-
-      <!-- Mini project charts stacked vertically -->
-      <div id="miniChartsRow" class="open">
-        <!-- Mini chart cards injected by cap-tracker.js -->
-      </div>
 
       <!-- Video + PDF row -->
       <div class="video-pdf-row">
@@ -154,7 +137,23 @@
         </div>
       </div>
 
-    </div><!-- /ledger-right -->
+      <div id="listingsTabPane">
+        <div class="listings-grid" id="listingsGrid">
+          <div class="empty-state" id="listingsLoader">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading listings…</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Graphs -->
+    <div class="ledger-right">
+      <div id="miniChartsRow" class="open">
+        <!-- Mini chart cards injected by cap-tracker.js -->
+      </div>
+    </div>
+
   </div><!-- /ledger-two-col -->
 
   </div>
