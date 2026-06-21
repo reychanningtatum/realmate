@@ -387,6 +387,12 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   overflow-y: auto;
   scrollbar-width: thin;
 }
+.video-pdf-row {
+  display: flex; flex-direction: column; gap: 12px; margin-top: 12px;
+}
+.yt-embed-wrap {
+  width: 100%; height: 158px;
+}
 
 .listings-grid {
   display: grid;
@@ -767,6 +773,9 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
   .ledger-two-col { display: flex; flex-direction: column-reverse; }
   .ledger-right { width: 100%; position: relative; top: 0; max-height: none; overflow-y: visible; }
   #miniChartsRow { flex-direction: row !important; overflow-x: auto; }
+  .video-pdf-row { flex-direction: row; align-items: flex-start; gap: 8px; margin-top: 8px; }
+  .yt-embed-wrap { width: 140px; height: 100px; flex-shrink: 0; }
+  #pdfStripWrap { min-width: 0; }
   .listings-grid { grid-template-columns: 1fr; gap: 14px; }
 
   .listing-card-images img.single-img { height: 180px; }
