@@ -1055,11 +1055,16 @@ renderMarketReportPdf();
 })();
 
 // ── Video controls ──
-let _ytMuted = false;
+let _ytMuted = true;
 function toggleYtMute(btn) {
     if (!_ytPlayer) return;
     _ytMuted = !_ytMuted;
-    _ytMuted ? _ytPlayer.mute() : (_ytPlayer.unMute(), _ytPlayer.setVolume(100));
+    if (_ytMuted) {
+        _ytPlayer.mute();
+    } else {
+        _ytPlayer.unMute();
+        _ytPlayer.setVolume(100);
+    }
     btn.innerHTML = _ytMuted ? '<i class="fas fa-volume-xmark"></i>' : '<i class="fas fa-volume-high"></i>';
     if (!_ytMuted) {
         const hint = document.getElementById('ytMuteHint');
