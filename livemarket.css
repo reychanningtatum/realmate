@@ -74,6 +74,7 @@ h1,h2,h3 { font-family: 'Playfair Display', serif; }
   overflow: hidden;
   flex-shrink: 0;
   border-bottom: 2px solid var(--primary);
+  padding-left: 4px;
 }
 
 .ticker-label {
