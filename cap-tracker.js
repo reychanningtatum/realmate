@@ -621,39 +621,8 @@ function initMiniChart() {
     });
 }
 
-function toggleVideoRow(btn) {
-    const row = document.getElementById('videoRow');
-    const chevron = document.getElementById('videoRowChevron');
-    const isOpen = row.classList.toggle('open');
-    chevron.classList.toggle('open', isOpen);
-    btn.classList.toggle('collapsed', !isOpen);
-    setTimeout(() => { if (typeof updateFilterBarTop === 'function') updateFilterBarTop(); }, 320);
-}
-
-function toggleMiniCharts(btn) {
-    const row = document.getElementById('miniChartsRow');
-    const chevron = document.getElementById('miniChartsChevron');
-    const sep = document.getElementById('tickerSeparator');
-    const isOpen = row.classList.toggle('open');
-    chevron.classList.toggle('open', isOpen);
-    btn.classList.toggle('collapsed', !isOpen);
-    sep.style.display = isOpen ? 'block' : 'none';
-    setTimeout(() => { if (typeof updateFilterBarTop === 'function') updateFilterBarTop(); }, 320);
-}
-
 function miniChartOpenAnalytics() {
     location.href = 'analytics.html';
-}
-
-function closeMiniChart() {
-    const row = document.getElementById('miniChartsRow');
-    if (row) row.style.display = 'none';
-    const sep = document.getElementById('tickerSeparator');
-    if (sep) sep.style.display = 'none';
-    const btn = document.getElementById('miniChartsToggleBtn');
-    if (btn) btn.style.display = 'none';
-    Object.values(_miniCharts).forEach(c => c.destroy());
-    Object.keys(_miniCharts).forEach(k => delete _miniCharts[k]);
 }
 
 // Auto-init full chart on analytics page
@@ -664,16 +633,11 @@ if (location.pathname.endsWith('analytics.html')) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (location.pathname.endsWith('analytics.html')) return; // handled above
+    if (location.pathname.endsWith('analytics.html')) return;
     if (localStorage.getItem('rm_show_graphs') === '0') {
-        ['miniChartsRow', 'miniChartsToggleBtn', 'tickerSeparator'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.style.display = 'none';
-        });
+        const row = document.getElementById('miniChartsRow');
+        if (row) row.style.display = 'none';
         return;
     }
-    setTimeout(() => {
-        initMiniChart();
-        document.getElementById('tickerSeparator').style.display = 'block';
-    }, 300);
+    setTimeout(() => initMiniChart(), 300);
 });

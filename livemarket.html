@@ -51,18 +51,9 @@
         <!-- Mini chart cards are injected dynamically by cap-tracker.js -->
       </div><!-- /mini charts row -->
 
-      <!-- Mini charts chevron toggle -->
-      <div id="miniChartsToggleBtn" class="mini-charts-toggle-btn" onclick="toggleMiniCharts(this)">
-        <span class="mini-charts-collapsed-label"><i class="fas fa-chart-line" style="color:#32cd32;"></i> Project Graphs</span>
-        <span id="miniChartsChevron" class="mini-charts-chevron open">
-          <i class="fas fa-chevron-up" style="font-size:11px; display:block;"></i>
-          <i class="fas fa-chevron-up" style="font-size:11px; display:block; margin-top:-6px;"></i>
-        </span>
-      </div>
-
       <!-- Separator -->
-      <div id="tickerSeparator" class="ticker-separator-wrap" style="display:none; background:#fff;">
-        <div style="height:1px; background:linear-gradient(to right, transparent, rgba(100,116,139,0.3), transparent);"></div>
+      <div class="ticker-separator-wrap" style="background:#fff;">
+        <div style="height:1px; background:linear-gradient(to right, transparent, rgba(100,116,139,0.18), transparent);"></div>
       </div>
 
       <!-- Bottom row: Video | PDF side by side -->
@@ -94,14 +85,6 @@
 
       </div><!-- /bottom row: video + pdf -->
 
-      <!-- Video/PDF row chevron toggle -->
-      <div id="videoRowToggleBtn" class="mini-charts-toggle-btn" onclick="toggleVideoRow(this)">
-        <span class="mini-charts-collapsed-label"><i class="fas fa-play-circle" style="color:#32cd32;"></i> Video &amp; PDF</span>
-        <span id="videoRowChevron" class="mini-charts-chevron open">
-          <i class="fas fa-chevron-up" style="font-size:11px; display:block;"></i>
-          <i class="fas fa-chevron-up" style="font-size:11px; display:block; margin-top:-6px;"></i>
-        </span>
-      </div>
 
       <!-- PDF lightbox -->
       <div id="pdfLightbox" onclick="closePdfLightbox()" class="pdf-lightbox">

@@ -191,8 +191,7 @@ h1,h2,h3 { font-family: 'Playfair Display', serif; }
    STATS STRIP
    ========================================= */
 .sticky-ticker-bar {
-  position: sticky;
-  top: 40px;
+  position: relative;
   z-index: 99;
   background: var(--bg);
   padding: 8px 48px 2px;
@@ -700,8 +699,7 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
 
   /* Sticky-ticker-bar (video + stats) sticks just below the fixed ticker */
   .sticky-ticker-bar {
-    position: sticky;
-    top: 40px;
+    position: relative;
     z-index: 150;
     margin-left: -16px;
     margin-right: -16px;
