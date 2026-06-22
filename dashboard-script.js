@@ -684,7 +684,7 @@ function uploadCoverPhoto(input) {
     const file = input.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = e => openCoverCropModal(e.target.result);
+    reader.onload = e => openCoverCropModal(e.target.result, true);
     reader.readAsDataURL(file);
 }
 
@@ -737,7 +737,10 @@ async function repositionCover() {
 
 let _coverCropper = null;
 
-function openCoverCropModal(src) {
+let _coverIsNewUpload = false;
+
+function openCoverCropModal(src, isNewUpload) {
+    _coverIsNewUpload = !!isNewUpload;
     const modal = document.getElementById('coverCropModal');
     const img = document.getElementById('coverCropImage');
     img.src = src;
@@ -783,7 +786,7 @@ async function applyCoverCrop() {
         localStorage.setItem('user', JSON.stringify(user));
         updateUI();
         closeCoverCropModal();
-        showPhotoToast('Cover photo repositioned!');
+        showPhotoToast(_coverIsNewUpload ? 'Cover photo updated!' : 'Cover photo repositioned!');
     } catch (e) {
         alert('Failed to save cover: ' + e.message);
     } finally {
