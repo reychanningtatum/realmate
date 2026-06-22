@@ -70,6 +70,18 @@ function updateUI() {
     if(!document.getElementById("nameDisplay")) return;
     
     document.getElementById("profileImage").src = user.image;
+
+    // Cover photo
+    const coverImg = document.getElementById('coverImage');
+    const coverPlaceholder = document.getElementById('coverPlaceholder');
+    if (coverImg && user.coverUrl) {
+        coverImg.src = user.coverUrl;
+        coverImg.style.display = 'block';
+        if (coverPlaceholder) coverPlaceholder.style.display = 'none';
+    } else if (coverImg) {
+        coverImg.style.display = 'none';
+        if (coverPlaceholder) coverPlaceholder.style.display = 'flex';
+    }
     document.getElementById("nameDisplay").innerText = user.name;
 
     // Update menu avatar with profile photo or initial
@@ -146,7 +158,6 @@ async function loadProfile() {
                 if (profiles && profiles.length > 0) {
                     const profile = profiles[0];
                     if (effectivelyViewingOther) {
-                        // When viewing another user: use ONLY their data, no fallback to current user
                         user = {
                             id: targetId,
                             name: profile.full_name || 'Realmate Member',
@@ -157,7 +168,8 @@ async function loadProfile() {
                             group: profile.business_group || '',
                             team: profile.team_name || '',
                             bio: profile.bio || '',
-                            relationship: profile.relationship_status || ''
+                            relationship: profile.relationship_status || '',
+                            coverUrl: profile.cover_url || ''
                         };
                     } else {
                         user = {
@@ -170,7 +182,8 @@ async function loadProfile() {
                             group: profile.business_group || user.group,
                             team: profile.team_name || user.team,
                             bio: profile.bio || user.bio,
-                            relationship: profile.relationship_status || ''
+                            relationship: profile.relationship_status || '',
+                            coverUrl: profile.cover_url || ''
                         };
                         localStorage.setItem("user", JSON.stringify(user));
                     }
@@ -661,3 +674,24 @@ window.onload = async () => {
         });
     }
 };
+
+async function uploadCoverPhoto(input) {
+    const file = input.files?.[0];
+    if (!file) return;
+    try {
+        const { data: authData } = await _supabase.auth.getUser();
+        const userId = authData?.user?.id;
+        if (!userId) return;
+        const path = `covers/${userId}_${Date.now()}.${file.name.split('.').pop()}`;
+        const { error: upErr } = await _supabase.storage.from('images').upload(path, file, { upsert: true });
+        if (upErr) throw upErr;
+        const url = _supabase.storage.from('images').getPublicUrl(path).data.publicUrl;
+        await _supabase.from('profiles').update({ cover_url: url }).eq('id', userId);
+        user.coverUrl = url;
+        localStorage.setItem('user', JSON.stringify(user));
+        updateUI();
+    } catch (e) {
+        console.error('Cover upload failed:', e);
+        alert('Failed to upload cover photo.');
+    }
+}

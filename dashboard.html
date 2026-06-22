@@ -46,6 +46,19 @@
     <div class="bento-grid">
         <div class="bento-card profile-card" id="profileCard">
 
+            <!-- Cover Photo -->
+            <div class="profile-cover" id="profileCover">
+                <div class="profile-cover-placeholder" id="coverPlaceholder">
+                    <i class="fas fa-image"></i>
+                </div>
+                <img id="coverImage" style="display:none;">
+                <label class="profile-cover-edit edit-only" for="coverPhotoInput">
+                    <i class="fas fa-camera"></i> Edit Cover
+                </label>
+                <input type="file" id="coverPhotoInput" hidden accept="image/*" onchange="uploadCoverPhoto(this)">
+            </div>
+
+          <div class="profile-card-body">
             <!-- Avatar + chevron menu — top right -->
             <div style="position:absolute; top:16px; right:16px;">
                 <button id="profileMenuBtn" onclick="toggleProfileMenu(event)" style="height:34px; padding:0 10px 0 6px; border-radius:50px; background:#f1f5f9; border:1px solid #e2e8f0; display:flex; align-items:center; gap:6px; cursor:pointer;">
@@ -115,6 +128,7 @@
                     <div id="profileFollowBtn"></div>
                 </div>
             </div>
+          </div><!-- /profile-card-body -->
 
         </div>
 
