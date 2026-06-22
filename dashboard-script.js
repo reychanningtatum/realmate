@@ -457,7 +457,7 @@ async function saveProfile() {
     updateUI();
     if (btn) { btn.disabled = false; btn.innerHTML = 'Save Changes'; }
     closeEditModal();
-    _editAlert('Profile saved successfully!');
+    showPhotoToast('Profile saved successfully!');
 }
 
 function openEditModal() {
@@ -516,8 +516,9 @@ function closeProfileLightbox() {
 }
 
 // ── Toast ──
-function showPhotoToast() {
+function showPhotoToast(msg) {
     const toast = document.getElementById("profileToast");
+    if (msg) toast.innerHTML = `<i class="fas fa-check-circle" style="color:#32cd32;"></i> ${msg}`;
     toast.style.display = "flex";
     toast.style.opacity = "1";
     clearTimeout(window._toastTimer);
@@ -691,6 +692,7 @@ async function uploadCoverPhoto(input) {
         localStorage.setItem('user', JSON.stringify(user));
         updateUI();
         closeCoverActionSheet();
+        showPhotoToast('Cover photo updated!');
     } catch (e) {
         console.error('Cover upload failed:', e);
         alert('Failed to upload cover photo.');
@@ -792,6 +794,7 @@ async function applyCoverCrop() {
         localStorage.setItem('user', JSON.stringify(user));
         updateUI();
         closeCoverCropModal();
+        showPhotoToast('Cover photo repositioned!');
     } catch (e) {
         alert('Failed to save cover: ' + e.message);
     } finally {
