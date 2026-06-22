@@ -146,6 +146,10 @@ function parse(text) {
   return { locs, unit, project, price, features };
 }
 
+function goToProfile(userId) {
+  if (userId) location.href = `dashboard.html?user_id=${userId}`;
+}
+
 function avatarFallback(n) { return `https://ui-avatars.com/api/?name=${encodeURIComponent(n||'?')}&background=random&color=fff`; }
 function safeText(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function timeAgo(d) {
@@ -198,8 +202,8 @@ async function loadListing() {
         </div>
         <div class="ld-divider"></div>
         <div class="ld-user">
-          <img src="${img}" onerror="this.src='${avatarFallback(name)}'">
-          <div>
+          <img src="${img}" onerror="this.src='${avatarFallback(name)}'" onclick="goToProfile('${listing.user_id}')" style="cursor:pointer;">
+          <div onclick="goToProfile('${listing.user_id}')" style="cursor:pointer;">
             <div class="ld-user-name">${safeText(name)}</div>
             <div class="ld-user-job">${listing.user_job || ''}</div>
           </div>
