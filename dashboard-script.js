@@ -676,27 +676,12 @@ window.onload = async () => {
     }
 };
 
-async function uploadCoverPhoto(input) {
+function uploadCoverPhoto(input) {
     const file = input.files?.[0];
     if (!file) return;
-    try {
-        const { data: authData } = await _supabase.auth.getUser();
-        const userId = authData?.user?.id;
-        if (!userId) return;
-        const path = `covers/${userId}_${Date.now()}.${file.name.split('.').pop()}`;
-        const { error: upErr } = await _supabase.storage.from('images').upload(path, file, { upsert: true });
-        if (upErr) throw upErr;
-        const url = _supabase.storage.from('images').getPublicUrl(path).data.publicUrl;
-        await _supabase.from('profiles').update({ cover_url: url }).eq('id', userId);
-        user.coverUrl = url;
-        localStorage.setItem('user', JSON.stringify(user));
-        updateUI();
-        closeCoverActionSheet();
-        showPhotoToast('Cover photo updated!');
-    } catch (e) {
-        console.error('Cover upload failed:', e);
-        alert('Failed to upload cover photo.');
-    }
+    const reader = new FileReader();
+    reader.onload = e => openCoverCropModal(e.target.result);
+    reader.readAsDataURL(file);
 }
 
 function openCoverActionSheet() {
