@@ -927,12 +927,7 @@ async function submitLMPost() {
     const localUser = JSON.parse(localStorage.getItem('user'));
     if (!localUser)      { status.className = 'lm-post-status error'; status.textContent = 'You must be logged in to post.'; return; }
 
-    const isAnon   = document.getElementById('lmAnonToggle')?.checked || false;
-    const settings = JSON.parse(localStorage.getItem('userSettings')) || {};
-    if (isAnon && !settings.anonName) {
-        settings.anonName = generateAnonName();
-        localStorage.setItem('userSettings', JSON.stringify(settings));
-    }
+    const isAnon = false;
 
     const btn = document.getElementById('lmSubmitBtn');
     btn.disabled = true;
