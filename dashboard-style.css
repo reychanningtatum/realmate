@@ -246,11 +246,10 @@ h1, h2, h3 { font-family: 'Playfair Display', serif; margin: 0; }
 /* Camera overlay — visible on hover */
 .profile-camera-overlay {
     position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 38px;
-    background: rgba(0, 0, 0, 0.55);
-    backdrop-filter: blur(4px);
-    border-radius: 0 0 50% 50%;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
     display: flex;
     align-items: center;
     justify-content: center;
