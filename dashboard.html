@@ -47,14 +47,14 @@
         <div class="bento-card profile-card" id="profileCard">
 
             <!-- Cover Photo -->
-            <div class="profile-cover" id="profileCover">
+            <div class="profile-cover" id="profileCover" onclick="openCoverActionSheet()">
                 <div class="profile-cover-placeholder" id="coverPlaceholder">
                     <i class="fas fa-image"></i>
                 </div>
                 <img id="coverImage" style="display:none;">
-                <label class="profile-cover-edit edit-only" for="coverPhotoInput">
+                <button class="profile-cover-edit edit-only" onclick="event.stopPropagation(); openCoverActionSheet()">
                     <i class="fas fa-camera"></i> Edit Cover
-                </label>
+                </button>
                 <input type="file" id="coverPhotoInput" hidden accept="image/*" onchange="uploadCoverPhoto(this)">
 
                 <!-- Menu button on cover -->
@@ -285,6 +285,33 @@
                 <div><div style="font-size:14px; font-weight:700; color:#0f172a;">Change Photo</div><div style="font-size:12px; color:#94a3b8;">Upload a new profile picture</div></div>
             </div>
             <div onclick="closePhotoActionSheet()" style="display:flex; align-items:center; gap:14px; padding:16px 24px; cursor:pointer;">
+                <div style="width:38px; height:38px; background:#fef2f2; border-radius:10px; display:flex; align-items:center; justify-content:center;"><i class="fas fa-times" style="color:#ef4444;"></i></div>
+                <div><div style="font-size:14px; font-weight:700; color:#ef4444;">Close</div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cover Photo Action Sheet -->
+<div id="coverActionSheet" onclick="closeCoverActionSheet()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:99997; justify-content:flex-end; align-items:center; flex-direction:column;">
+    <div onclick="event.stopPropagation()" style="background:#fff; border-radius:24px 24px 0 0; width:100%; max-width:480px; padding:12px 0 32px; box-shadow:0 -8px 40px rgba(0,0,0,0.15);">
+        <div style="width:40px; height:4px; background:#e2e8f0; border-radius:4px; margin:0 auto 20px;"></div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:6px; margin-bottom:20px; padding:0 20px;">
+            <div style="width:100%; height:80px; border-radius:12px; overflow:hidden; background:linear-gradient(135deg,#0f172a,#1e3a5f,#32cd32);">
+                <img id="coverActionSheetPreview" style="width:100%; height:100%; object-fit:cover; display:none;">
+            </div>
+            <span style="font-size:14px; font-weight:700; color:#0f172a;">Cover Photo</span>
+        </div>
+        <div style="border-top:1px solid #f1f5f9;">
+            <div onclick="viewFullCover()" style="display:flex; align-items:center; gap:14px; padding:16px 24px; cursor:pointer; border-bottom:1px solid #f1f5f9;">
+                <div style="width:38px; height:38px; background:#f1f5f9; border-radius:10px; display:flex; align-items:center; justify-content:center;"><i class="fas fa-expand" style="color:#475569;"></i></div>
+                <div><div style="font-size:14px; font-weight:700; color:#0f172a;">View Full Photo</div><div style="font-size:12px; color:#94a3b8;">See cover photo in full size</div></div>
+            </div>
+            <div onclick="changeCoverPhoto()" style="display:flex; align-items:center; gap:14px; padding:16px 24px; cursor:pointer; border-bottom:1px solid #f1f5f9;">
+                <div style="width:38px; height:38px; background:#f1f5f9; border-radius:10px; display:flex; align-items:center; justify-content:center;"><i class="fas fa-camera" style="color:#475569;"></i></div>
+                <div><div style="font-size:14px; font-weight:700; color:#0f172a;">Change Photo</div><div style="font-size:12px; color:#94a3b8;">Upload a new cover photo</div></div>
+            </div>
+            <div onclick="closeCoverActionSheet()" style="display:flex; align-items:center; gap:14px; padding:16px 24px; cursor:pointer;">
                 <div style="width:38px; height:38px; background:#fef2f2; border-radius:10px; display:flex; align-items:center; justify-content:center;"><i class="fas fa-times" style="color:#ef4444;"></i></div>
                 <div><div style="font-size:14px; font-weight:700; color:#ef4444;">Close</div></div>
             </div>

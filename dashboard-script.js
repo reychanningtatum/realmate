@@ -690,8 +690,39 @@ async function uploadCoverPhoto(input) {
         user.coverUrl = url;
         localStorage.setItem('user', JSON.stringify(user));
         updateUI();
+        closeCoverActionSheet();
     } catch (e) {
         console.error('Cover upload failed:', e);
         alert('Failed to upload cover photo.');
     }
+}
+
+function openCoverActionSheet() {
+    const sheet = document.getElementById('coverActionSheet');
+    const preview = document.getElementById('coverActionSheetPreview');
+    if (user.coverUrl) {
+        preview.src = user.coverUrl;
+        preview.style.display = 'block';
+    } else {
+        preview.style.display = 'none';
+    }
+    sheet.style.display = 'flex';
+}
+
+function closeCoverActionSheet() {
+    document.getElementById('coverActionSheet').style.display = 'none';
+}
+
+function viewFullCover() {
+    closeCoverActionSheet();
+    if (!user.coverUrl) return;
+    const lb = document.getElementById('profileLightbox');
+    const img = document.getElementById('lightboxImg');
+    img.src = user.coverUrl;
+    lb.style.display = 'flex';
+}
+
+function changeCoverPhoto() {
+    closeCoverActionSheet();
+    document.getElementById('coverPhotoInput').click();
 }
