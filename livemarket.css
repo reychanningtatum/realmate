@@ -388,7 +388,7 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   scrollbar-width: thin;
 }
 .video-pdf-row {
-  display: flex; flex-direction: column; gap: 12px; margin-top: 12px;
+  display: flex; flex-direction: row; align-items: flex-start; gap: 12px; margin-bottom: 16px;
 }
 #miniChartsRow {
   display: flex; flex-direction: column; gap: 10px;
