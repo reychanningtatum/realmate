@@ -262,10 +262,9 @@
 </div>
 
 <!-- Photo Action Sheet -->
-<div id="photoActionSheet" onclick="closePhotoActionSheet()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:99997; justify-content:flex-end; align-items:center; flex-direction:column;">
-    <div onclick="event.stopPropagation()" style="background:#fff; border-radius:24px 24px 0 0; width:100%; max-width:480px; padding:12px 0 32px; box-shadow:0 -8px 40px rgba(0,0,0,0.15);">
-        <!-- Handle -->
-        <div style="width:40px; height:4px; background:#e2e8f0; border-radius:4px; margin:0 auto 20px;"></div>
+<div id="photoActionSheet" onclick="closePhotoActionSheet()" class="cover-action-overlay" style="display:none;">
+    <div onclick="event.stopPropagation()" class="cover-action-sheet">
+        <div class="cover-action-handle"></div></div>
         <!-- Preview -->
         <div style="display:flex; flex-direction:column; align-items:center; gap:8px; margin-bottom:20px; padding:0 20px;">
             <img id="actionSheetPreview" style="width:72px; height:72px; border-radius:16px; object-fit:cover; border:3px solid #fff; box-shadow:0 0 0 1px #e2e8f0;">
