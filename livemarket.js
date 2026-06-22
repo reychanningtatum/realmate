@@ -117,12 +117,22 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
     const card = document.createElement('div');
     card.className = 'listing-card' + (matchLabel ? ' is-match' : '');
 
+    const matchScore = matchLabel?.matchScore || 0;
+    const matchGrade = matchScore >= 80 ? 'Excellent' : matchScore >= 50 ? 'Strong' : matchScore >= 30 ? 'Good' : 'Possible';
+    const matchColor = matchScore >= 80 ? '#16a34a' : matchScore >= 50 ? '#2563eb' : matchScore >= 30 ? '#f59e0b' : '#94a3b8';
+    const matchReasons = matchLabel?.matchReasons || [];
     const matchBanner = matchLabel ? `
         <div class="match-banner">
             <i class="fas fa-bolt"></i>
             Matches your <strong>${matchLabel.myCategory}</strong> listing
+            <span style="margin-left:auto;display:flex;align-items:center;gap:6px;">
+                <span style="font-size:10px;font-weight:800;color:${matchColor};background:rgba(255,255,255,0.9);padding:2px 8px;border-radius:20px;">${matchGrade} Match</span>
+            </span>
             <i class="fas fa-chevron-right match-banner-arrow"></i>
-        </div>` : '';
+        </div>
+        ${matchReasons.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;padding:4px 12px 8px;background:#eff6ff;">
+            ${matchReasons.map(r => `<span style="font-size:10px;font-weight:600;color:#1e40af;background:#dbeafe;padding:2px 8px;border-radius:12px;"><i class="fas fa-check" style="font-size:8px;margin-right:3px;"></i>${r}</span>`).join('')}
+        </div>` : ''}` : '';
 
     card.innerHTML = `
         ${matchBanner}
@@ -439,26 +449,177 @@ function selectSubCat(btn) {
     applyFilters();
 }
 
+// ── Smart AI Matching Engine ─────────────────────
+
+const LOCATION_KEYWORDS = {
+    'bgc': 'BGC', 'bonifacio': 'BGC', 'fort': 'BGC', 'taguig': 'Taguig',
+    'makati': 'Makati', 'salcedo': 'Makati', 'legazpi': 'Makati', 'rockwell': 'Makati',
+    'pasig': 'Pasig', 'ortigas': 'Pasig', 'eastwood': 'Pasig',
+    'mandaluyong': 'Mandaluyong', 'quezon city': 'Quezon City', 'qc': 'Quezon City',
+    'alabang': 'Alabang', 'muntinlupa': 'Muntinlupa', 'pasay': 'Pasay',
+    'paranaque': 'Parañaque', 'parañaque': 'Parañaque',
+    'las pinas': 'Las Piñas', 'las piñas': 'Las Piñas',
+    'laguna': 'Laguna', 'cavite': 'Cavite', 'cebu': 'Cebu',
+    'rizal': 'Rizal', 'bulacan': 'Bulacan', 'pampanga': 'Pampanga',
+    'mckinley': 'BGC', 'mckinley hill': 'BGC', 'uptown': 'BGC',
+};
+
+const FEATURE_KEYWORDS = [
+    'furnished', 'fully furnished', 'semi furnished', 'bare',
+    'parking', 'with parking', 'no parking',
+    'balcony', 'corner unit', 'penthouse', 'loft',
+    'pool', 'gym', 'rfo', 'ready for occupancy', 'preselling', 'pre-selling',
+    'high floor', 'low floor', 'mid floor',
+    'pet friendly', 'smoking', 'non smoking',
+];
+
+function extractLocations(text) {
+    const lower = text.toLowerCase();
+    const found = new Set();
+    Object.entries(LOCATION_KEYWORDS).forEach(([key, val]) => {
+        if (lower.includes(key)) found.add(val);
+    });
+    return [...found];
+}
+
+function extractProject(text) {
+    const upper = text.toUpperCase();
+    for (const proj of KNOWN_PROJECTS) {
+        if (upper.includes(proj.toUpperCase())) return proj;
+    }
+    return null;
+}
+
+function extractFeatures(text) {
+    const lower = text.toLowerCase();
+    return FEATURE_KEYWORDS.filter(f => lower.includes(f));
+}
+
+function extractBudgetRange(text) {
+    const lower = text.toLowerCase().replace(/,/g, '');
+    const prices = [];
+    const patterns = [
+        /(\d+\.?\d*)\s*m(?:illion)?/gi,
+        /(?:₱|php|p)\s*(\d+\.?\d*)\s*m/gi,
+        /\b(\d{7,9})\b/g,
+        /(\d+)\s*k/gi,
+    ];
+    for (const pat of patterns) {
+        let m;
+        while ((m = pat.exec(lower)) !== null) {
+            let val = parseFloat(m[1]);
+            if (pat.source.includes('k')) val *= 1000;
+            else if (pat.source.includes('m')) val *= 1_000_000;
+            if (val > 0) prices.push(val);
+        }
+    }
+    if (!prices.length) return null;
+    return { min: Math.min(...prices), max: Math.max(...prices) };
+}
+
+function parseListing(listing) {
+    const text = listing.content || '';
+    return {
+        id: listing.id,
+        category: listing.category,
+        locations: extractLocations(text),
+        unit: extractUnit(text),
+        project: extractProject(text),
+        price: extractPrice(text),
+        budget: extractBudgetRange(text),
+        features: extractFeatures(text),
+        userId: listing.user_id,
+        raw: listing
+    };
+}
+
+function computeMatchScore(mine, other) {
+    let score = 0;
+    let reasons = [];
+
+    // Category must be complementary (required)
+    const partnerCat = PARTNER_MAP[mine.category];
+    if (!partnerCat || other.category !== partnerCat) return { score: 0, reasons: [] };
+    score += 10;
+
+    // Location match (high weight)
+    if (mine.locations.length && other.locations.length) {
+        const overlap = mine.locations.filter(l => other.locations.includes(l));
+        if (overlap.length > 0) {
+            score += 30;
+            reasons.push(`Location: ${overlap.join(', ')}`);
+        }
+    }
+
+    // Project match (very high weight)
+    if (mine.project && other.project && mine.project.toLowerCase() === other.project.toLowerCase()) {
+        score += 35;
+        reasons.push(`Project: ${mine.project}`);
+    }
+
+    // Unit type match
+    if (mine.unit && other.unit && mine.unit === other.unit) {
+        score += 20;
+        reasons.push(`Unit: ${mine.unit}`);
+    }
+
+    // Price/budget compatibility
+    const sellerPrice = mine.category.includes('FOR') ? mine.price : other.price;
+    const buyerBudget = mine.category.includes('WILLING') ? mine.budget : other.budget;
+    if (sellerPrice && buyerBudget) {
+        if (sellerPrice >= buyerBudget.min * 0.8 && sellerPrice <= buyerBudget.max * 1.2) {
+            score += 25;
+            reasons.push('Price in range');
+        } else if (sellerPrice >= buyerBudget.min * 0.6 && sellerPrice <= buyerBudget.max * 1.5) {
+            score += 10;
+            reasons.push('Price close to range');
+        }
+    }
+
+    // Feature overlap
+    if (mine.features.length && other.features.length) {
+        const common = mine.features.filter(f => other.features.includes(f));
+        if (common.length > 0) {
+            score += common.length * 5;
+            reasons.push(`Features: ${common.join(', ')}`);
+        }
+    }
+
+    return { score, reasons };
+}
+
 // Build a map: other listing id → which of my listings it matches
 // Also builds myMatchCount: myListing.id → number of matches found
 let myMatchCountMap = new Map();
 function buildMatchMap() {
     const map = new Map();
     myMatchCountMap = new Map();
-    myListings.forEach(mine => {
-        const partnerCat = PARTNER_MAP[mine.category];
-        if (!partnerCat) return;
+
+    const parsedMine = myListings.map(parseListing);
+    const parsedAll = allListings.map(parseListing);
+
+    parsedMine.forEach(mine => {
         let count = 0;
-        allListings.forEach(other => {
-            if (other.user_id === mine.user_id) return;
-            if (other.category !== partnerCat) return;
-            if (!map.has(other.id)) {
-                map.set(other.id, { myCategory: mine.category, myContent: mine.content, myListing: mine });
+        parsedAll.forEach(other => {
+            if (other.userId === mine.userId) return;
+            const { score, reasons } = computeMatchScore(mine, other);
+            if (score < 10) return; // no match at all
+
+            const existing = map.get(other.id);
+            if (!existing || existing.matchScore < score) {
+                map.set(other.id, {
+                    myCategory: mine.raw.category,
+                    myContent: mine.raw.content,
+                    myListing: mine.raw,
+                    matchScore: score,
+                    matchReasons: reasons
+                });
             }
             count++;
         });
-        if (count > 0) myMatchCountMap.set(mine.id, count);
+        if (count > 0) myMatchCountMap.set(mine.raw.id, count);
     });
+
     return map;
 }
 
@@ -520,8 +681,9 @@ function applyFilters() {
         });
     } catch(e) { console.warn('FMV error:', e); }
 
-    // Matches first, then others
-    const matched   = pool.filter(l => matchMap.has(l.id));
+    // Matches first (sorted by score), then others
+    const matched   = pool.filter(l => matchMap.has(l.id))
+        .sort((a, b) => (matchMap.get(b.id)?.matchScore || 0) - (matchMap.get(a.id)?.matchScore || 0));
     const unmatched = pool.filter(l => !matchMap.has(l.id));
     [...matched, ...unmatched].forEach(l => grid.appendChild(
         buildListingCard(l, matchMap.get(l.id) || null, fmvMap.get(l.id) || null, myMatchCountMap.get(l.id) || 0)
