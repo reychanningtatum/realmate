@@ -118,15 +118,16 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
     card.className = 'listing-card' + (matchLabel ? ' is-match' : '');
 
     const matchScore = matchLabel?.matchScore || 0;
-    const matchGrade = matchScore >= 80 ? 'Excellent' : matchScore >= 50 ? 'Strong' : matchScore >= 30 ? 'Good' : 'Possible';
-    const matchColor = matchScore >= 80 ? '#16a34a' : matchScore >= 50 ? '#2563eb' : matchScore >= 30 ? '#f59e0b' : '#94a3b8';
+    const matchPct = Math.min(99, Math.round((matchScore / 145) * 100));
+    const matchGrade = matchPct >= 70 ? 'Excellent' : matchPct >= 45 ? 'Strong' : matchPct >= 25 ? 'Good' : 'Possible';
+    const matchColor = matchPct >= 70 ? '#16a34a' : matchPct >= 45 ? '#2563eb' : matchPct >= 25 ? '#f59e0b' : '#94a3b8';
     const matchReasons = matchLabel?.matchReasons || [];
     const matchBanner = matchLabel ? `
         <div class="match-banner">
             <i class="fas fa-bolt"></i>
             Matches your <strong>${matchLabel.myCategory}</strong> listing
             <span style="margin-left:auto;display:flex;align-items:center;gap:6px;">
-                <span style="font-size:10px;font-weight:800;color:${matchColor};background:rgba(255,255,255,0.9);padding:2px 8px;border-radius:20px;">${matchGrade} Match</span>
+                <span style="font-size:10px;font-weight:800;color:${matchColor};background:rgba(255,255,255,0.9);padding:2px 8px;border-radius:20px;">${matchPct}% ${matchGrade} Match</span>
             </span>
             <i class="fas fa-chevron-right match-banner-arrow"></i>
         </div>
