@@ -56,37 +56,38 @@
                     <i class="fas fa-camera"></i> Edit Cover
                 </label>
                 <input type="file" id="coverPhotoInput" hidden accept="image/*" onchange="uploadCoverPhoto(this)">
-            </div>
 
-          <div class="profile-card-body">
-            <!-- Avatar + chevron menu — top right -->
-            <div style="position:absolute; top:16px; right:16px;">
-                <button id="profileMenuBtn" onclick="toggleProfileMenu(event)" style="height:34px; padding:0 10px 0 6px; border-radius:50px; background:#f1f5f9; border:1px solid #e2e8f0; display:flex; align-items:center; gap:6px; cursor:pointer;">
-                    <div id="profileMenuAvatar" style="width:24px; height:24px; min-width:24px; border-radius:50%; background:#32cd32; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; overflow:hidden; flex-shrink:0;">R</div>
-                    <i class="fas fa-chevron-down" style="font-size:11px; color:#64748b;"></i>
-                </button>
-                <div id="profileMenuDropdown" style="display:none; position:absolute; right:0; top:44px; background:#fff; border:1px solid #e2e8f0; border-radius:14px; box-shadow:0 8px 24px rgba(0,0,0,0.10); min-width:160px; overflow:hidden; z-index:999;">
-                    <div onclick="openEditModal(); toggleProfileMenu()" style="padding:12px 16px; font-size:13px; font-weight:600; color:#0f172a; cursor:pointer; display:flex; align-items:center; gap:10px;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''">
-                        <i class="fas fa-pen" style="color:var(--primary); width:14px;"></i> Edit Profile
-                    </div>
-                    <div style="height:1px; background:#f1f5f9;"></div>
-                    <div onclick="logout()" style="padding:12px 16px; font-size:13px; font-weight:600; color:#ef4444; cursor:pointer; display:flex; align-items:center; gap:10px;" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background=''">
-                        <i class="fas fa-sign-out-alt" style="width:14px;"></i> Logout
+                <!-- Menu button on cover -->
+                <div style="position:absolute; top:12px; right:12px; z-index:10;">
+                    <button id="profileMenuBtn" onclick="toggleProfileMenu(event)" style="height:34px; padding:0 10px 0 6px; border-radius:50px; background:rgba(0,0,0,0.45); border:none; display:flex; align-items:center; gap:6px; cursor:pointer; backdrop-filter:blur(8px);">
+                        <div id="profileMenuAvatar" style="width:24px; height:24px; min-width:24px; border-radius:50%; background:#32cd32; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; overflow:hidden; flex-shrink:0;">R</div>
+                        <i class="fas fa-chevron-down" style="font-size:11px; color:#fff;"></i>
+                    </button>
+                    <div id="profileMenuDropdown" style="display:none; position:absolute; right:0; top:44px; background:#fff; border:1px solid #e2e8f0; border-radius:14px; box-shadow:0 8px 24px rgba(0,0,0,0.10); min-width:160px; overflow:hidden; z-index:999;">
+                        <div onclick="openEditModal(); toggleProfileMenu()" style="padding:12px 16px; font-size:13px; font-weight:600; color:#0f172a; cursor:pointer; display:flex; align-items:center; gap:10px;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''">
+                            <i class="fas fa-pen" style="color:var(--primary); width:14px;"></i> Edit Profile
+                        </div>
+                        <div style="height:1px; background:#f1f5f9;"></div>
+                        <div onclick="logout()" style="padding:12px 16px; font-size:13px; font-weight:600; color:#ef4444; cursor:pointer; display:flex; align-items:center; gap:10px;" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background=''">
+                            <i class="fas fa-sign-out-alt" style="width:14px;"></i> Logout
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Photo -->
-            <div class="profile-img-container" onclick="openPhotoActionSheet()">
-                <img id="profileImage">
-                <div class="profile-camera-overlay">
-                    <i class="fas fa-camera"></i>
-                    <span>Edit</span>
+            <!-- Avatar overlapping cover -->
+            <div class="profile-avatar-wrap">
+                <div class="profile-img-container" onclick="openPhotoActionSheet()">
+                    <img id="profileImage">
+                    <div class="profile-camera-overlay">
+                        <i class="fas fa-camera"></i>
+                        <span>Edit</span>
+                    </div>
                 </div>
             </div>
 
             <!-- Info -->
-            <div class="profile-info-block">
+            <div class="profile-card-body">
                 <h2 id="nameDisplay"></h2>
                 <div id="jobDisplay"></div>
                 <div class="profile-meta-container">
@@ -108,27 +109,26 @@
                     </div>
                 </div>
                 <!-- Stats row -->
-                <div style="display:flex; gap:0; margin-top:12px; background:#f8fafc; border:1px solid var(--border); border-radius:12px; overflow:hidden;">
-                    <div style="flex:1; text-align:center; padding:8px 10px; border-right:1px solid var(--border);">
-                        <div style="font-size:15px; font-weight:800; color:var(--text-main);" id="followersCount">0</div>
-                        <div style="font-size:10px; font-weight:600; color:var(--text-sub); text-transform:uppercase; letter-spacing:0.4px;">Followers</div>
+                <div class="profile-stats-row">
+                    <div class="profile-stat">
+                        <div class="profile-stat-num" id="followersCount">0</div>
+                        <div class="profile-stat-label">Followers</div>
                     </div>
-                    <div style="flex:1; text-align:center; padding:8px 10px; border-right:1px solid var(--border);">
-                        <div style="font-size:15px; font-weight:800; color:var(--text-main);" id="followingCount">0</div>
-                        <div style="font-size:10px; font-weight:600; color:var(--text-sub); text-transform:uppercase; letter-spacing:0.4px;">Following</div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-num" id="followingCount">0</div>
+                        <div class="profile-stat-label">Following</div>
                     </div>
-                    <div style="flex:1; text-align:center; padding:8px 10px;">
-                        <div style="font-size:15px; font-weight:800; color:var(--primary);" id="matesCountProfile">0</div>
-                        <div style="font-size:10px; font-weight:600; color:var(--text-sub); text-transform:uppercase; letter-spacing:0.4px;">Realmates</div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-num profile-stat-accent" id="matesCountProfile">0</div>
+                        <div class="profile-stat-label">Realmates</div>
                     </div>
                 </div>
                 <!-- Action buttons -->
-                <div style="display:flex; align-items:center; gap:8px; margin-top:10px; flex-wrap:wrap;">
+                <div style="display:flex; align-items:center; gap:8px; margin-top:4px; flex-wrap:wrap; justify-content:center;">
                     <div id="profileMateBtn"></div>
                     <div id="profileFollowBtn"></div>
                 </div>
             </div>
-          </div><!-- /profile-card-body -->
 
         </div>
 
