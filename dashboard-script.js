@@ -785,6 +785,8 @@ async function applyCoverCrop() {
         user.coverUrl = url;
         localStorage.setItem('user', JSON.stringify(user));
         updateUI();
+        const preview = document.getElementById('coverActionSheetPreview');
+        if (preview) { preview.src = url; preview.style.display = 'block'; }
         closeCoverCropModal();
         showPhotoToast(_coverIsNewUpload ? 'Cover photo updated!' : 'Cover photo repositioned!');
     } catch (e) {
