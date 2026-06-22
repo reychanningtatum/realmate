@@ -726,3 +726,76 @@ function changeCoverPhoto() {
     closeCoverActionSheet();
     document.getElementById('coverPhotoInput').click();
 }
+
+async function repositionCover() {
+    closeCoverActionSheet();
+    if (!user.coverUrl) { changeCoverPhoto(); return; }
+    try {
+        const res = await fetch(user.coverUrl);
+        const blob = await res.blob();
+        const dataUrl = await new Promise(resolve => {
+            const reader = new FileReader();
+            reader.onload = e => resolve(e.target.result);
+            reader.readAsDataURL(blob);
+        });
+        openCoverCropModal(dataUrl);
+    } catch {
+        openCoverCropModal(user.coverUrl);
+    }
+}
+
+let _coverCropper = null;
+
+function openCoverCropModal(src) {
+    const modal = document.getElementById('coverCropModal');
+    const img = document.getElementById('coverCropImage');
+    img.src = src;
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    if (_coverCropper) _coverCropper.destroy();
+    _coverCropper = new Cropper(img, {
+        aspectRatio: 16 / 5,
+        viewMode: 1,
+        dragMode: 'move',
+        cropBoxResizable: false,
+        cropBoxMovable: false,
+        guides: false,
+        center: true,
+        background: false,
+    });
+}
+
+function closeCoverCropModal() {
+    if (_coverCropper) { _coverCropper.destroy(); _coverCropper = null; }
+    document.getElementById('coverCropModal').style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+async function applyCoverCrop() {
+    if (!_coverCropper) return;
+    const btn = document.getElementById('applyCoverCropBtn');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    btn.disabled = true;
+    try {
+        const canvas = _coverCropper.getCroppedCanvas({ width: 1200, height: 375 });
+        if (!canvas) throw new Error('Could not process image.');
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.90));
+        const file = new File([blob], `cover_${Date.now()}.jpg`, { type: 'image/jpeg' });
+        const { data: authData } = await _supabase.auth.getUser();
+        const userId = authData?.user?.id;
+        const path = `covers/${userId}_${Date.now()}.jpg`;
+        const { error } = await _supabase.storage.from('images').upload(path, file, { upsert: true });
+        if (error) throw error;
+        const url = _supabase.storage.from('images').getPublicUrl(path).data.publicUrl;
+        await _supabase.from('profiles').update({ cover_url: url }).eq('id', userId);
+        user.coverUrl = url;
+        localStorage.setItem('user', JSON.stringify(user));
+        updateUI();
+        closeCoverCropModal();
+    } catch (e) {
+        alert('Failed to save cover: ' + e.message);
+    } finally {
+        btn.innerHTML = '<i class="fas fa-check"></i> Save';
+        btn.disabled = false;
+    }
+}
