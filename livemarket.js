@@ -171,8 +171,8 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
     }
 
     card.style.cursor = 'pointer';
-    card.addEventListener('click', () => {
-        if (matchLabel) {
+    card.addEventListener('click', (e) => {
+        if (e.target.closest('.match-banner')) {
             showMatchView(matchLabel.myListing, [listing]);
         } else {
             showListingDetail(listing);
