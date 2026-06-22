@@ -465,6 +465,54 @@ const LOCATION_KEYWORDS = {
     'mckinley': 'BGC', 'mckinley hill': 'BGC', 'uptown': 'BGC',
 };
 
+// Location proximity zones — locations in same zone are "nearby"
+const LOCATION_ZONES = {
+    'Metro Manila Core': ['BGC', 'Makati', 'Taguig', 'Pasay', 'Mandaluyong'],
+    'Metro Manila East': ['Pasig', 'Quezon City'],
+    'Metro Manila South': ['Alabang', 'Muntinlupa', 'Parañaque', 'Las Piñas'],
+    'Calabarzon': ['Laguna', 'Cavite', 'Rizal'],
+    'Central Luzon': ['Bulacan', 'Pampanga'],
+    'Visayas': ['Cebu'],
+};
+
+// Adjacent zones that count as "nearby"
+const ADJACENT_ZONES = {
+    'Metro Manila Core': ['Metro Manila East', 'Metro Manila South'],
+    'Metro Manila East': ['Metro Manila Core', 'Calabarzon'],
+    'Metro Manila South': ['Metro Manila Core', 'Calabarzon'],
+    'Calabarzon': ['Metro Manila East', 'Metro Manila South'],
+    'Central Luzon': ['Metro Manila Core', 'Metro Manila East'],
+    'Visayas': [],
+};
+
+function getLocationZone(loc) {
+    for (const [zone, cities] of Object.entries(LOCATION_ZONES)) {
+        if (cities.includes(loc)) return zone;
+    }
+    return null;
+}
+
+function locationProximity(locsA, locsB) {
+    // Returns: 'exact', 'nearby', 'far', or 'unknown'
+    if (!locsA.length || !locsB.length) return 'unknown';
+    for (const a of locsA) {
+        for (const b of locsB) {
+            if (a === b) return 'exact';
+        }
+    }
+    for (const a of locsA) {
+        const zoneA = getLocationZone(a);
+        if (!zoneA) continue;
+        for (const b of locsB) {
+            const zoneB = getLocationZone(b);
+            if (!zoneB) continue;
+            if (zoneA === zoneB) return 'nearby';
+            if (ADJACENT_ZONES[zoneA]?.includes(zoneB)) return 'nearby';
+        }
+    }
+    return 'far';
+}
+
 const FEATURE_KEYWORDS = [
     'furnished', 'fully furnished', 'semi furnished', 'bare',
     'parking', 'with parking', 'no parking',
@@ -543,13 +591,16 @@ function computeMatchScore(mine, other) {
     if (!partnerCat || other.category !== partnerCat) return { score: 0, reasons: [] };
     score += 10;
 
-    // Location match (high weight)
-    if (mine.locations.length && other.locations.length) {
+    // Location match (high weight) — far locations kill the match
+    const proximity = locationProximity(mine.locations, other.locations);
+    if (proximity === 'far') return { score: 0, reasons: [] };
+    if (proximity === 'exact') {
         const overlap = mine.locations.filter(l => other.locations.includes(l));
-        if (overlap.length > 0) {
-            score += 30;
-            reasons.push(`Location: ${overlap.join(', ')}`);
-        }
+        score += 30;
+        reasons.push(`Location: ${overlap.join(', ')}`);
+    } else if (proximity === 'nearby') {
+        score += 15;
+        reasons.push(`Nearby area`);
     }
 
     // Project match (very high weight)
