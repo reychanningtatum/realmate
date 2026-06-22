@@ -1014,7 +1014,7 @@ renderMarketReportPdf();
                 videoId,
                 width: '100%',
                 height: '100%',
-                playerVars: { autoplay: 1, mute: 1, rel: 0, modestbranding: 1, playsinline: 1 },
+                playerVars: { autoplay: 1, mute: 0, rel: 0, modestbranding: 1, playsinline: 1 },
                 events: {
                     onReady: function(e) {
                         const autoMute = localStorage.getItem('rm_automute_video') === '1';
@@ -1055,7 +1055,7 @@ renderMarketReportPdf();
 })();
 
 // ── Video controls ──
-let _ytMuted = true;
+let _ytMuted = false;
 function toggleYtMute(btn) {
     if (!_ytPlayer) return;
     _ytMuted = !_ytMuted;
