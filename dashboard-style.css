@@ -236,8 +236,8 @@ h1, h2, h3 { font-family: 'Playfair Display', serif; margin: 0; }
     width: 104px;
     height: 104px;
     border-radius: 50%;
-    border: 2px solid #ffffff;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.12);
     overflow: hidden;
     flex-shrink: 0;
 }
