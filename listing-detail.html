@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Realmate | Listing</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="forum.css">
+  <script src="theme.js"></script>
+  <style>
+    .ld-page { max-width: 680px; margin: 0 auto; padding: 20px 16px 80px; }
+    .ld-back { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--text-sub); cursor: pointer; margin-bottom: 18px; padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border); background: #fff; transition: all 0.15s; }
+    .ld-back:hover { background: #f1f5f9; color: var(--text-main); }
+    .ld-card { background: #fff; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .ld-images { position: relative; }
+    .ld-images img { width: 100%; max-height: 400px; object-fit: cover; display: block; }
+    .ld-images-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+    .ld-images-grid img { width: 100%; height: 200px; object-fit: cover; cursor: pointer; }
+    .ld-body { padding: 24px; }
+    .ld-cat { display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 5px 14px; border-radius: 50px; margin-bottom: 14px; }
+    .ld-cat-sale { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .ld-cat-rent { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+    .ld-cat-lease { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+    .ld-cat-wbuy { background: #fefce8; color: #ca8a04; border: 1px solid #fde68a; }
+    .ld-cat-wrent { background: #eef2ff; color: #4f46e5; border: 1px solid #c7d2fe; }
+    .ld-cat-wlease { background: #fdf4ff; color: #a855f7; border: 1px solid #e9d5ff; }
+    .ld-content { font-size: 15px; line-height: 1.7; color: var(--text-main); white-space: pre-line; margin-bottom: 18px; }
+    .ld-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+    .ld-tag { font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 50px; border: 1px solid; display: inline-flex; align-items: center; gap: 5px; }
+    .ld-tag-loc { background: #f0fdf4; color: #16a34a; border-color: #bbf7d0; }
+    .ld-tag-unit { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
+    .ld-tag-project { background: #fefce8; color: #92400e; border-color: #fde68a; }
+    .ld-tag-price { background: #fce7f3; color: #9d174d; border-color: #fbcfe8; }
+    .ld-tag-feature { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
+    .ld-divider { height: 1px; background: var(--border); margin: 18px 0; }
+    .ld-user { display: flex; align-items: center; gap: 14px; }
+    .ld-user img { width: 48px; height: 48px; border-radius: 14px; object-fit: cover; }
+    .ld-user-name { font-size: 15px; font-weight: 700; color: var(--text-main); }
+    .ld-user-job { font-size: 12px; color: var(--text-sub); }
+    .ld-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .ld-time { font-size: 12px; color: var(--text-sub); margin-bottom: 14px; }
+    .ld-loading { text-align: center; padding: 60px 20px; color: #94a3b8; }
+
+    html[data-theme="dark"] .ld-card { background: #1e293b; border-color: #334155; }
+    html[data-theme="dark"] .ld-back { background: #1e293b; border-color: #334155; color: #94a3b8; }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="brand"><img src="images/realmate2.png" onclick="location.href='home.html'"></div>
+  <div class="nav-item" onclick="location.href='home.html'"><i class="fas fa-house"></i><span>Home Feed</span></div>
+  <div class="nav-item" onclick="location.href='dashboard.html'"><i class="fas fa-user-tie"></i><span>Profile</span></div>
+  <div class="nav-item" onclick="location.href='livemarket.html'"><i class="fas fa-chart-line"></i><span>Live Market</span></div>
+  <div class="nav-item" onclick="location.href='analytics.html'"><i class="fas fa-chart-area"></i><span>Analytics</span></div>
+  <div class="nav-item" onclick="location.href='forum.html'"><i class="fas fa-people-group"></i><span>Forum</span></div>
+  <div class="nav-item" onclick="location.href='notifications.html'"><i class="fas fa-bell"></i><span>Notifications</span></div>
+  <div class="nav-item" onclick="location.href='settings.html'"><i class="fas fa-cog"></i><span>Settings</span></div>
+  <div style="margin-top:auto"><div class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Sign Out</span></div></div>
+</div>
+
+<div class="main-content">
+  <div class="ld-page">
+    <button class="ld-back" onclick="history.back()"><i class="fas fa-chevron-left"></i> Back to Market</button>
+    <div id="ldContent" class="ld-loading"><i class="fas fa-spinner fa-spin" style="font-size:24px;"></i></div>
+  </div>
+</div>
+
+<nav class="mobile-bottom-nav">
+  <a class="mob-nav-item" href="livemarket.html"><i class="fas fa-chart-line"></i><span>Live Market</span></a>
+  <a class="mob-nav-item" href="forum.html"><i class="fas fa-people-group"></i><span>Forum</span></a>
+  <a class="mob-nav-item mob-nav-center" href="home.html"><i class="fas fa-house"></i><span>Home</span></a>
+  <a class="mob-nav-item" href="notifications.html"><i class="fas fa-bell"></i><span>Notifications</span></a>
+  <div class="mob-nav-item mob-nav-avatar-wrap" onclick="toggleNavMenu(event)">
+    <div class="mob-nav-avatar" id="navAvatar"><i class="fas fa-user-tie" style="font-size:13px;"></i></div>
+    <span>Me</span>
+    <div class="mob-nav-menu" id="navMenu">
+      <a href="dashboard.html"><i class="fas fa-user-tie"></i> Profile</a>
+      <a href="realmates.html"><i class="fas fa-handshake"></i> Realmates</a>
+      <a href="analytics.html"><i class="fas fa-chart-area"></i> Analytics</a>
+      <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+      <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+  </div>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="search-overlay.js"></script>
+<script src="auth-guard.js"></script>
+<script src="mates.js"></script>
+<script src="nav-menu.js"></script>
+<script src="notif-badge.js"></script>
+<script>
+const _sb = supabase.createClient('https://wmegpgrfrtprhuzmgjma.supabase.co', 'sb_publishable_Rm_fIBDUfu3DEyLj0_bWZw_qEqo8cd4');
+
+const CAT_CLASSES = {
+  'FOR SALE': 'ld-cat-sale', 'FOR RENT': 'ld-cat-rent', 'FOR LEASE': 'ld-cat-lease',
+  'WILLING TO BUY': 'ld-cat-wbuy', 'WILLING TO RENT': 'ld-cat-wrent', 'WILLING TO LEASE': 'ld-cat-wlease'
+};
+
+const LOCATION_KW = {
+  'bgc':'BGC','bonifacio':'BGC','fort':'BGC','taguig':'Taguig',
+  'makati':'Makati','salcedo':'Makati','legazpi':'Makati','rockwell':'Makati',
+  'pasig':'Pasig','ortigas':'Pasig','eastwood':'Pasig',
+  'mandaluyong':'Mandaluyong','quezon city':'Quezon City','qc':'Quezon City',
+  'alabang':'Alabang','muntinlupa':'Muntinlupa','pasay':'Pasay',
+  'laguna':'Laguna','cavite':'Cavite','cebu':'Cebu','rizal':'Rizal',
+  'bulacan':'Bulacan','pampanga':'Pampanga','mckinley':'BGC','uptown':'BGC',
+};
+
+const PROJECTS = ['One Maridien','Two Maridien','Verve One','Verve Two','Park Triangle Residences','Two Serendra','Kroma','Lerato','Senta','TREC','The Residences At Greenbelt'];
+
+function parse(text) {
+  const lower = text.toLowerCase();
+  const locs = [...new Set(Object.entries(LOCATION_KW).filter(([k]) => lower.includes(k)).map(([,v]) => v))];
+  let unit = null;
+  if (/\bstudio\b/i.test(text)) unit = 'Studio';
+  else if (/\b1\s*br\b|1\s*bed/i.test(text)) unit = '1BR';
+  else if (/\b2\s*br\b|2\s*bed/i.test(text)) unit = '2BR';
+  else if (/\b3\s*br\b|3\s*bed/i.test(text)) unit = '3BR';
+  else if (/\b4\s*br\b|4\s*bed/i.test(text)) unit = '4BR';
+  let project = null;
+  for (const p of PROJECTS) { if (text.toUpperCase().includes(p.toUpperCase())) { project = p; break; } }
+  let price = null;
+  let m = lower.match(/(\d+\.?\d*)\s*m(?:illion)?/);
+  if (m) price = parseFloat(m[1]) * 1e6;
+  else { m = text.replace(/,/g,'').match(/\b(\d{7,9})\b/); if (m) price = parseFloat(m[1]); }
+  const features = ['furnished','fully furnished','semi furnished','bare','parking','balcony','corner unit','penthouse','rfo','preselling','pet friendly']
+    .filter(f => lower.includes(f));
+  return { locs, unit, project, price, features };
+}
+
+function avatarFallback(n) { return `https://ui-avatars.com/api/?name=${encodeURIComponent(n||'?')}&background=random&color=fff`; }
+function safeText(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function timeAgo(d) {
+  const s = Math.floor((Date.now() - new Date(d).getTime()) / 1000);
+  if (s < 60) return 'Just now';
+  if (s < 3600) return Math.floor(s/60) + 'm ago';
+  if (s < 86400) return Math.floor(s/3600) + 'h ago';
+  return Math.floor(s/86400) + 'd ago';
+}
+
+async function loadListing() {
+  const id = new URLSearchParams(location.search).get('id');
+  const container = document.getElementById('ldContent');
+  if (!id) { container.innerHTML = '<p>Listing not found.</p>'; return; }
+
+  const { data: listing, error } = await _sb.from('listings').select('*').eq('id', id).single();
+  if (error || !listing) { container.innerHTML = '<p>Listing not found or has been removed.</p>'; return; }
+
+  const name = listing.user_name || 'Unknown';
+  const img = listing.user_img || avatarFallback(name);
+  const imgs = listing.image_urls || [];
+  const p = parse(listing.content || '');
+
+  let imagesHtml = '';
+  if (imgs.length === 1) {
+    imagesHtml = `<div class="ld-images"><img src="${imgs[0]}"></div>`;
+  } else if (imgs.length > 1) {
+    imagesHtml = `<div class="ld-images ld-images-grid">${imgs.map(i => `<img src="${i}">`).join('')}</div>`;
+  }
+
+  container.innerHTML = `
+    <div class="ld-card">
+      ${imagesHtml}
+      <div class="ld-body">
+        <span class="ld-cat ${CAT_CLASSES[listing.category] || ''}">${listing.category}</span>
+        <div class="ld-time"><i class="far fa-clock" style="margin-right:4px;"></i>${timeAgo(listing.created_at)}</div>
+        <div class="ld-content">${safeText(listing.content)}</div>
+        <div class="ld-tags">
+          ${p.locs.map(l => `<span class="ld-tag ld-tag-loc"><i class="fas fa-map-marker-alt"></i>${l}</span>`).join('')}
+          ${p.unit ? `<span class="ld-tag ld-tag-unit"><i class="fas fa-bed"></i>${p.unit}</span>` : ''}
+          ${p.project ? `<span class="ld-tag ld-tag-project"><i class="fas fa-building"></i>${p.project}</span>` : ''}
+          ${p.price ? `<span class="ld-tag ld-tag-price"><i class="fas fa-tag"></i>₱${(p.price/1e6).toFixed(1)}M</span>` : ''}
+          ${p.features.map(f => `<span class="ld-tag ld-tag-feature">${f}</span>`).join('')}
+        </div>
+        <div class="ld-divider"></div>
+        <div class="ld-user">
+          <img src="${img}" onerror="this.src='${avatarFallback(name)}'">
+          <div style="flex:1;">
+            <div class="ld-user-name">${safeText(name)}</div>
+            <div class="ld-user-job">${listing.user_job || ''}</div>
+          </div>
+        </div>
+        ${!listing.is_anonymous ? `<div class="ld-actions">${mateButtonHtml(name, 'btn-mate')}</div>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+document.addEventListener('DOMContentLoaded', loadListing);
+</script>
+</body>
+</html>
