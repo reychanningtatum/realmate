@@ -170,12 +170,14 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
         });
     }
 
-    if (matchLabel) {
-        card.style.cursor = 'pointer';
-        card.addEventListener('click', () => {
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', () => {
+        if (matchLabel) {
             showMatchView(matchLabel.myListing, [listing]);
-        });
-    }
+        } else {
+            showListingDetail(listing);
+        }
+    });
 
     return card;
 }
@@ -847,6 +849,46 @@ function showMatchView(query, matches) {
         `;
         container.appendChild(card);
     });
+}
+
+// ── Listing Detail View ──────────────────────────
+function showListingDetail(listing) {
+    document.getElementById('ledgerView').style.display = 'none';
+    const fb = document.querySelector('.filter-bar');
+    if (fb) fb.style.display = 'none';
+    document.getElementById('matchView').style.display = 'block';
+
+    const imgs = listing.image_urls?.length ? listing.image_urls : [];
+    const name = listing.user_name || 'Unknown';
+    const img = listing.user_img || avatarFallback(name);
+    const parsed = parseListing(listing);
+
+    document.getElementById('yourListingCard').innerHTML = `
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <img src="${img}" onerror="this.src='${avatarFallback(name)}'" style="width:44px;height:44px;border-radius:12px;object-fit:cover;">
+            <div>
+                <div style="font-size:14px;font-weight:700;color:var(--text-main);">${safeText(name)}</div>
+                <div style="font-size:12px;color:var(--text-sub);">${listing.user_job || ''}</div>
+            </div>
+        </div>
+        ${catTag(listing.category)}
+        <p class="your-listing-text">${safeText(listing.content)}</p>
+        ${imgs.length ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">${imgs.map(i => `<img src="${i}" style="height:120px;border-radius:10px;object-fit:cover;">`).join('')}</div>` : ''}
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;">
+            ${parsed.locations.length ? parsed.locations.map(l => `<span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;"><i class="fas fa-map-marker-alt" style="margin-right:4px;"></i>${l}</span>`).join('') : ''}
+            ${parsed.unit ? `<span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;"><i class="fas fa-bed" style="margin-right:4px;"></i>${parsed.unit}</span>` : ''}
+            ${parsed.project ? `<span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:#fef3c7;color:#92400e;border:1px solid #fde68a;"><i class="fas fa-building" style="margin-right:4px;"></i>${parsed.project}</span>` : ''}
+            ${parsed.price ? `<span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:#fce7f3;color:#9d174d;border:1px solid #fbcfe8;"><i class="fas fa-tag" style="margin-right:4px;"></i>₱${(parsed.price/1e6).toFixed(1)}M</span>` : ''}
+            ${parsed.features.length ? parsed.features.map(f => `<span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;">${f}</span>`).join('') : ''}
+        </div>
+        ${!listing.is_anonymous ? `<div style="margin-top:16px;">${mateButtonHtml(name, 'btn-mate')}</div>` : ''}
+    `;
+
+    const badge = document.getElementById('matchCountBadge');
+    badge.textContent = 'Listing Detail';
+
+    const container = document.getElementById('matchesContainer');
+    container.innerHTML = '';
 }
 
 // ── Init ──────────────────────────────────────────
