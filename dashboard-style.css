@@ -131,6 +131,8 @@ h1, h2, h3 { font-family: 'Playfair Display', serif; margin: 0; }
     position: relative;
     overflow: visible;
     border-radius: 20px;
+    background: transparent !important;
+    box-shadow: none !important;
 }
 .profile-cover {
     width: 100%;
@@ -166,8 +168,13 @@ h1, h2, h3 { font-family: 'Playfair Display', serif; margin: 0; }
 .profile-card-body {
     display: flex; flex-direction: column; align-items: center;
     text-align: center;
-    padding: 8px 24px 24px;
+    padding: 60px 24px 24px;
     width: 100%;
+    background: var(--white);
+    border-radius: 0 0 20px 20px;
+    box-shadow: var(--card-shadow);
+    margin-top: -52px;
+    position: relative;
 }
 .profile-card-body h2 { margin-top: 2px; }
 .profile-stats-row {
