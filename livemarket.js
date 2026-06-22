@@ -129,7 +129,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
             <span style="margin-left:auto;display:flex;align-items:center;gap:6px;">
                 <span style="font-size:10px;font-weight:800;color:${matchColor};background:rgba(255,255,255,0.9);padding:2px 8px;border-radius:20px;">${matchPct}% ${matchGrade} Match</span>
             </span>
-            <i class="fas fa-chevron-right match-banner-arrow"></i>
+            <button class="match-analysis-btn" onclick="event.stopPropagation();" style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.15);color:#fff;cursor:pointer;white-space:nowrap;">View Match <i class="fas fa-chevron-right" style="font-size:8px;margin-left:3px;"></i></button>
         </div>
         ${matchReasons.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;padding:4px 12px 8px;background:#eff6ff;">
             ${matchReasons.map(r => `<span style="font-size:10px;font-weight:600;color:#1e40af;background:#dbeafe;padding:2px 8px;border-radius:12px;"><i class="fas fa-check" style="font-size:8px;margin-right:3px;"></i>${r}</span>`).join('')}
@@ -172,11 +172,11 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
 
     card.style.cursor = 'pointer';
     card.addEventListener('click', (e) => {
-        if (e.target.closest('.match-banner')) {
+        if (e.target.closest('.match-analysis-btn')) {
             showMatchView(matchLabel.myListing, [listing]);
-        } else {
-            showListingDetail(listing);
+            return;
         }
+        showListingDetail(listing);
     });
 
     return card;
