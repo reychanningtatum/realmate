@@ -639,8 +639,8 @@ html[data-theme="dark"] .btn-follow-ing { background: rgba(59,130,246,0.1); }
     }
     .profile-cover { height: 150px; border-radius: 0; }
     .profile-avatar-wrap { margin-top: -44px; }
-    .profile-img-container { width: 92px; height: 92px; }
-    .profile-img-container img { width: 92px; height: 92px; }
+    .profile-img-container { width: 96px; height: 96px; }
+    .profile-img-container img { width: 96px; height: 96px; }
     .profile-card-body { padding: 6px 16px 20px; }
     .profile-stats-row { max-width: 100%; }
 
