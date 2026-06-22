@@ -473,7 +473,11 @@ function openEditModal() {
     document.getElementById("editBio").value = user.bio;
     document.getElementById("editModal").style.display = "flex";
 }
-function closeEditModal() { document.getElementById("editModal").style.display = "none"; }
+function closeEditModal() {
+    document.getElementById("editModal").style.display = "none";
+    document.body.style.overflow = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
 function logout() { 
     if (_supabase) _supabase.auth.signOut();
