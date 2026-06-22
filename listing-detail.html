@@ -199,12 +199,12 @@ async function loadListing() {
         <div class="ld-divider"></div>
         <div class="ld-user">
           <img src="${img}" onerror="this.src='${avatarFallback(name)}'">
-          <div style="flex:1;">
+          <div>
             <div class="ld-user-name">${safeText(name)}</div>
             <div class="ld-user-job">${listing.user_job || ''}</div>
           </div>
+          ${!listing.is_anonymous ? `<div style="margin-left:auto;">${mateButtonHtml(name, 'btn-mate')}</div>` : ''}
         </div>
-        ${!listing.is_anonymous ? `<div class="ld-actions">${mateButtonHtml(name, 'btn-mate')}</div>` : ''}
       </div>
     </div>
   `;
