@@ -576,14 +576,14 @@ function computeMatchScore(mine, other) {
         details.project = { match: false, mine: mine.project, theirs: other.project };
     }
 
-    // 3. Unit type match
+    // 3. Unit type match — different unit type kills the match
     if (mine.unit && other.unit) {
         if (mine.unit === other.unit) {
             score += 25;
             reasons.push(`Unit: ${mine.unit}`);
             details.unit = { match: true, value: mine.unit, points: 25 };
         } else {
-            details.unit = { match: false, mine: mine.unit, theirs: other.unit };
+            return { score: 0, reasons: [], details: {} };
         }
     }
 
