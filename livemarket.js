@@ -587,59 +587,104 @@ function parseListing(listing) {
 function computeMatchScore(mine, other) {
     let score = 0;
     let reasons = [];
+    let details = {};
 
     // Category must be complementary (required)
     const partnerCat = PARTNER_MAP[mine.category];
-    if (!partnerCat || other.category !== partnerCat) return { score: 0, reasons: [] };
+    if (!partnerCat || other.category !== partnerCat) return { score: 0, reasons: [], details: {} };
     score += 10;
+    details.category = { match: true, mine: mine.category, theirs: other.category };
 
-    // Location match (high weight) — far locations kill the match
+    // Location match — far locations kill the match
     const proximity = locationProximity(mine.locations, other.locations);
-    if (proximity === 'far') return { score: 0, reasons: [] };
+    if (proximity === 'far') return { score: 0, reasons: [], details: {} };
     if (proximity === 'exact') {
         const overlap = mine.locations.filter(l => other.locations.includes(l));
         score += 30;
         reasons.push(`Location: ${overlap.join(', ')}`);
+        details.location = { match: 'exact', value: overlap.join(', '), points: 30 };
     } else if (proximity === 'nearby') {
         score += 15;
         reasons.push(`Nearby area`);
+        details.location = { match: 'nearby', mine: mine.locations.join(', '), theirs: other.locations.join(', '), points: 15 };
+    } else {
+        details.location = { match: 'unknown' };
     }
 
-    // Project match (very high weight)
+    // Project match
     if (mine.project && other.project && mine.project.toLowerCase() === other.project.toLowerCase()) {
         score += 35;
         reasons.push(`Project: ${mine.project}`);
+        details.project = { match: true, value: mine.project, points: 35 };
+    } else if (mine.project || other.project) {
+        details.project = { match: false, mine: mine.project, theirs: other.project };
     }
 
     // Unit type match
-    if (mine.unit && other.unit && mine.unit === other.unit) {
-        score += 20;
-        reasons.push(`Unit: ${mine.unit}`);
+    if (mine.unit && other.unit) {
+        if (mine.unit === other.unit) {
+            score += 20;
+            reasons.push(`Unit: ${mine.unit}`);
+            details.unit = { match: true, value: mine.unit, points: 20 };
+        } else {
+            details.unit = { match: false, mine: mine.unit, theirs: other.unit };
+        }
     }
 
     // Price/budget compatibility
     const sellerPrice = mine.category.includes('FOR') ? mine.price : other.price;
     const buyerBudget = mine.category.includes('WILLING') ? mine.budget : other.budget;
     if (sellerPrice && buyerBudget) {
-        if (sellerPrice >= buyerBudget.min * 0.8 && sellerPrice <= buyerBudget.max * 1.2) {
+        const pctInRange = sellerPrice >= buyerBudget.min * 0.8 && sellerPrice <= buyerBudget.max * 1.2;
+        const pctClose = sellerPrice >= buyerBudget.min * 0.6 && sellerPrice <= buyerBudget.max * 1.5;
+        if (pctInRange) {
             score += 25;
             reasons.push('Price in range');
-        } else if (sellerPrice >= buyerBudget.min * 0.6 && sellerPrice <= buyerBudget.max * 1.5) {
+            details.price = { match: 'exact', seller: sellerPrice, budget: buyerBudget, points: 25 };
+        } else if (pctClose) {
             score += 10;
             reasons.push('Price close to range');
+            details.price = { match: 'close', seller: sellerPrice, budget: buyerBudget, points: 10 };
+        } else {
+            details.price = { match: false, seller: sellerPrice, budget: buyerBudget };
         }
     }
 
     // Feature overlap
-    if (mine.features.length && other.features.length) {
-        const common = mine.features.filter(f => other.features.includes(f));
+    const allMineFeatures = mine.features;
+    const allOtherFeatures = other.features;
+    if (allMineFeatures.length && allOtherFeatures.length) {
+        const common = allMineFeatures.filter(f => allOtherFeatures.includes(f));
         if (common.length > 0) {
             score += common.length * 5;
             reasons.push(`Features: ${common.join(', ')}`);
+            details.features = { match: true, common, points: common.length * 5 };
         }
     }
 
-    return { score, reasons };
+    // Size/sqm matching
+    const sizeRegex = /(\d+)\s*(?:sqm|sq\.?\s*m)/i;
+    const mineSize = (mine.raw?.content || '').match(sizeRegex);
+    const otherSize = (other.raw?.content || '').match(sizeRegex);
+    if (mineSize && otherSize) {
+        const ms = parseInt(mineSize[1]), os = parseInt(otherSize[1]);
+        if (Math.abs(ms - os) <= 10) {
+            score += 10;
+            reasons.push(`Size: ~${os} sqm`);
+            details.size = { match: true, value: os, points: 10 };
+        }
+    }
+
+    // Floor preference
+    const floorRegex = /\b(high|mid|low)\s*floor\b/i;
+    const mineFloor = (mine.raw?.content || '').match(floorRegex);
+    const otherFloor = (other.raw?.content || '').match(floorRegex);
+    if (mineFloor && otherFloor && mineFloor[1].toLowerCase() === otherFloor[1].toLowerCase()) {
+        score += 5;
+        reasons.push(`${otherFloor[1]} floor`);
+    }
+
+    return { score, reasons, details };
 }
 
 // Build a map: other listing id → which of my listings it matches
@@ -844,26 +889,75 @@ function showMatchView(query, matches) {
         return;
     }
 
+    const parsedQuery = parseListing(query);
+
     matches.forEach(m => {
+        const parsedM = parseListing(m);
+        const { score, reasons, details } = computeMatchScore(parsedQuery, parsedM);
+        const pct = Math.min(99, Math.round((score / 155) * 100));
+        const grade = pct >= 70 ? 'Excellent' : pct >= 45 ? 'Strong' : pct >= 25 ? 'Good' : 'Possible';
+        const gradeColor = pct >= 70 ? '#16a34a' : pct >= 45 ? '#2563eb' : pct >= 25 ? '#f59e0b' : '#94a3b8';
+        const gradeBg = pct >= 70 ? '#f0fdf4' : pct >= 45 ? '#eff6ff' : pct >= 25 ? '#fffbeb' : '#f8fafc';
+
         const card = document.createElement('div');
         card.className = 'match-card';
         const matchImgs = m.image_urls?.length ? m.image_urls : (m.image_url || m.image ? [m.image_url || m.image] : []);
+        const userName = m.user_name || m.userName || 'Unknown';
+
+        // Build detail rows
+        let detailRows = '';
+        const check = '<i class="fas fa-check-circle" style="color:#16a34a;font-size:12px;"></i>';
+        const warn = '<i class="fas fa-exclamation-circle" style="color:#f59e0b;font-size:12px;"></i>';
+        const cross = '<i class="fas fa-times-circle" style="color:#cbd5e1;font-size:12px;"></i>';
+
+        if (details.location) {
+            if (details.location.match === 'exact') detailRows += `<div class="match-detail-row">${check} <span>Location match: <strong>${details.location.value}</strong></span></div>`;
+            else if (details.location.match === 'nearby') detailRows += `<div class="match-detail-row">${warn} <span>Nearby area: ${details.location.theirs}</span></div>`;
+        }
+        if (details.project) {
+            if (details.project.match) detailRows += `<div class="match-detail-row">${check} <span>Same project: <strong>${details.project.value}</strong></span></div>`;
+            else if (details.project.theirs) detailRows += `<div class="match-detail-row">${cross} <span>Different project: ${details.project.theirs}</span></div>`;
+        }
+        if (details.unit) {
+            if (details.unit.match) detailRows += `<div class="match-detail-row">${check} <span>Unit type: <strong>${details.unit.value}</strong></span></div>`;
+            else detailRows += `<div class="match-detail-row">${cross} <span>Unit: ${details.unit.theirs || 'N/A'} (yours: ${details.unit.mine})</span></div>`;
+        }
+        if (details.price) {
+            const fmtP = v => '₱' + (v / 1e6).toFixed(1) + 'M';
+            if (details.price.match === 'exact') detailRows += `<div class="match-detail-row">${check} <span>Price in budget: <strong>${fmtP(details.price.seller)}</strong></span></div>`;
+            else if (details.price.match === 'close') detailRows += `<div class="match-detail-row">${warn} <span>Price close: ${fmtP(details.price.seller)} (budget ${fmtP(details.price.budget.min)}–${fmtP(details.price.budget.max)})</span></div>`;
+            else detailRows += `<div class="match-detail-row">${cross} <span>Price: ${fmtP(details.price.seller)} outside budget</span></div>`;
+        }
+        if (details.features?.match) detailRows += `<div class="match-detail-row">${check} <span>Features: <strong>${details.features.common.join(', ')}</strong></span></div>`;
+        if (details.size?.match) detailRows += `<div class="match-detail-row">${check} <span>Size: <strong>~${details.size.value} sqm</strong></span></div>`;
+
         card.innerHTML = `
-            <div class="match-card-top">
-                <div class="match-user">
-                    <img src="${m.user_img || m.userImg || avatarFallback(m.user_name || m.userName)}"
-                         onerror="this.src='${avatarFallback(m.user_name || m.userName)}'">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <img src="${m.user_img || m.userImg || avatarFallback(userName)}"
+                         onerror="this.src='${avatarFallback(userName)}'"
+                         style="width:40px;height:40px;border-radius:10px;object-fit:cover;">
                     <div>
-                        <div class="match-user-name">${m.user_name || m.userName || 'Unknown'}</div>
+                        <div class="match-user-name">${userName}</div>
                         <div class="match-user-job">${m.user_job || m.userJob || ''}</div>
                     </div>
                 </div>
-                <div class="ai-verified-chip"><i class="fas fa-check-circle"></i> AI Match</div>
+                <div style="text-align:right;">
+                    <div style="font-size:22px;font-weight:800;color:${gradeColor};line-height:1;">${pct}%</div>
+                    <div style="font-size:10px;font-weight:700;color:${gradeColor};">${grade} Match</div>
+                </div>
+            </div>
+            <div style="height:4px;background:#f1f5f9;border-radius:4px;margin-bottom:12px;overflow:hidden;">
+                <div style="height:100%;width:${pct}%;background:${gradeColor};border-radius:4px;transition:width 0.5s;"></div>
             </div>
             ${catTag(m.category)}
             <p class="match-card-text">${safeText(m.content || m.text)}</p>
             ${matchImgs.length ? `<img class="match-card-img" src="${matchImgs[0]}" loading="lazy">` : ''}
-            ${mateButtonHtml(m.user_name || m.userName || '')}
+            ${detailRows ? `<div style="margin-top:12px;padding:12px;background:${gradeBg};border-radius:12px;border:1px solid ${gradeColor}22;">
+                <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:${gradeColor};margin-bottom:8px;"><i class="fas fa-brain" style="margin-right:5px;"></i>AI Analysis</div>
+                ${detailRows}
+            </div>` : ''}
+            <div style="margin-top:12px;">${mateButtonHtml(userName)}</div>
         `;
         container.appendChild(card);
     });
