@@ -135,8 +135,8 @@ function parse(text) {
   else if (/\b2\s*br\b|2\s*bed/i.test(text)) unit = '2BR';
   else if (/\b3\s*br\b|3\s*bed/i.test(text)) unit = '3BR';
   else if (/\b4\s*br\b|4\s*bed/i.test(text)) unit = '4BR';
-  let project = null;
-  for (const p of PROJECTS) { if (text.toUpperCase().includes(p.toUpperCase())) { project = p; break; } }
+  let project = null, projectIdx = Infinity;
+  for (const p of PROJECTS) { const i = text.toUpperCase().indexOf(p.toUpperCase()); if (i !== -1 && i < projectIdx) { projectIdx = i; project = p; } }
   let price = null;
   let m = lower.match(/(\d+\.?\d*)\s*m(?:illion)?/);
   if (m) price = parseFloat(m[1]) * 1e6;

@@ -535,10 +535,15 @@ function extractLocations(text) {
 
 function extractProject(text) {
     const upper = text.toUpperCase();
+    let earliest = Infinity, found = null;
     for (const proj of KNOWN_PROJECTS) {
-        if (upper.includes(proj.toUpperCase())) return proj;
+        const idx = upper.indexOf(proj.toUpperCase());
+        if (idx !== -1 && idx < earliest) {
+            earliest = idx;
+            found = proj;
+        }
     }
-    return null;
+    return found;
 }
 
 function extractFeatures(text) {
