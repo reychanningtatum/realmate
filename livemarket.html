@@ -139,12 +139,14 @@
 
       <!-- PDF section -->
       <div class="feed-section" id="feedPdfSection">
-        <div class="feed-section-label"><i class="fas fa-file-pdf" style="color:#32cd32;"></i> Property Market Report</div>
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+          <div class="feed-section-label" style="margin-bottom:0;"><i class="fas fa-file-pdf" style="color:#32cd32;"></i> Property Market Report</div>
+          <div id="pdfCourtesy" class="feed-courtesy" style="display:none;">
+            <i class="fas fa-handshake" style="color:#94a3b8;"></i> Courtesy: <span id="pdfCourtesyText">Colliers Philippines</span>
+          </div>
+        </div>
         <div id="pdfStripWrap" class="feed-pdf-wrap" style="display:none;">
           <div id="pdfPageStrip" class="feed-pdf-strip"></div>
-        </div>
-        <div id="pdfCourtesy" class="feed-courtesy" style="display:none;">
-          <i class="fas fa-handshake" style="color:#94a3b8;"></i> Courtesy: <span id="pdfCourtesyText">Colliers Philippines</span>
         </div>
       </div>
 
