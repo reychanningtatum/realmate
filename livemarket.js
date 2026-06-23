@@ -402,6 +402,7 @@ function selectSegTab(btn) {
         else if (activeSegTab === 'MARKET') activeCategory = marketCat;
         applyFilters();
     }
+    setTimeout(syncTopPadding, 50);
 }
 
 function selectPortfolioSub(btn) {
@@ -412,6 +413,7 @@ function selectPortfolioSub(btn) {
     const subfilter = document.getElementById('myListingsSubfilter');
     subfilter.style.display = portfolioSub === 'MY_LISTINGS' ? 'flex' : 'none';
     applyFilters();
+    setTimeout(syncTopPadding, 50);
 }
 
 function selectMarketCat(btn) {
@@ -1390,16 +1392,14 @@ renderMarketReportPdf();
 })();
 
 // Sync top padding on mobile for fixed header
-(function() {
+function syncTopPadding() {
     const wrap = document.querySelector('.top-fixed-wrap');
     if (!wrap) return;
-    function sync() {
-        document.documentElement.style.setProperty('--top-fixed-height', wrap.offsetHeight + 'px');
-    }
-    sync();
-    window.addEventListener('resize', sync);
-    setTimeout(sync, 500);
-})();
+    document.documentElement.style.setProperty('--top-fixed-height', wrap.offsetHeight + 'px');
+}
+syncTopPadding();
+window.addEventListener('resize', syncTopPadding);
+setTimeout(syncTopPadding, 500);
 
 // ── Load courtesy attributions from DB ──
 (async function loadCourtesy() {
