@@ -829,6 +829,16 @@ function showMatchView(query, matches) {
         <p class="your-listing-text">${safeText(query.content || query.text)}</p>
     `;
 
+    // Sync match layout padding to fixed header heights
+    setTimeout(() => {
+        const hdr = document.querySelector('.match-page-header');
+        const fix = document.querySelector('.match-your-listing-fixed');
+        const layout = document.querySelector('#matchView .match-layout');
+        if (hdr && fix && layout) {
+            layout.style.paddingTop = (hdr.offsetHeight + fix.offsetHeight + 16) + 'px';
+        }
+    }, 100);
+
     // Match count badge
     const badge = document.getElementById('matchCountBadge');
     badge.textContent = `${matches.length} match${matches.length !== 1 ? 'es' : ''}`;
