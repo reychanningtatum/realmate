@@ -125,7 +125,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
     const matchBanner = matchLabel ? `
         <div class="match-banner">
             <div style="display:flex;align-items:center;gap:5px;flex:1;min-width:0;">
-                <i class="fas fa-robot" style="color:#32cd32;"></i>
+                <i class="fas fa-brain" style="color:#32cd32;"></i>
                 <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#94a3b8;">AI Match · <span style="color:#fff;">${matchLabel.myCategory}</span></span>
             </div>
             <span class="match-pct-badge" style="color:${matchColor};">${matchPct}% ${matchGrade}</span>
@@ -138,7 +138,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
         <div class="listing-card-body">
             <div class="listing-card-top">
                 ${catTag(listing.category)}
-                ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-robot"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''}</button>` : ''}
+                ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-brain"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''}</button>` : ''}
                 <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
             </div>
             <p class="listing-text">${safeText(listing.content)}</p>
