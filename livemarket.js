@@ -958,8 +958,18 @@ function showMatchView(query, matches) {
                 <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:${gradeColor};margin-bottom:8px;"><i class="fas fa-brain" style="margin-right:5px;"></i>AI Analysis</div>
                 ${detailRows}
             </div>` : ''}
-            <div style="margin-top:12px;">${mateButtonHtml(userName)}</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:12px;">
+                ${mateButtonHtml(userName)}
+                <button onclick="event.stopPropagation(); location.href='listing-detail.html?id=${m.id}';" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:50px;border:1.5px solid var(--border);background:#fff;color:var(--text-main);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">
+                    <i class="fas fa-eye"></i> View Listing
+                </button>
+            </div>
         `;
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', (e) => {
+            if (e.target.closest('button') || e.target.closest('.btn-mate')) return;
+            location.href = 'listing-detail.html?id=' + m.id;
+        });
         container.appendChild(card);
     });
 }
