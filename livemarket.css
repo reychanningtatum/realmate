@@ -544,8 +544,22 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   padding: 12px 48px;
   border-bottom: 2px solid var(--primary);
 }
+.match-your-listing-fixed {
+  position: fixed;
+  top: 50px;
+  left: 240px; right: 0;
+  z-index: 150;
+  background: var(--bg);
+  padding: 10px 48px 12px;
+  border-bottom: 1px solid var(--border);
+  max-height: 40vh;
+  overflow-y: auto;
+}
+.match-your-listing-fixed .your-listing-card {
+  position: relative; top: auto;
+}
 #matchView .match-layout {
-  padding-top: 60px;
+  padding-top: 280px;
 }
 .match-page-header .btn-back {
   background: rgba(255,255,255,0.1);
@@ -593,11 +607,8 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 .match-title-block p  { color: var(--text-sub); font-size: 14px; }
 
 .match-layout {
-  display: grid;
-  grid-template-columns: 360px 1fr;
-  gap: 28px;
-  max-width: 1200px;
-  align-items: start;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .section-label {
@@ -838,7 +849,7 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
     grid-template-columns: 1fr;
     gap: 16px;
   }
-  .your-listing-card { position: sticky; top: 52px; z-index: 98; }
+  .match-your-listing-fixed { left: 0; padding: 8px 16px 10px; }
   .match-page-header { left: 0; padding: 10px 16px; }
   .match-title-block h2 { font-size: 22px; }
 }
