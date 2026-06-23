@@ -422,7 +422,7 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 }
 .pdf-page-strip {
   display: flex; flex-direction: column; gap: 8px; align-items: center;
-  animation: graphScrollV 40s linear infinite;
+  animation: graphScrollV 25s linear infinite;
   will-change: transform;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
@@ -861,7 +861,7 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
   #miniChartsRow { flex-direction: row !important; animation-name: graphScrollH !important; width: max-content; }
   .ledger-left-media { width: 100%; position: relative; top: 0; max-height: none; overflow-y: visible; flex-direction: row; align-items: center; gap: 8px; margin-bottom: 12px; }
   .pdf-strip-wrap { max-height: none; overflow: hidden; }
-  .pdf-page-strip { flex-direction: row !important; animation-name: graphScrollH !important; animation-duration: 120s !important; width: max-content; }
+  .pdf-page-strip { flex-direction: row !important; animation-name: graphScrollH !important; animation-duration: 60s !important; width: max-content; }
   .ledger-center { width: 100%; overflow: hidden; }
   .yt-embed-wrap { flex-shrink: 0; width: 224px; height: 126px; }
   .yt-embed-wrap > div:first-child { height: 100%; }
