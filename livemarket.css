@@ -396,11 +396,16 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   position: sticky;
   top: 160px;
   max-height: calc(100vh - 180px);
-  overflow-y: auto;
-  scrollbar-width: thin;
+  overflow: hidden;
 }
 #miniChartsRow {
   display: flex; flex-direction: column; gap: 10px;
+  animation: graphScroll 20s linear infinite;
+}
+#miniChartsRow:hover { animation-play-state: paused; }
+@keyframes graphScroll {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
 }
 .yt-embed-wrap {
   width: 100%; height: 126px;

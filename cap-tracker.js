@@ -610,7 +610,6 @@ function initMiniChart() {
         if (_miniCharts[project.id]) return;
         const card = buildMiniChartCard(project);
         row.appendChild(card);
-        // Update gain badge with CAGR
         setTimeout(() => {
             buildMiniChartCanvas(project);
             if (project.cagr) {
@@ -619,6 +618,17 @@ function initMiniChart() {
             }
         }, 50);
     });
+
+    // Duplicate cards for seamless scrolling loop (like ticker)
+    setTimeout(() => {
+        const cards = row.querySelectorAll('[id^="miniCard_"]');
+        cards.forEach(card => {
+            const clone = card.cloneNode(true);
+            clone.id = clone.id + '_clone';
+            clone.querySelectorAll('canvas').forEach(c => c.remove());
+            row.appendChild(clone);
+        });
+    }, 200);
 }
 
 function miniChartOpenAnalytics() {
