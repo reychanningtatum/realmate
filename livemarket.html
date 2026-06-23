@@ -78,14 +78,11 @@
       <button class="seg-tab active" data-seg="FEED" onclick="selectSegTab(this)">
         <i class="fas fa-rss"></i><span>Pulse</span>
       </button>
-      <button class="seg-tab" data-seg="MATCHES" onclick="selectSegTab(this)">
-        <i class="fas fa-bolt"></i><span>Matches</span>
-      </button>
-      <button class="seg-tab" data-seg="MY_LISTINGS" onclick="selectSegTab(this)">
-        <i class="fas fa-user"></i><span>Mine</span>
-      </button>
       <button class="seg-tab" data-seg="MARKET" onclick="selectSegTab(this)">
         <i class="fas fa-store"></i><span>Market</span>
+      </button>
+      <button class="seg-tab" data-seg="PORTFOLIO" onclick="selectSegTab(this)">
+        <i class="fas fa-briefcase"></i><span>Portfolio</span>
       </button>
     </div>
     <!-- Category filters (visible only under Market) -->
@@ -98,7 +95,12 @@
       <button class="chip" data-cat="WILLING TO RENT" onclick="selectMarketCat(this)">Willing to Rent</button>
       <button class="chip" data-cat="WILLING TO LEASE" onclick="selectMarketCat(this)">Willing to Lease</button>
     </div>
-    <!-- My Listings sub-filter -->
+    <!-- Portfolio sub-filter (Matches + My Listings) -->
+    <div class="filter-chips" id="portfolioSubfilter" style="display:none;">
+      <button class="chip chip-sub chip-match active" data-psub="MATCHES" onclick="selectPortfolioSub(this)"><i class="fas fa-bolt"></i> My Matches</button>
+      <button class="chip chip-sub chip-mine" data-psub="MY_LISTINGS" onclick="selectPortfolioSub(this)"><i class="fas fa-list"></i> My Listings</button>
+    </div>
+    <!-- My Listings category sub-filter -->
     <div class="filter-chips" id="myListingsSubfilter" style="display:none;">
       <button class="chip chip-sub active" data-sub="ALL" onclick="selectSubCat(this)">All</button>
       <button class="chip chip-sub" data-sub="FOR SALE" onclick="selectSubCat(this)">For Sale</button>

@@ -375,6 +375,8 @@ let activeSegTab = 'FEED';
 let marketCat = 'ALL';
 let myListingsSubCat = 'ALL';
 
+let portfolioSub = 'MATCHES';
+
 function selectSegTab(btn) {
     document.querySelectorAll('.seg-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
@@ -383,10 +385,12 @@ function selectSegTab(btn) {
     const feedPane = document.getElementById('feedTabPane');
     const listPane = document.getElementById('listingsTabPane');
     const catFilters = document.getElementById('marketCatFilters');
+    const portfolioFilters = document.getElementById('portfolioSubfilter');
     const subfilter = document.getElementById('myListingsSubfilter');
 
     catFilters.style.display = activeSegTab === 'MARKET' ? 'flex' : 'none';
-    subfilter.style.display = activeSegTab === 'MY_LISTINGS' ? 'flex' : 'none';
+    portfolioFilters.style.display = activeSegTab === 'PORTFOLIO' ? 'flex' : 'none';
+    subfilter.style.display = (activeSegTab === 'PORTFOLIO' && portfolioSub === 'MY_LISTINGS') ? 'flex' : 'none';
 
     if (activeSegTab === 'FEED') {
         feedPane.style.display = '';
@@ -394,11 +398,20 @@ function selectSegTab(btn) {
     } else {
         feedPane.style.display = 'none';
         listPane.style.display = '';
-        if (activeSegTab === 'MATCHES') activeCategory = 'MATCHES';
-        else if (activeSegTab === 'MY_LISTINGS') activeCategory = 'MY_LISTINGS';
+        if (activeSegTab === 'PORTFOLIO') activeCategory = portfolioSub;
         else if (activeSegTab === 'MARKET') activeCategory = marketCat;
         applyFilters();
     }
+}
+
+function selectPortfolioSub(btn) {
+    document.querySelectorAll('#portfolioSubfilter .chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    portfolioSub = btn.dataset.psub;
+    activeCategory = portfolioSub;
+    const subfilter = document.getElementById('myListingsSubfilter');
+    subfilter.style.display = portfolioSub === 'MY_LISTINGS' ? 'flex' : 'none';
+    applyFilters();
 }
 
 function selectMarketCat(btn) {
