@@ -118,7 +118,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
     card.className = 'listing-card' + (matchLabel ? ' is-match' : '');
 
     const matchScore = matchLabel?.matchScore || 0;
-    const matchPct = Math.min(99, Math.round((matchScore / 145) * 100));
+    const matchPct = Math.min(99, Math.round((matchScore / 100) * 100));
     const matchGrade = matchPct >= 70 ? 'Excellent' : matchPct >= 45 ? 'Strong' : matchPct >= 25 ? 'Good' : 'Possible';
     const matchColor = matchPct >= 70 ? '#16a34a' : matchPct >= 45 ? '#2563eb' : matchPct >= 25 ? '#f59e0b' : '#94a3b8';
     const matchReasons = matchLabel?.matchReasons || [];
@@ -592,46 +592,47 @@ function computeMatchScore(mine, other) {
     // Category must be complementary (required)
     const partnerCat = PARTNER_MAP[mine.category];
     if (!partnerCat || other.category !== partnerCat) return { score: 0, reasons: [], details: {} };
-    score += 10;
     details.category = { match: true, mine: mine.category, theirs: other.category };
 
-    // Location match — far locations kill the match
+    // ── 4 MAIN INDICATORS (each 25pts = 100pts total) ──
+
+    // 1. Location match — far locations kill the match
     const proximity = locationProximity(mine.locations, other.locations);
     if (proximity === 'far') return { score: 0, reasons: [], details: {} };
     if (proximity === 'exact') {
         const overlap = mine.locations.filter(l => other.locations.includes(l));
-        score += 30;
+        score += 25;
         reasons.push(`Location: ${overlap.join(', ')}`);
-        details.location = { match: 'exact', value: overlap.join(', '), points: 30 };
+        details.location = { match: 'exact', value: overlap.join(', '), points: 25 };
     } else if (proximity === 'nearby') {
-        score += 15;
+        score += 12;
         reasons.push(`Nearby area`);
-        details.location = { match: 'nearby', mine: mine.locations.join(', '), theirs: other.locations.join(', '), points: 15 };
+        details.location = { match: 'nearby', mine: mine.locations.join(', '), theirs: other.locations.join(', '), points: 12 };
     } else {
         details.location = { match: 'unknown' };
     }
 
-    // Project match
+    // 2. Project match
     if (mine.project && other.project && mine.project.toLowerCase() === other.project.toLowerCase()) {
-        score += 35;
+        score += 25;
         reasons.push(`Project: ${mine.project}`);
-        details.project = { match: true, value: mine.project, points: 35 };
+        details.project = { match: true, value: mine.project, points: 25 };
     } else if (mine.project || other.project) {
         details.project = { match: false, mine: mine.project, theirs: other.project };
     }
 
-    // Unit type match
+    // 3. Unit type match
     if (mine.unit && other.unit) {
         if (mine.unit === other.unit) {
-            score += 20;
+            score += 25;
             reasons.push(`Unit: ${mine.unit}`);
-            details.unit = { match: true, value: mine.unit, points: 20 };
+            details.unit = { match: true, value: mine.unit, points: 25 };
         } else {
             details.unit = { match: false, mine: mine.unit, theirs: other.unit };
         }
     }
 
-    // Price/budget compatibility
+    // 4. Price/budget compatibility
     const sellerPrice = mine.category.includes('FOR') ? mine.price : other.price;
     const buyerBudget = mine.category.includes('WILLING') ? mine.budget : other.budget;
     if (sellerPrice && buyerBudget) {
@@ -642,9 +643,9 @@ function computeMatchScore(mine, other) {
             reasons.push('Price in range');
             details.price = { match: 'exact', seller: sellerPrice, budget: buyerBudget, points: 25 };
         } else if (pctClose) {
-            score += 10;
+            score += 12;
             reasons.push('Price close to range');
-            details.price = { match: 'close', seller: sellerPrice, budget: buyerBudget, points: 10 };
+            details.price = { match: 'close', seller: sellerPrice, budget: buyerBudget, points: 12 };
         } else {
             details.price = { match: false, seller: sellerPrice, budget: buyerBudget };
         }
@@ -894,7 +895,7 @@ function showMatchView(query, matches) {
     matches.forEach(m => {
         const parsedM = parseListing(m);
         const { score, reasons, details } = computeMatchScore(parsedQuery, parsedM);
-        const pct = Math.min(99, Math.round((score / 155) * 100));
+        const pct = Math.min(99, Math.round((score / 100) * 100));
         const grade = pct >= 70 ? 'Excellent' : pct >= 45 ? 'Strong' : pct >= 25 ? 'Good' : 'Possible';
         const gradeColor = pct >= 70 ? '#16a34a' : pct >= 45 ? '#2563eb' : pct >= 25 ? '#f59e0b' : '#94a3b8';
         const gradeBg = pct >= 70 ? '#f0fdf4' : pct >= 45 ? '#eff6ff' : pct >= 25 ? '#fffbeb' : '#f8fafc';
