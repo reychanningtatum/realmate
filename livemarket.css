@@ -424,7 +424,7 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   display: flex; flex-direction: column; gap: 8px; align-items: center;
 }
 .yt-embed-wrap {
-  width: 100%; height: 126px; margin-bottom: 12px;
+  width: 100%; height: 126px;
 }
 
 .listings-grid {
@@ -876,6 +876,10 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
   .match-your-listing-fixed { left: 0; padding: 8px 16px 10px; }
   .match-page-header { left: 0; padding: 10px 16px; }
   .match-title-block h2 { font-size: 22px; }
+}
+
+@media (min-width: 769px) {
+  .yt-embed-wrap { margin-bottom: 12px; }
 }
 
 @media (min-width: 769px) and (max-width: 1100px) {
