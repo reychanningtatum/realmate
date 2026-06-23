@@ -641,36 +641,8 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   padding: 8px 48px;
   border-bottom: 2px solid var(--primary);
 }
-.match-your-listing-fixed {
-  position: fixed;
-  top: 42px;
-  left: 240px; right: 0;
-  z-index: 150;
-  background: var(--bg);
-  padding: 6px 48px 6px;
-  border-bottom: 1px solid var(--border);
-  overflow-y: auto;
-  scrollbar-width: thin;
-}
-.match-your-listing-fixed .your-listing-card {
-  position: relative; top: auto;
-  padding: 14px;
-  border-width: 1px;
-}
-.match-your-listing-fixed .your-listing-text {
-  font-size: 13px; line-height: 1.5; margin-bottom: 10px;
-}
-.match-your-listing-fixed .your-listing-img {
-  max-height: 100px;
-}
-.match-your-listing-fixed .ai-monitoring-strip {
-  padding: 6px 10px; font-size: 10px;
-}
-.match-your-listing-fixed .section-label {
-  margin-bottom: 6px; font-size: 10px;
-}
 #matchView .match-layout {
-  padding-top: 120px;
+  padding-top: 56px;
 }
 .match-page-header .btn-back {
   background: rgba(255,255,255,0.1);
@@ -962,20 +934,7 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
   }
   .match-header-right h2 { font-size: 14px !important; }
   .match-header-right .match-ai-badge { font-size: 9px; padding: 2px 6px; }
-  .match-your-listing-fixed {
-    left: 0; padding: 4px 12px 4px;
-    top: 36px;
-  }
-  .match-your-listing-fixed .your-listing-card {
-    padding: 10px; border-radius: 12px;
-  }
-  .match-your-listing-fixed .your-listing-text {
-    font-size: 12px; max-height: none; line-height: 1.4;
-  }
-  .match-your-listing-fixed .your-listing-img { max-height: 70px; border-radius: 8px; }
-  .match-your-listing-fixed .ai-monitoring-strip { padding: 5px 8px; font-size: 9px; border-radius: 6px; }
-  .match-your-listing-fixed .section-label { margin-bottom: 4px; font-size: 9px; }
-  #matchView .match-layout { padding-top: 80px; }
+  #matchView .match-layout { padding-top: 44px; }
   .match-layout { gap: 12px; }
   .match-card { padding: 14px; margin-bottom: 10px; border-radius: 14px; }
   .match-card-text { font-size: 13px; line-height: 1.5; margin: 8px 0; }
