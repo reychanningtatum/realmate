@@ -1308,20 +1308,25 @@ renderMarketReportPdf();
                 videoId,
                 width: '100%',
                 height: '100%',
-                playerVars: { autoplay: 1, mute: 0, rel: 0, modestbranding: 1, playsinline: 1 },
+                playerVars: { autoplay: 1, mute: 1, rel: 0, modestbranding: 1, playsinline: 1 },
                 events: {
                     onReady: function(e) {
                         const autoMute = localStorage.getItem('rm_automute_video') === '1';
                         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                        if (!autoMute && !isMobile) {
-                            try { e.target.unMute(); e.target.setVolume(100); } catch {}
-                        }
-                        if (isMobile && !autoMute) {
+                        if (autoMute || isMobile) {
                             _ytMuted = true;
+                            e.target.mute();
                             const btn = document.getElementById('ytMuteBtn');
                             if (btn) btn.innerHTML = '<i class="fas fa-volume-xmark"></i>';
-                            const hint = document.getElementById('ytMuteHint');
-                            if (hint) hint.style.display = 'block';
+                            if (isMobile) {
+                                const hint = document.getElementById('ytMuteHint');
+                                if (hint) hint.style.display = 'block';
+                            }
+                        } else {
+                            _ytMuted = false;
+                            try { e.target.unMute(); e.target.setVolume(100); } catch {}
+                            const btn = document.getElementById('ytMuteBtn');
+                            if (btn) btn.innerHTML = '<i class="fas fa-volume-high"></i>';
                         }
                         updateFilterBarTop();
                     },
