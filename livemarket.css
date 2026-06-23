@@ -366,23 +366,48 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 /* ── Match banner on card ── */
 .match-banner {
   display: flex; align-items: center; gap: 6px;
-  background: linear-gradient(90deg, #eff6ff 0%, #dbeafe 100%);
-  color: var(--ai-blue);
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #0f172a 100%);
+  color: #60a5fa;
   font-size: 11px; font-weight: 700;
-  padding: 6px 12px;
-  border-bottom: 1px solid #bfdbfe;
+  padding: 8px 12px;
+  position: relative;
+  overflow: hidden;
+}
+.match-banner::before {
+  content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(96,165,250,0.08), transparent);
+  animation: aiShimmer 3s ease-in-out infinite;
+}
+@keyframes aiShimmer {
+  0% { left: -60%; }
+  100% { left: 160%; }
 }
 .match-banner i { font-size: 10px; flex-shrink: 0; }
 .match-banner-arrow { font-size: 9px; opacity: 0.7; flex-shrink: 0; }
+.match-banner .match-pct-badge {
+  font-size: 10px; font-weight: 800; padding: 2px 8px;
+  border-radius: 20px; white-space: nowrap; flex-shrink: 0;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+}
 
 /* ── Matched card highlight ── */
 .listing-card.is-match {
-  border: 1.5px solid #93c5fd;
-  box-shadow: 0 4px 20px rgba(24, 119, 242, 0.10);
+  border: 1px solid rgba(96,165,250,0.3);
+  box-shadow: 0 0 0 1px rgba(96,165,250,0.1), 0 4px 20px rgba(15,23,42,0.08);
+  position: relative;
+}
+.listing-card.is-match::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, #3b82f6, #32cd32, #3b82f6);
+  background-size: 200% 100%;
+  animation: aiGradientBar 4s linear infinite;
+}
+@keyframes aiGradientBar {
+  0% { background-position: 0% 0; }
+  100% { background-position: 200% 0; }
 }
 .listing-card.is-match:hover {
-  box-shadow: 0 12px 36px rgba(24, 119, 242, 0.18);
-  border-color: var(--ai-blue);
+  box-shadow: 0 0 0 1px rgba(96,165,250,0.2), 0 12px 36px rgba(15,23,42,0.12);
 }
 
 /* =========================================
@@ -1174,7 +1199,7 @@ html[data-theme="dark"] .lm-modal-close { background: #0f172a; color: #94a3b8; }
 html[data-theme="dark"] .lm-modal-close:hover { background: #334155; color: #e2e8f0; }
 
 /* DARK MODE — match banner on cards */
-html[data-theme="dark"] .match-banner { background: rgba(24,119,242,0.15); color: #60a5fa; }
+html[data-theme="dark"] .match-banner { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #0f172a 100%); }
 
 /* ═══ PDF LIGHTBOX ═══ */
 .pdf-lightbox {
@@ -1234,12 +1259,12 @@ html[data-theme="dark"] .match-banner { background: rgba(24,119,242,0.15); color
 .ai-match-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 13px;
+  gap: 5px;
+  padding: 5px 11px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  border: 1.5px solid #e2e8f0;
+  border: 1px solid #e2e8f0;
   background: #f1f5f9;
   color: #94a3b8;
   cursor: default;
@@ -1247,20 +1272,27 @@ html[data-theme="dark"] .match-banner { background: rgba(24,119,242,0.15); color
 }
 
 .ai-match-badge.has-matches {
-  background: #eff6ff;
-  color: #1877f2;
-  border-color: #93c5fd;
+  background: linear-gradient(135deg, #0f172a, #1e3a5f);
+  color: #32cd32;
+  border-color: rgba(50,205,50,0.3);
   cursor: pointer;
-  animation: lmMatchHeartbeat 1.2s ease-in-out infinite;
-  box-shadow: 0 0 0 0 rgba(24, 119, 242, 0.4);
+  animation: lmMatchHeartbeat 1.5s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(50,205,50,0.3);
+  position: relative;
+  overflow: hidden;
+}
+.ai-match-badge.has-matches::before {
+  content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(50,205,50,0.15), transparent);
+  animation: aiShimmer 2.5s ease-in-out infinite;
 }
 
 .ai-match-badge.has-matches:hover {
-  background: #1877f2;
-  color: #ffffff;
-  border-color: #1877f2;
+  background: linear-gradient(135deg, #0f172a, #16a34a);
+  color: #fff;
+  border-color: #32cd32;
   animation: none;
-  box-shadow: 0 4px 14px rgba(24, 119, 242, 0.4);
+  box-shadow: 0 4px 14px rgba(50,205,50,0.3);
   transform: translateY(-1px);
   transition: background 0.15s, color 0.15s, box-shadow 0.15s, transform 0.15s;
 }

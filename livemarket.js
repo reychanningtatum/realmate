@@ -125,11 +125,11 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
     const matchBanner = matchLabel ? `
         <div class="match-banner">
             <div style="display:flex;align-items:center;gap:5px;flex:1;min-width:0;">
-                <i class="fas fa-bolt"></i>
-                <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Match · ${matchLabel.myCategory}</span>
+                <i class="fas fa-robot" style="color:#32cd32;"></i>
+                <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#94a3b8;">AI Match · <span style="color:#fff;">${matchLabel.myCategory}</span></span>
             </div>
-            <span style="font-size:10px;font-weight:800;color:${matchColor};background:rgba(255,255,255,0.9);padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;">${matchPct}%</span>
-            <i class="fas fa-chevron-right match-banner-arrow"></i>
+            <span class="match-pct-badge" style="color:${matchColor};">${matchPct}% ${matchGrade}</span>
+            <i class="fas fa-chevron-right match-banner-arrow" style="color:#475569;"></i>
         </div>` : '';
 
     card.innerHTML = `
