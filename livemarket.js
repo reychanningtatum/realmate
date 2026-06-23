@@ -857,7 +857,7 @@ function showMatchView(query, matches) {
     document.getElementById('yourListingCard').innerHTML = `
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
             ${catTag(query.category)}
-            <span style="font-size:10px;color:#94a3b8;margin-left:auto;"><i class="fas fa-satellite-dish" style="color:#32cd32;margin-right:4px;"></i>AI Monitoring</span>
+            <span style="font-size:10px;color:#94a3b8;margin-left:auto;"><i class="fas fa-satellite-dish ai-satellite-icon" style="color:#32cd32;margin-right:4px;"></i>AI Monitoring</span>
         </div>
         ${imgStrip}
         <p class="your-listing-text">${safeText(query.content || query.text)}</p>

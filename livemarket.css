@@ -394,6 +394,14 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 .fa-circle-nodes {
   animation: aiOrbit 5s linear infinite, aiGlow 2s ease-in-out infinite;
 }
+@keyframes aiSatellitePulse {
+  0%,100% { transform: scale(1); text-shadow: 0 0 4px rgba(50,205,50,0.3); }
+  50% { transform: scale(1.15); text-shadow: 0 0 12px rgba(50,205,50,0.7), 0 0 24px rgba(50,205,50,0.3); }
+}
+.ai-satellite-icon {
+  animation: aiSatellitePulse 1.5s ease-in-out infinite;
+  display: inline-block;
+}
 .match-banner i { font-size: 10px; flex-shrink: 0; }
 .match-banner-arrow { font-size: 9px; opacity: 0.7; flex-shrink: 0; }
 .match-banner .match-pct-badge {
