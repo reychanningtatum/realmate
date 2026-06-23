@@ -124,16 +124,13 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
     const matchReasons = matchLabel?.matchReasons || [];
     const matchBanner = matchLabel ? `
         <div class="match-banner">
-            <i class="fas fa-bolt"></i>
-            Matches your <strong>${matchLabel.myCategory}</strong> listing
-            <span style="margin-left:auto;display:flex;align-items:center;gap:6px;">
-                <span style="font-size:10px;font-weight:800;color:${matchColor};background:rgba(255,255,255,0.9);padding:2px 8px;border-radius:20px;">${matchPct}% ${matchGrade} Match</span>
-            </span>
+            <div style="display:flex;align-items:center;gap:5px;flex:1;min-width:0;">
+                <i class="fas fa-bolt"></i>
+                <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Match · ${matchLabel.myCategory}</span>
+            </div>
+            <span style="font-size:10px;font-weight:800;color:${matchColor};background:rgba(255,255,255,0.9);padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;">${matchPct}%</span>
             <i class="fas fa-chevron-right match-banner-arrow"></i>
-        </div>
-        ${matchReasons.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;padding:4px 12px 8px;background:#eff6ff;">
-            ${matchReasons.map(r => `<span style="font-size:10px;font-weight:600;color:#1e40af;background:#dbeafe;padding:2px 8px;border-radius:12px;"><i class="fas fa-check" style="font-size:8px;margin-right:3px;"></i>${r}</span>`).join('')}
-        </div>` : ''}` : '';
+        </div>` : '';
 
     card.innerHTML = `
         ${matchBanner}
