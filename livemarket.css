@@ -1152,7 +1152,7 @@ html[data-theme="dark"] .match-banner { background: rgba(24,119,242,0.15); color
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-  z-index: 10;
+  z-index: 3001;
 }
 .pdf-lb-pages {
   display: flex;

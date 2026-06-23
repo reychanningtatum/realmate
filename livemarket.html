@@ -162,10 +162,10 @@
 
     <!-- PDF lightbox -->
     <div id="pdfLightbox" onclick="closePdfLightbox()" class="pdf-lightbox">
+      <button onclick="closePdfLightbox()" class="pdf-lightbox-close">
+        <i class="fas fa-times"></i>
+      </button>
       <div onclick="event.stopPropagation()" class="pdf-lightbox-inner">
-        <button onclick="closePdfLightbox()" class="pdf-lightbox-close">
-          <i class="fas fa-times"></i>
-        </button>
         <div id="pdfLbPages" class="pdf-lb-pages"></div>
       </div>
     </div>
