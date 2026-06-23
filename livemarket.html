@@ -73,10 +73,14 @@
         <i class="fas fa-plus"></i> Post Listing
       </button>
     </div>
-    <div class="filter-chips" id="filterChips">
+    <!-- Personal tabs -->
+    <div class="filter-chips filter-chips-personal" id="filterChipsPersonal">
       <button class="chip chip-feed active" data-cat="FEED" onclick="selectCat(this)"><i class="fas fa-rss"></i> Feed</button>
       <button class="chip chip-match" data-cat="MATCHES" onclick="selectCat(this)"><i class="fas fa-bolt"></i> My Matches</button>
       <button class="chip chip-mine" data-cat="MY_LISTINGS" onclick="selectCat(this)"><i class="fas fa-user"></i> My Listings</button>
+    </div>
+    <!-- Market tabs -->
+    <div class="filter-chips filter-chips-market" id="filterChips">
       <button class="chip" data-cat="ALL" onclick="selectCat(this)">All Listings</button>
       <button class="chip" data-cat="FOR SALE" onclick="selectCat(this)">For Sale</button>
       <button class="chip" data-cat="FOR RENT" onclick="selectCat(this)">For Rent</button>

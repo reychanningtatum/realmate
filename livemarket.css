@@ -299,12 +299,20 @@ h1,h2,h3 { font-family: 'Playfair Display', serif; }
 
 /* ── Filter chip rows ── */
 .filter-chips {
-  display: flex; gap: 8px;
+  display: flex; gap: 6px;
   flex-wrap: nowrap; overflow-x: auto;
   scrollbar-width: none; -ms-overflow-style: none;
-  padding-bottom: 2px;
+  padding-bottom: 0;
 }
 .filter-chips::-webkit-scrollbar { display: none; }
+.filter-chips-personal {
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 6px;
+}
+.filter-chips-market .chip {
+  font-size: 11px; padding: 5px 12px;
+}
 
 .chip {
   padding: 7px 16px; border-radius: 50px; flex-shrink: 0;
