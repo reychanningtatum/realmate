@@ -141,7 +141,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
         <div class="listing-card-body">
             <div class="listing-card-top">
                 ${catTag(listing.category)}
-                ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); selectCatByName('MATCHES');"><i class="fas fa-robot"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''}</button>` : ''}
+                ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-robot"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''}</button>` : ''}
                 <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
             </div>
             <p class="listing-text">${safeText(listing.content)}</p>
@@ -788,6 +788,24 @@ function exitMatchView() {
     const fb = document.querySelector('.filter-bar');
     if (fb) fb.style.display = '';
     loadLedger();
+}
+
+function showAllMatches(listingId) {
+    const myListing = myListings.find(l => String(l.id) === String(listingId));
+    if (!myListing) return;
+    const partnerCat = PARTNER_MAP[myListing.category];
+    if (!partnerCat) return;
+    const parsedMine = parseListing(myListing);
+    const matches = allListings.filter(other => {
+        if (other.user_id === myListing.user_id) return false;
+        const { score } = computeMatchScore(parsedMine, parseListing(other));
+        return score > 0;
+    }).sort((a, b) => {
+        const sa = computeMatchScore(parsedMine, parseListing(a)).score;
+        const sb = computeMatchScore(parsedMine, parseListing(b)).score;
+        return sb - sa;
+    });
+    showMatchView(myListing, matches);
 }
 
 function showMatchView(query, matches) {
