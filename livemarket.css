@@ -115,8 +115,8 @@ h1,h2,h3 { font-family: 'Playfair Display', serif; }
 .ticker-content:hover { animation-play-state: paused; }
 
 @keyframes tickerScroll {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0%   { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
 }
 
 .ticker-item {
@@ -402,16 +402,19 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 #miniChartsRow {
   display: flex; flex-direction: column; gap: 10px;
   animation: graphScrollV 40s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 #miniChartsRow:hover { animation-play-state: paused; }
 #miniChartsRow > * { flex-shrink: 0; }
 @keyframes graphScrollV {
-  0%   { transform: translateY(0); }
-  100% { transform: translateY(-50%); }
+  0%   { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(0, -50%, 0); }
 }
 @keyframes graphScrollH {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0%   { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
 }
 .pdf-strip-wrap {
   overflow: hidden;
@@ -420,6 +423,9 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 .pdf-page-strip {
   display: flex; flex-direction: column; gap: 8px; align-items: center;
   animation: graphScrollV 40s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 .pdf-page-strip:hover { animation-play-state: paused; }
 .yt-embed-wrap {
