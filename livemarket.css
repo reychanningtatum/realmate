@@ -579,46 +579,63 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
    ========================================= */
 .match-page-header {
   display: flex; align-items: center; justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
   position: fixed;
   top: 0; left: 240px; right: 0;
   z-index: 200;
   background: #0f172a;
-  padding: 12px 48px;
+  padding: 8px 48px;
   border-bottom: 2px solid var(--primary);
 }
 .match-your-listing-fixed {
   position: fixed;
-  top: 50px;
+  top: 42px;
   left: 240px; right: 0;
   z-index: 150;
   background: var(--bg);
-  padding: 10px 48px 12px;
+  padding: 8px 48px 8px;
   border-bottom: 1px solid var(--border);
-  max-height: 40vh;
+  max-height: 35vh;
   overflow-y: auto;
 }
 .match-your-listing-fixed .your-listing-card {
   position: relative; top: auto;
+  padding: 14px;
+  border-width: 1px;
+}
+.match-your-listing-fixed .your-listing-text {
+  font-size: 13px; line-height: 1.5; margin-bottom: 10px;
+  max-height: 80px; overflow: hidden;
+}
+.match-your-listing-fixed .your-listing-img {
+  max-height: 100px;
+}
+.match-your-listing-fixed .ai-monitoring-strip {
+  padding: 6px 10px; font-size: 10px;
+}
+.match-your-listing-fixed .section-label {
+  margin-bottom: 6px; font-size: 10px;
 }
 #matchView .match-layout {
-  padding-top: 280px;
+  padding-top: 220px;
 }
 .match-page-header .btn-back {
   background: rgba(255,255,255,0.1);
   border: 1px solid rgba(255,255,255,0.15);
   color: #fff;
-  padding: 8px 16px;
-  font-size: 13px;
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 8px;
 }
 .match-page-header .btn-back:hover {
   background: rgba(255,255,255,0.18);
 }
 .match-header-right {
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center; gap: 8px;
 }
 .match-header-right h2 {
   color: #fff !important;
+  font-size: 16px !important;
 }
 .match-header-right .accent {
   color: var(--primary) !important;
@@ -627,6 +644,8 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   background: rgba(50,205,50,0.15);
   border: 1px solid rgba(50,205,50,0.3);
   color: #32cd32;
+  font-size: 10px;
+  padding: 3px 8px;
 }
 .btn-back {
   display: inline-flex; align-items: center; gap: 8px;
@@ -881,14 +900,39 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
   .listing-card-images img.single-img { height: 180px; }
   .listing-img-grid { height: 180px; }
 
-  /* Match view */
-  .match-layout {
-    grid-template-columns: 1fr;
-    gap: 16px;
+  /* Match view — mobile optimized */
+  .match-page-header {
+    left: 0; padding: 6px 12px;
   }
-  .match-your-listing-fixed { left: 0; padding: 8px 16px 10px; }
-  .match-page-header { left: 0; padding: 10px 16px; }
-  .match-title-block h2 { font-size: 22px; }
+  .match-page-header .btn-back {
+    padding: 5px 10px; font-size: 11px; gap: 4px;
+  }
+  .match-header-right h2 { font-size: 14px !important; }
+  .match-header-right .match-ai-badge { font-size: 9px; padding: 2px 6px; }
+  .match-your-listing-fixed {
+    left: 0; padding: 6px 12px 6px;
+    top: 36px; max-height: 30vh;
+  }
+  .match-your-listing-fixed .your-listing-card {
+    padding: 10px; border-radius: 12px;
+  }
+  .match-your-listing-fixed .your-listing-text {
+    font-size: 12px; max-height: 60px; line-height: 1.4;
+  }
+  .match-your-listing-fixed .your-listing-img { max-height: 70px; border-radius: 8px; }
+  .match-your-listing-fixed .ai-monitoring-strip { padding: 5px 8px; font-size: 9px; border-radius: 6px; }
+  .match-your-listing-fixed .section-label { margin-bottom: 4px; font-size: 9px; }
+  #matchView .match-layout { padding-top: 180px; }
+  .match-layout { gap: 12px; }
+  .match-card { padding: 14px; margin-bottom: 10px; border-radius: 14px; }
+  .match-card-text { font-size: 13px; line-height: 1.5; margin: 8px 0; }
+  .match-card-img { max-height: 150px; border-radius: 8px; margin-bottom: 8px; }
+  .match-user img { width: 36px; height: 36px; border-radius: 10px; }
+  .match-user-name { font-size: 13px; }
+  .match-user-job { font-size: 11px; }
+  .match-detail-row { font-size: 11px; padding: 3px 0; }
+  .match-results-header { margin-bottom: 10px; }
+  .section-label { font-size: 10px; margin-bottom: 8px; letter-spacing: 1px; }
 }
 
 @media (min-width: 769px) {

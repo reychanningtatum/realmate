@@ -815,16 +815,18 @@ function showMatchView(query, matches) {
     if (fb) fb.style.display = 'none';
     document.getElementById('matchView').style.display = 'block';
 
-    // Your listing card
+    // Your listing card — compact layout
     const imgs = query.image_urls?.length ? query.image_urls : (query.image_url ? [query.image_url] : []);
+    const imgStrip = imgs.length > 1
+        ? `<div style="display:flex;gap:4px;margin-bottom:8px;overflow-x:auto;scrollbar-width:none;">${imgs.map(i => `<img src="${i}" style="height:60px;border-radius:6px;object-fit:cover;flex-shrink:0;">`).join('')}</div>`
+        : imgs.length === 1 ? `<img class="your-listing-img" src="${imgs[0]}">` : '';
     document.getElementById('yourListingCard').innerHTML = `
-        ${catTag(query.category)}
-        ${imgs.length ? `<img class="your-listing-img" src="${imgs[0]}">` : ''}
-        <p class="your-listing-text">${safeText(query.content || query.text)}</p>
-        <div class="ai-monitoring-strip">
-            <i class="fas fa-satellite-dish"></i>
-            AI Engine — live monitoring active
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            ${catTag(query.category)}
+            <span style="font-size:10px;color:#94a3b8;margin-left:auto;"><i class="fas fa-satellite-dish" style="color:#32cd32;margin-right:4px;"></i>AI Monitoring</span>
         </div>
+        ${imgStrip}
+        <p class="your-listing-text">${safeText(query.content || query.text)}</p>
     `;
 
     // Match count badge
