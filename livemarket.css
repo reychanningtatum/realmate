@@ -382,6 +382,18 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   0% { left: -60%; }
   100% { left: 160%; }
 }
+@keyframes aiOrbit {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.1); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+@keyframes aiGlow {
+  0%,100% { text-shadow: 0 0 4px rgba(50,205,50,0.3); }
+  50% { text-shadow: 0 0 14px rgba(50,205,50,0.8), 0 0 28px rgba(50,205,50,0.3); }
+}
+.fa-circle-nodes {
+  animation: aiOrbit 5s linear infinite, aiGlow 2s ease-in-out infinite;
+}
 .match-banner i { font-size: 10px; flex-shrink: 0; }
 .match-banner-arrow { font-size: 9px; opacity: 0.7; flex-shrink: 0; }
 .match-banner .match-pct-badge {

@@ -125,7 +125,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
     const matchBanner = matchLabel ? `
         <div class="match-banner">
             <div style="display:flex;align-items:center;gap:5px;flex:1;min-width:0;">
-                <i class="fas fa-brain" style="color:#32cd32;"></i>
+                <i class="fas fa-circle-nodes" style="color:#32cd32;"></i>
                 <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#94a3b8;">AI Match · <span style="color:#fff;">${matchLabel.myCategory}</span></span>
             </div>
             <span class="match-pct-badge" style="color:${matchColor};">${matchPct}% ${matchGrade}</span>
@@ -138,7 +138,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
         <div class="listing-card-body">
             <div class="listing-card-top">
                 ${catTag(listing.category)}
-                ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-brain"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''}</button>` : ''}
+                ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''}</button>` : ''}
                 <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
             </div>
             <p class="listing-text">${safeText(listing.content)}</p>
@@ -956,7 +956,7 @@ function showMatchView(query, matches) {
             <p class="match-card-text">${safeText(m.content || m.text)}</p>
             ${matchImgs.length ? `<img class="match-card-img" src="${matchImgs[0]}" loading="lazy">` : ''}
             ${detailRows ? `<div style="margin-top:12px;padding:12px;background:${gradeBg};border-radius:12px;border:1px solid ${gradeColor}22;">
-                <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:${gradeColor};margin-bottom:8px;"><i class="fas fa-brain" style="margin-right:5px;"></i>AI Analysis</div>
+                <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:${gradeColor};margin-bottom:8px;"><i class="fas fa-circle-nodes" style="margin-right:5px;"></i>AI Analysis</div>
                 ${detailRows}
             </div>` : ''}
             <div style="display:flex;align-items:center;gap:10px;margin-top:12px;">
