@@ -403,19 +403,14 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   max-width: 100%;
 }
 .feed-pdf-wrap {
-  overflow: hidden;
+  overflow-x: auto;
   padding: 4px 0;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
 }
 .feed-pdf-strip {
   display: flex; gap: 14px; align-items: flex-start;
-  animation: graphScrollH 60s linear infinite;
-  width: max-content;
-  will-change: transform;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
 }
-.feed-pdf-strip:hover { animation-play-state: paused; }
-.feed-pdf-strip > * { flex-shrink: 0; }
 .feed-courtesy {
   font-size: 12px; font-weight: 600; color: #94a3b8;
   margin-top: 8px; display: flex; align-items: center; gap: 6px;

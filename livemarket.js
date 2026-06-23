@@ -1204,17 +1204,6 @@ async function renderMarketReportPdf() {
             strip.appendChild(canvas);
         }
 
-        // Duplicate pages as images for seamless scroll loop
-        const origPages = strip.querySelectorAll('canvas');
-        origPages.forEach(c => {
-            const img = document.createElement('img');
-            img.src = c.toDataURL('image/jpeg', 0.85);
-            img.style.cssText = c.style.cssText;
-            img.style.cursor = 'pointer';
-            img.addEventListener('click', openPdfViewer);
-            strip.appendChild(img);
-        });
-
         // Show courtesy
         const pdfCourtesy = document.getElementById('pdfCourtesy');
         if (pdfCourtesy) pdfCourtesy.style.display = 'flex';
