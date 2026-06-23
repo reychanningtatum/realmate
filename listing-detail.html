@@ -17,16 +17,22 @@
     .ld-header-right .ld-badge { background: rgba(50,205,50,0.15); border: 1px solid rgba(50,205,50,0.3); color: #32cd32; font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.5px; }
     .ld-header-title { font-size: 18px; font-weight: 800; color: #fff; }
 
-    .ld-page { max-width: 680px; margin: 0 auto; padding: 68px 16px 80px; }
-    .ld-card { background: #fff; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+    .ld-page { max-width: 680px; margin: 0 auto; padding: 56px 16px 80px; }
+
+    /* Card */
+    .ld-card { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.06); }
+
+    /* Images */
     .ld-images { position: relative; overflow: hidden; }
     .ld-images-scroll { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
     .ld-images-scroll::-webkit-scrollbar { display: none; }
-    .ld-images-scroll img { width: 100%; min-width: 100%; max-height: 420px; object-fit: cover; scroll-snap-align: start; cursor: pointer; flex-shrink: 0; }
-    .ld-img-count { position: absolute; bottom: 12px; right: 12px; background: rgba(0,0,0,0.65); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; pointer-events: none; }
-    .ld-img-dots { display: flex; justify-content: center; gap: 6px; padding: 10px 0 4px; }
-    .ld-img-dot { width: 7px; height: 7px; border-radius: 50%; background: #cbd5e1; transition: all 0.2s; }
-    .ld-img-dot.active { background: #32cd32; width: 18px; border-radius: 4px; }
+    .ld-images-scroll img { width: 100%; min-width: 100%; max-height: 380px; object-fit: cover; scroll-snap-align: start; cursor: pointer; flex-shrink: 0; }
+    .ld-img-count { position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.6); color: #fff; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px; pointer-events: none; }
+    .ld-img-dots { display: flex; justify-content: center; gap: 5px; padding: 8px 0 2px; }
+    .ld-img-dot { width: 6px; height: 6px; border-radius: 50%; background: #cbd5e1; transition: all 0.2s; }
+    .ld-img-dot.active { background: #32cd32; width: 16px; border-radius: 3px; }
+
+    /* Lightbox */
     .ld-lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 99999; display: flex; align-items: center; justify-content: center; cursor: zoom-out; }
     .ld-lightbox img { max-width: 92vw; max-height: 90vh; object-fit: contain; border-radius: 10px; }
     .ld-lb-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.15); border: none; color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -34,46 +40,70 @@
     .ld-lb-prev { left: 16px; }
     .ld-lb-next { right: 16px; }
     .ld-lb-close { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.15); border: none; color: #fff; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .ld-body { padding: 24px 24px 20px; }
-    .ld-cat { display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 5px 14px; border-radius: 50px; }
+
+    /* Body */
+    .ld-body { padding: 16px 20px 20px; }
+
+    /* User row — always on top */
+    .ld-user-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9; }
+    .ld-user-row img { width: 42px; height: 42px; border-radius: 12px; object-fit: cover; cursor: pointer; flex-shrink: 0; }
+    .ld-user-name { font-size: 14px; font-weight: 700; color: var(--text-main); cursor: pointer; }
+    .ld-user-name:hover { color: #32cd32; }
+    .ld-user-job { font-size: 11px; color: var(--text-sub); }
+    .ld-user-time { font-size: 11px; color: #cbd5e1; margin-left: auto; white-space: nowrap; }
+
+    /* Category */
+    .ld-cat { display: inline-block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 12px; border-radius: 50px; margin-bottom: 10px; }
     .ld-cat-sale { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
     .ld-cat-rent { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
     .ld-cat-lease { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
     .ld-cat-wbuy { background: #fefce8; color: #ca8a04; border: 1px solid #fde68a; }
     .ld-cat-wrent { background: #eef2ff; color: #4f46e5; border: 1px solid #c7d2fe; }
     .ld-cat-wlease { background: #fdf4ff; color: #a855f7; border: 1px solid #e9d5ff; }
-    .ld-meta-row { display: flex; align-items: center; gap: 12px; margin: 12px 0 16px; flex-wrap: wrap; }
-    .ld-content { font-size: 15px; line-height: 1.8; color: var(--text-main); white-space: pre-line; margin-bottom: 18px; }
-    .ld-section-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: #94a3b8; margin-bottom: 10px; }
-    .ld-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
-    .ld-tag { font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 50px; border: 1px solid; display: inline-flex; align-items: center; gap: 5px; }
+
+    /* Content */
+    .ld-content { font-size: 14px; line-height: 1.7; color: var(--text-main); white-space: pre-line; margin-bottom: 14px; }
+
+    /* AI tags */
+    .ld-ai-card { padding: 12px 14px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 14px; }
+    .ld-section-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: #94a3b8; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
+    .ld-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .ld-tag { font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 50px; border: 1px solid; display: inline-flex; align-items: center; gap: 4px; }
     .ld-tag-loc { background: #f0fdf4; color: #16a34a; border-color: #bbf7d0; }
     .ld-tag-unit { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
     .ld-tag-project { background: #fefce8; color: #92400e; border-color: #fde68a; }
     .ld-tag-price { background: #fce7f3; color: #9d174d; border-color: #fbcfe8; }
     .ld-tag-feature { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
-    .ld-divider { height: 1px; background: var(--border); margin: 20px 0; }
-    .ld-user { display: flex; align-items: center; gap: 14px; }
-    .ld-user img { width: 48px; height: 48px; border-radius: 14px; object-fit: cover; cursor: pointer; }
-    .ld-user-name { font-size: 15px; font-weight: 700; color: var(--text-main); cursor: pointer; }
-    .ld-user-name:hover { color: #32cd32; }
-    .ld-user-job { font-size: 12px; color: var(--text-sub); }
-    .ld-time { font-size: 12px; color: var(--text-sub); }
-    .ld-loading { text-align: center; padding: 60px 20px; color: #94a3b8; }
-    .btn-mate { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 50px; border: 1.5px solid #32cd32; background: #fff; color: #32cd32; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+
+    /* Action row */
+    .ld-action-row { display: flex; align-items: center; gap: 10px; padding-top: 14px; border-top: 1px solid #f1f5f9; }
+
+    /* Buttons */
+    .btn-mate { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 50px; border: 1.5px solid #32cd32; background: #fff; color: #32cd32; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s; font-family: inherit; }
     .btn-mate:hover:not(:disabled) { background: #32cd32; color: #fff; box-shadow: 0 2px 10px rgba(50,205,50,0.25); }
     .mate-status-pending { border-color: #94a3b8; color: #94a3b8; cursor: default; opacity: 0.8; }
     .mate-status-mates { border-color: #32cd32; background: rgba(50,205,50,0.08); color: #16a34a; cursor: default; }
 
+    .ld-loading { text-align: center; padding: 60px 20px; color: #94a3b8; }
+
     @media (max-width: 768px) {
-      .ld-header { padding: 10px 16px; }
-      .ld-page { padding-top: 56px; }
+      .ld-header { padding: 8px 14px; }
+      .ld-header .ld-back { padding: 6px 10px; font-size: 11px; }
+      .ld-header-title { font-size: 14px; }
+      .ld-header-right .ld-badge { font-size: 9px; padding: 3px 8px; }
+      .ld-page { padding-top: 48px; padding-left: 10px; padding-right: 10px; }
+      .ld-body { padding: 14px 16px 16px; }
+      .ld-images-scroll img { max-height: 280px; }
+      .ld-content { font-size: 13px; line-height: 1.6; }
     }
     @media (min-width: 769px) {
       .ld-header { left: 240px; }
     }
 
     html[data-theme="dark"] .ld-card { background: #1e293b; border-color: #334155; }
+    html[data-theme="dark"] .ld-ai-card { background: #0f172a; border-color: #334155; }
+    html[data-theme="dark"] .ld-user-row { border-color: #334155; }
+    html[data-theme="dark"] .ld-action-row { border-color: #334155; }
   </style>
 </head>
 <body>
@@ -213,16 +243,27 @@ async function loadListing() {
     <div class="ld-card">
       ${imagesHtml}
       <div class="ld-body">
-        <div class="ld-meta-row">
-          <span class="ld-cat ${CAT_CLASSES[listing.category] || ''}">${listing.category}</span>
-          <span class="ld-time"><i class="far fa-clock" style="margin-right:4px;"></i>${timeAgo(listing.created_at)}</span>
+
+        <!-- User row -->
+        <div class="ld-user-row">
+          <img src="${img}" onerror="this.src='${avatarFallback(name)}'" onclick="goToProfile('${listing.user_id}')">
+          <div onclick="goToProfile('${listing.user_id}')" style="cursor:pointer;">
+            <div class="ld-user-name">${safeText(name)}</div>
+            <div class="ld-user-job">${listing.user_job || ''}</div>
+          </div>
+          <span class="ld-user-time"><i class="far fa-clock" style="margin-right:3px;"></i>${timeAgo(listing.created_at)}</span>
         </div>
 
+        <!-- Category -->
+        <span class="ld-cat ${CAT_CLASSES[listing.category] || ''}">${listing.category}</span>
+
+        <!-- Content -->
         <div class="ld-content">${safeText(listing.content)}</div>
 
+        <!-- AI-Detected tags -->
         ${hasTags ? `
-        <div style="padding:16px;background:#f8fafc;border-radius:14px;border:1px solid var(--border);margin-bottom:20px;">
-          <div class="ld-section-label"><i class="fas fa-brain" style="margin-right:5px;color:#32cd32;"></i>AI-Detected Details</div>
+        <div class="ld-ai-card">
+          <div class="ld-section-label"><i class="fas fa-brain" style="color:#32cd32;"></i> AI-Detected Details</div>
           <div class="ld-tags">
             ${p.locs.map(l => `<span class="ld-tag ld-tag-loc"><i class="fas fa-map-marker-alt"></i>${l}</span>`).join('')}
             ${p.unit ? `<span class="ld-tag ld-tag-unit"><i class="fas fa-bed"></i>${p.unit}</span>` : ''}
@@ -232,17 +273,12 @@ async function loadListing() {
           </div>
         </div>` : ''}
 
-        <div class="ld-divider"></div>
+        <!-- Action row -->
+        ${!listing.is_anonymous ? `
+        <div class="ld-action-row">
+          ${mateButtonHtml(name, 'btn-mate')}
+        </div>` : ''}
 
-        <div class="ld-section-label">Posted by</div>
-        <div class="ld-user">
-          <img src="${img}" onerror="this.src='${avatarFallback(name)}'" onclick="goToProfile('${listing.user_id}')">
-          <div onclick="goToProfile('${listing.user_id}')" style="cursor:pointer;flex:1;">
-            <div class="ld-user-name">${safeText(name)}</div>
-            <div class="ld-user-job">${listing.user_job || ''}</div>
-          </div>
-          ${!listing.is_anonymous ? `<div style="margin-left:auto;">${mateButtonHtml(name, 'btn-mate')}</div>` : ''}
-        </div>
       </div>
     </div>
   `;
