@@ -372,7 +372,55 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
    LISTINGS GRID
    ========================================= */
 /* Graph strip — horizontal scrolling ticker */
-/* Three-column layout: video/PDF left, listings center, graphs right */
+/* ═══ FEED DASHBOARD ═══ */
+.feed-dashboard {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.feed-section {
+  margin-bottom: 24px;
+}
+.feed-section-label {
+  font-size: 11px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 1.2px; color: var(--text-sub);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+}
+.feed-graph-strip {
+  overflow: hidden;
+  border-radius: 14px;
+  background: #0f172a;
+  padding: 12px 0;
+}
+.feed-graph-strip #miniChartsRow {
+  display: flex; flex-direction: row; gap: 10px;
+  animation: graphScrollH 40s linear infinite;
+  width: max-content;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+.feed-graph-strip #miniChartsRow:hover { animation-play-state: paused; }
+.feed-graph-strip #miniChartsRow > * { flex-shrink: 0; }
+.feed-video-wrap {
+  max-width: 100%;
+}
+.feed-pdf-wrap {
+  display: flex; gap: 12px; overflow-x: auto;
+  padding: 8px 0; scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+.feed-pdf-strip {
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.chip-feed {
+  background: #0f172a !important; color: #32cd32 !important;
+  border-color: #0f172a !important;
+}
+.chip-feed.active {
+  background: #0f172a !important; color: #32cd32 !important;
+  box-shadow: 0 2px 10px rgba(50,205,50,0.2);
+}
+
+/* ═══ LISTINGS LAYOUT ═══ */
 .ledger-two-col {
   display: flex;
   gap: 20px;
@@ -391,40 +439,9 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   gap: 10px;
 }
 .ledger-center { flex: 1; min-width: 0; }
-.ledger-right {
-  width: 280px;
-  flex-shrink: 0;
-  position: sticky;
-  top: 160px;
-  max-height: calc(100vh - 180px);
-  overflow: hidden;
-}
-#miniChartsRow {
-  display: flex; flex-direction: column; gap: 10px;
-  animation: graphScrollV 40s linear infinite;
-  will-change: transform;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-#miniChartsRow:hover { animation-play-state: paused; }
-#miniChartsRow > * { flex-shrink: 0; }
-@keyframes graphScrollV {
-  0%   { transform: translate3d(0, 0, 0); }
-  100% { transform: translate3d(0, -50%, 0); }
-}
 @keyframes graphScrollH {
   0%   { transform: translate3d(0, 0, 0); }
   100% { transform: translate3d(-50%, 0, 0); }
-}
-.pdf-strip-wrap {
-  overflow: hidden;
-  max-height: calc(100vh - 300px);
-}
-.pdf-page-strip {
-  display: flex; flex-direction: column; gap: 8px; align-items: center;
-}
-.yt-embed-wrap {
-  width: 100%; height: 126px;
 }
 
 .listings-grid {
@@ -851,18 +868,9 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
   .location-wrap { flex: 1; width: auto; }
   .btn-location-ok { padding: 11px 14px; }
 
-  .ledger-two-col { flex-direction: column; gap: 2px; }
-  .ledger-right { width: 100%; position: relative; top: 0; max-height: none; overflow: hidden; order: -1; margin-bottom: 8px; }
-  #miniChartsRow { flex-direction: row !important; animation-name: graphScrollH !important; width: max-content; }
-  .ledger-left-media { width: 100%; position: relative; top: 0; max-height: none; overflow-y: visible; flex-direction: row; align-items: center; gap: 8px; margin-bottom: 12px; }
-  .pdf-strip-wrap { max-height: none; overflow: hidden; }
-  .pdf-page-strip { flex-direction: row !important; }
-  .ledger-center { width: 100%; overflow: hidden; }
-  .yt-embed-wrap { flex-shrink: 0; width: 224px; height: 126px; }
-  .yt-embed-wrap > div:first-child { height: 100%; }
-  #ytEmbedFrame { width: 100% !important; height: 100% !important; }
-  #pdfStripWrap { min-width: 0; flex-direction: row !important; overflow-x: auto; }
-  #pdfPageStrip { flex-direction: row !important; }
+  .feed-dashboard { padding: 0; }
+  .feed-graph-strip { border-radius: 10px; }
+  .feed-pdf-strip { gap: 8px; }
   .listings-grid { grid-template-columns: 1fr; gap: 14px; }
 
   .listing-card-images img.single-img { height: 180px; }

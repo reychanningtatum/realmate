@@ -373,7 +373,7 @@ function buildTicker(listings) {
 // ── State ─────────────────────────────────────────
 let allListings = [];
 let myListings = [];
-let activeCategory = 'ALL'; // default: show all listings
+let activeCategory = 'FEED'; // default: show feed
 let myListingsSubCat = 'ALL';
 
 function selectCat(btn) {
@@ -382,7 +382,17 @@ function selectCat(btn) {
     activeCategory = btn.dataset.cat;
     const subfilter = document.getElementById('myListingsSubfilter');
     if (subfilter) subfilter.style.display = activeCategory === 'MY_LISTINGS' ? 'flex' : 'none';
-    applyFilters();
+
+    const feedPane = document.getElementById('feedTabPane');
+    const listPane = document.getElementById('listingsTabPane');
+    if (activeCategory === 'FEED') {
+        if (feedPane) feedPane.style.display = '';
+        if (listPane) listPane.style.display = 'none';
+    } else {
+        if (feedPane) feedPane.style.display = 'none';
+        if (listPane) listPane.style.display = '';
+        applyFilters();
+    }
 }
 
 function selectSubCat(btn) {

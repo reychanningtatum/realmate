@@ -74,9 +74,10 @@
       </button>
     </div>
     <div class="filter-chips" id="filterChips">
+      <button class="chip chip-feed active" data-cat="FEED" onclick="selectCat(this)"><i class="fas fa-rss"></i> Feed</button>
       <button class="chip chip-match" data-cat="MATCHES" onclick="selectCat(this)"><i class="fas fa-bolt"></i> My Matches</button>
       <button class="chip chip-mine" data-cat="MY_LISTINGS" onclick="selectCat(this)"><i class="fas fa-user"></i> My Listings</button>
-      <button class="chip active" data-cat="ALL" onclick="selectCat(this)">All Listings</button>
+      <button class="chip" data-cat="ALL" onclick="selectCat(this)">All Listings</button>
       <button class="chip" data-cat="FOR SALE" onclick="selectCat(this)">For Sale</button>
       <button class="chip" data-cat="FOR RENT" onclick="selectCat(this)">For Rent</button>
       <button class="chip" data-cat="FOR LEASE" onclick="selectCat(this)">For Lease</button>
@@ -99,49 +100,56 @@
   <!-- ═══ LEDGER VIEW ═══ -->
   <div id="ledgerView">
 
-    <!-- Video/PDF + Listings + Graphs -->
-    <div class="ledger-two-col">
-      <!-- Left: Video/PDF -->
-      <div class="ledger-left-media">
-        <div id="ytEmbedSection" class="yt-embed-wrap" style="display:none; position:relative;">
-          <div style="border-radius:10px; overflow:hidden; background:#000; box-shadow:0 2px 10px rgba(0,0,0,0.18);">
-            <div id="ytEmbedFrame" style="width:100%; height:100%;"></div>
+    <!-- ═══ FEED TAB ═══ -->
+    <div id="feedTabPane" class="feed-dashboard">
+
+      <!-- Graph strip -->
+      <div class="feed-section">
+        <div class="feed-section-label"><i class="fas fa-chart-line" style="color:#32cd32;"></i> Capital Appreciation Tracker</div>
+        <div class="feed-graph-strip">
+          <div id="miniChartsRow" class="open"></div>
+        </div>
+      </div>
+
+      <!-- Video -->
+      <div class="feed-section" id="feedVideoSection">
+        <div class="feed-section-label"><i class="fas fa-play-circle" style="color:#32cd32;"></i> Market Pulse Video</div>
+        <div id="ytEmbedSection" class="feed-video-wrap" style="display:none; position:relative;">
+          <div style="border-radius:14px; overflow:hidden; background:#000; box-shadow:0 4px 20px rgba(0,0,0,0.15);">
+            <div id="ytEmbedFrame" style="width:100%; aspect-ratio:16/9;"></div>
           </div>
-          <div id="ytMuteHint" style="display:none;position:absolute;bottom:6px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:#fff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;z-index:10;pointer-events:none;animation:ytHintPulse 1.5s ease-in-out infinite;">
-            <i class="fas fa-volume-xmark" style="margin-right:4px;"></i>Tap <i class="fas fa-volume-xmark" style="margin:0 2px;font-size:9px;"></i> to unmute
+          <div id="ytMuteHint" style="display:none;position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:#fff;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;white-space:nowrap;z-index:10;pointer-events:none;animation:ytHintPulse 1.5s ease-in-out infinite;">
+            <i class="fas fa-volume-xmark" style="margin-right:4px;"></i>Tap to unmute
           </div>
-          <div style="position:absolute; top:4px; right:4px; display:flex; gap:4px; z-index:10;">
+          <div style="position:absolute; top:8px; right:8px; display:flex; gap:4px; z-index:10;">
             <button id="ytMuteBtn" onclick="toggleYtMute(this)" title="Mute/Unmute"
-              style="width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;color:#fff;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;">
+              style="width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;color:#fff;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;">
               <i class="fas fa-volume-high"></i>
             </button>
             <button onclick="closeYtVideo()" title="Close video"
-              style="width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;color:#fff;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;">
+              style="width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;color:#fff;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;">
               <i class="fas fa-times"></i>
             </button>
           </div>
         </div>
-        <div id="pdfStripWrap" class="pdf-strip-wrap" style="display:none;">
-          <div id="pdfPageStrip" class="pdf-page-strip"></div>
+      </div>
+
+      <!-- PDF -->
+      <div class="feed-section" id="feedPdfSection">
+        <div class="feed-section-label"><i class="fas fa-file-pdf" style="color:#32cd32;"></i> Market Report</div>
+        <div id="pdfStripWrap" class="feed-pdf-wrap" style="display:none;">
+          <div id="pdfPageStrip" class="feed-pdf-strip"></div>
         </div>
       </div>
 
-      <!-- Center: Listings -->
-      <div class="ledger-center">
-        <div id="listingsTabPane">
-          <div class="listings-grid" id="listingsGrid">
-            <div class="empty-state" id="listingsLoader">
-              <i class="fas fa-spinner fa-spin"></i>
-              <p>Loading listings…</p>
-            </div>
-          </div>
-        </div>
-      </div>
+    </div>
 
-      <!-- Right: Graphs -->
-      <div class="ledger-right">
-        <div id="miniChartsRow" class="open">
-          <!-- Mini chart cards injected by cap-tracker.js -->
+    <!-- ═══ LISTINGS TAB ═══ -->
+    <div id="listingsTabPane" style="display:none;">
+      <div class="listings-grid" id="listingsGrid">
+        <div class="empty-state" id="listingsLoader">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Loading listings…</p>
         </div>
       </div>
     </div>
