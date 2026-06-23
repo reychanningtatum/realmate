@@ -424,7 +424,7 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   display: flex; flex-direction: column; gap: 8px; align-items: center;
 }
 .yt-embed-wrap {
-  width: 100%; height: 126px;
+  width: 100%; height: 126px; margin-bottom: 12px;
 }
 
 .listings-grid {
