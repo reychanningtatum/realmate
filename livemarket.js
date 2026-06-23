@@ -296,66 +296,6 @@ function allKnownProjects() {
 // Patterns that often precede a project name in listing text
 const PROJECT_CONTEXT = /(?:project|tower|residences|suites|place|at|near|in|inside|unit\s+at|condo\s+at|property\s+at)\s+([A-Z][A-Za-z0-9]+(?:\s+[A-Z][A-Za-z0-9]+)*)/g;
 
-function extractProject(text) {
-    const lower = text.toLowerCase();
-    const lines = text.split(/\n/).map(l => l.trim()).filter(Boolean);
-
-    // 1. Check each line against known projects first (line-by-line is most precise)
-    for (const line of lines) {
-        const lineLower = line.toLowerCase();
-        for (const proj of allKnownProjects()) {
-            if (lineLower === proj.toLowerCase() || lineLower.includes(proj.toLowerCase())) return proj;
-        }
-    }
-
-    // 2. Fallback: check full text
-    for (const proj of allKnownProjects()) {
-        if (lower.includes(proj.toLowerCase())) return proj;
-    }
-
-    // 2. Context-aware: look for project names after trigger words
-    let m;
-    const contextRe = new RegExp(PROJECT_CONTEXT.source, 'gi');
-    while ((m = contextRe.exec(text)) !== null) {
-        const candidate = toTitleCase(m[1].trim());
-        const isCompany = COMPANY_NAMES.some(c => candidate.toLowerCase() === c);
-        if (!isCompany && candidate.split(' ').length >= 1 && candidate.length >= 4) {
-            saveLearnedProject(candidate);
-            return candidate;
-        }
-    }
-
-    // 3. Fallback: scan line by line for standalone capitalized words
-    //    that aren't company/location/unit tokens
-    for (const line of lines) {
-        const cleaned = line
-            .replace(/\b\d+\s*BR\b/gi, '')
-            .replace(/\bSTUDIO\b/gi, '')
-            .replace(/\b\d+\s*BEDROOM\b/gi, '')
-            .trim();
-        if (!cleaned) continue;
-
-        const words = cleaned.toUpperCase().split(/\s+/).filter(Boolean);
-        // Filter out non-project tokens, company names, price tokens (e.g. 18M, 8.5M), numbers
-        const projectWords = words.filter(w =>
-            !NON_PROJECT_TOKENS.has(w) &&
-            !COMPANY_NAMES.some(c => c.toUpperCase() === w) &&
-            !/^\d+(\.\d+)?M?$/.test(w) &&   // price/number tokens
-            !/^\d+$/.test(w)                 // pure numbers
-        );
-        if (!projectWords.length) continue;
-
-        const candidate = toTitleCase(projectWords.join(' '));
-        const isCompany = COMPANY_NAMES.some(c => candidate.toLowerCase() === c);
-        if (!isCompany && candidate.length >= 3) {
-            saveLearnedProject(candidate);
-            return candidate;
-        }
-    }
-
-    return null;
-}
-
 function buildMarketPrices(listings) {
     const buckets = {}; // key: "Project||Unit"
 
