@@ -1204,6 +1204,21 @@ async function renderMarketReportPdf() {
             strip.appendChild(canvas);
         }
 
+        // Duplicate pages as images for seamless scroll loop
+        const origPages = strip.querySelectorAll('canvas');
+        origPages.forEach(c => {
+            const img = document.createElement('img');
+            img.src = c.toDataURL('image/jpeg', 0.85);
+            img.style.cssText = c.style.cssText;
+            img.style.cursor = 'pointer';
+            img.addEventListener('click', openPdfViewer);
+            strip.appendChild(img);
+        });
+
+        // Show courtesy
+        const pdfCourtesy = document.getElementById('pdfCourtesy');
+        if (pdfCourtesy) pdfCourtesy.style.display = 'flex';
+
         // Store URL for download
         window._pdfDownloadUrl = pdfUrl;
 
@@ -1295,6 +1310,8 @@ renderMarketReportPdf();
 
         const section = document.getElementById('ytEmbedSection');
         section.style.display = 'block';
+        const vidCourtesy = document.getElementById('videoCourtesy');
+        if (vidCourtesy) vidCourtesy.style.display = 'flex';
 
         // Load YouTube IFrame API
         const tag = document.createElement('script');
@@ -1350,6 +1367,24 @@ renderMarketReportPdf();
     sync();
     window.addEventListener('resize', sync);
     setTimeout(sync, 500);
+})();
+
+// ── Load courtesy attributions from DB ──
+(async function loadCourtesy() {
+    try {
+        const { data: vidC } = await _sb.from('site_settings').select('value').eq('key', 'video_courtesy').single();
+        if (vidC?.value) {
+            const el = document.getElementById('videoCourtesyText');
+            if (el) el.textContent = vidC.value;
+        }
+    } catch {}
+    try {
+        const { data: pdfC } = await _sb.from('site_settings').select('value').eq('key', 'pdf_courtesy').single();
+        if (pdfC?.value) {
+            const el = document.getElementById('pdfCourtesyText');
+            if (el) el.textContent = pdfC.value;
+        }
+    } catch {}
 })();
 
 // ── Video controls ──

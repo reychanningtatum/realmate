@@ -40,6 +40,7 @@ function showDash() {
     loadYoutubeUrl();
     loadMarketReportUrl();
     loadProducers();
+    loadCourtesyFields();
 }
 
 function logout() {
@@ -287,6 +288,26 @@ async function changePassword() {
     _currentPassword = newPass;
     ['secCurrent','secNew','secConfirm'].forEach(id => document.getElementById(id).value = '');
     showStatus('secStatus', 'Password updated successfully.', 'success');
+}
+
+// ── Courtesy Attribution ──────────────────────────────
+async function loadCourtesyFields() {
+    try {
+        const { data: vc } = await _sbAdmin.from('site_settings').select('value').eq('key', 'video_courtesy').single();
+        if (vc?.value) document.getElementById('videoCourtesyInput').value = vc.value;
+    } catch {}
+    try {
+        const { data: pc } = await _sbAdmin.from('site_settings').select('value').eq('key', 'pdf_courtesy').single();
+        if (pc?.value) document.getElementById('pdfCourtesyInput').value = pc.value;
+    } catch {}
+}
+
+async function saveCourtesy(key, inputId, statusId) {
+    const val = document.getElementById(inputId).value.trim();
+    if (!val) return showStatus(statusId, 'Please enter a name.', 'error');
+    const { error } = await _sbAdmin.from('site_settings').upsert({ key, value: val }, { onConflict: 'key' });
+    if (error) return showStatus(statusId, 'Failed: ' + error.message, 'error');
+    showStatus(statusId, 'Saved!', 'success');
 }
 
 // ── Utility ───────────────────────────────────────────

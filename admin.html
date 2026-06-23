@@ -60,8 +60,8 @@
     <!-- YouTube Tab -->
     <div id="tab-youtube" class="admin-tab active">
       <div class="tab-header">
-        <h2>Market Pulse Video</h2>
-        <p>Paste any YouTube URL here. It will appear as an embedded video on the Market Pulse page.</p>
+        <h2>Market Edge ANC</h2>
+        <p>Paste any YouTube URL here. It will appear as an embedded video on the Live Market Feed.</p>
       </div>
       <div class="admin-card">
         <label class="field-label">YouTube URL</label>
@@ -77,6 +77,16 @@
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
           </div>
         </div>
+      </div>
+    </div>
+
+      <div class="admin-card" style="margin-top:16px;">
+        <label class="field-label">Video Courtesy Attribution</label>
+        <div class="url-input-row">
+          <input type="text" id="videoCourtesyInput" placeholder="e.g. ANC">
+          <button class="btn-save" onclick="saveCourtesy('video_courtesy','videoCourtesyInput','videoCourtesyStatus')"><i class="fas fa-save"></i> Save</button>
+        </div>
+        <div id="videoCourtesyStatus" class="status-msg" style="display:none;"></div>
       </div>
     </div>
 
@@ -115,6 +125,14 @@
             <a id="pdfCurrentLink" href="#" target="_blank" style="font-size:12px; color:#32cd32; font-weight:600;">Open PDF ↗</a>
           </div>
         </div>
+      </div>
+      <div class="admin-card" style="margin-top:16px;">
+        <label class="field-label">PDF Courtesy Attribution</label>
+        <div class="url-input-row">
+          <input type="text" id="pdfCourtesyInput" placeholder="e.g. Colliers Philippines">
+          <button class="btn-save" onclick="saveCourtesy('pdf_courtesy','pdfCourtesyInput','pdfCourtesyStatus')"><i class="fas fa-save"></i> Save</button>
+        </div>
+        <div id="pdfCourtesyStatus" class="status-msg" style="display:none;"></div>
       </div>
     </div>
 

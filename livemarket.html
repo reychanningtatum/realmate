@@ -103,7 +103,7 @@
     <!-- ═══ FEED TAB ═══ -->
     <div id="feedTabPane" class="feed-dashboard">
 
-      <!-- Graph strip -->
+      <!-- Graph section -->
       <div class="feed-section">
         <div class="feed-section-label"><i class="fas fa-chart-line" style="color:#32cd32;"></i> Capital Appreciation Tracker</div>
         <div class="feed-graph-strip">
@@ -111,9 +111,9 @@
         </div>
       </div>
 
-      <!-- Video -->
+      <!-- Video section -->
       <div class="feed-section" id="feedVideoSection">
-        <div class="feed-section-label"><i class="fas fa-play-circle" style="color:#32cd32;"></i> Market Pulse Video</div>
+        <div class="feed-section-label"><i class="fas fa-play-circle" style="color:#32cd32;"></i> Market Edge ANC</div>
         <div id="ytEmbedSection" class="feed-video-wrap" style="display:none; position:relative;">
           <div style="border-radius:14px; overflow:hidden; background:#000; box-shadow:0 4px 20px rgba(0,0,0,0.15);">
             <div id="ytEmbedFrame" style="width:100%; aspect-ratio:16/9;"></div>
@@ -132,13 +132,19 @@
             </button>
           </div>
         </div>
+        <div id="videoCourtesy" class="feed-courtesy" style="display:none;">
+          <i class="fas fa-handshake" style="color:#94a3b8;"></i> Courtesy: <span id="videoCourtesyText">ANC</span>
+        </div>
       </div>
 
-      <!-- PDF -->
+      <!-- PDF section -->
       <div class="feed-section" id="feedPdfSection">
-        <div class="feed-section-label"><i class="fas fa-file-pdf" style="color:#32cd32;"></i> Market Report</div>
+        <div class="feed-section-label"><i class="fas fa-file-pdf" style="color:#32cd32;"></i> Property Market Report</div>
         <div id="pdfStripWrap" class="feed-pdf-wrap" style="display:none;">
           <div id="pdfPageStrip" class="feed-pdf-strip"></div>
+        </div>
+        <div id="pdfCourtesy" class="feed-courtesy" style="display:none;">
+          <i class="fas fa-handshake" style="color:#94a3b8;"></i> Courtesy: <span id="pdfCourtesyText">Colliers Philippines</span>
         </div>
       </div>
 
