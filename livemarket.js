@@ -1194,6 +1194,15 @@ async function renderMarketReportPdf() {
             strip.appendChild(canvas);
         }
 
+        // Duplicate pages for seamless scroll loop
+        const origPages = strip.querySelectorAll('canvas');
+        origPages.forEach(c => {
+            const clone = c.cloneNode(true);
+            clone.getContext('2d').drawImage(c, 0, 0);
+            clone.addEventListener('click', openPdfViewer);
+            strip.appendChild(clone);
+        });
+
         // Store URL for download
         window._pdfDownloadUrl = pdfUrl;
 
