@@ -641,6 +641,14 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   padding: 8px 48px;
   border-bottom: 2px solid var(--primary);
 }
+.match-your-listing-sticky {
+  position: sticky;
+  top: 42px;
+  z-index: 98;
+  background: var(--bg);
+  padding: 8px 0 12px;
+  margin-bottom: 8px;
+}
 #matchView .match-layout {
   padding-top: 56px;
 }
