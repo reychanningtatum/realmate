@@ -172,11 +172,11 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
 
     card.style.cursor = 'pointer';
     card.addEventListener('click', (e) => {
-        if (e.target.closest('.match-banner')) {
+        if (matchLabel) {
             showMatchView(matchLabel.myListing, [listing]);
-            return;
+        } else {
+            location.href = `listing-detail.html?id=${listing.id}`;
         }
-        location.href = `listing-detail.html?id=${listing.id}`;
     });
 
     return card;
