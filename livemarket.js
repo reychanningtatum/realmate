@@ -422,6 +422,7 @@ function selectMarketCat(btn) {
     marketCat = btn.dataset.cat;
     activeCategory = marketCat;
     applyFilters();
+    setTimeout(syncTopPadding, 50);
 }
 
 function selectCat(btn) {
