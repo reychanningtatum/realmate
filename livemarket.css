@@ -371,7 +371,7 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 /* =========================================
    LISTINGS GRID
    ========================================= */
-/* Two-column layout: video/PDF left, listings center */
+/* Three-column layout: video/PDF left, listings center, graphs right */
 .ledger-three-col {
   display: flex;
   gap: 20px;
@@ -390,6 +390,15 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   gap: 10px;
 }
 .ledger-center { flex: 1; min-width: 0; }
+.ledger-right {
+  width: 280px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 160px;
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
 #miniChartsRow {
   display: flex; flex-direction: column; gap: 10px;
 }
