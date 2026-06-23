@@ -537,15 +537,15 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 .match-page-header {
   display: flex; align-items: center; justify-content: space-between;
   gap: 12px;
-  margin-bottom: 20px;
-  position: sticky;
-  top: 0;
-  z-index: 99;
+  position: fixed;
+  top: 0; left: 240px; right: 0;
+  z-index: 200;
   background: #0f172a;
   padding: 12px 48px;
-  margin-left: -48px;
-  margin-right: -48px;
   border-bottom: 2px solid var(--primary);
+}
+#matchView .match-layout {
+  padding-top: 60px;
 }
 .match-page-header .btn-back {
   background: rgba(255,255,255,0.1);
@@ -839,7 +839,7 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
     gap: 16px;
   }
   .your-listing-card { position: static; }
-  .match-page-header { margin-bottom: 12px; margin-left: -16px; margin-right: -16px; padding: 10px 16px; }
+  .match-page-header { left: 0; padding: 10px 16px; }
   .match-title-block h2 { font-size: 22px; }
 }
 
