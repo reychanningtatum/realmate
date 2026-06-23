@@ -370,26 +370,47 @@ function buildTicker(listings) {
 // ── State ─────────────────────────────────────────
 let allListings = [];
 let myListings = [];
-let activeCategory = 'FEED'; // default: show feed
+let activeCategory = 'FEED';
+let activeSegTab = 'FEED';
+let marketCat = 'ALL';
 let myListingsSubCat = 'ALL';
 
-function selectCat(btn) {
-    document.querySelectorAll('.chip:not(.chip-sub)').forEach(c => c.classList.remove('active'));
+function selectSegTab(btn) {
+    document.querySelectorAll('.seg-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
-    activeCategory = btn.dataset.cat;
-    const subfilter = document.getElementById('myListingsSubfilter');
-    if (subfilter) subfilter.style.display = activeCategory === 'MY_LISTINGS' ? 'flex' : 'none';
+    activeSegTab = btn.dataset.seg;
 
     const feedPane = document.getElementById('feedTabPane');
     const listPane = document.getElementById('listingsTabPane');
-    if (activeCategory === 'FEED') {
-        if (feedPane) feedPane.style.display = '';
-        if (listPane) listPane.style.display = 'none';
+    const catFilters = document.getElementById('marketCatFilters');
+    const subfilter = document.getElementById('myListingsSubfilter');
+
+    catFilters.style.display = activeSegTab === 'MARKET' ? 'flex' : 'none';
+    subfilter.style.display = activeSegTab === 'MY_LISTINGS' ? 'flex' : 'none';
+
+    if (activeSegTab === 'FEED') {
+        feedPane.style.display = '';
+        listPane.style.display = 'none';
     } else {
-        if (feedPane) feedPane.style.display = 'none';
-        if (listPane) listPane.style.display = '';
+        feedPane.style.display = 'none';
+        listPane.style.display = '';
+        if (activeSegTab === 'MATCHES') activeCategory = 'MATCHES';
+        else if (activeSegTab === 'MY_LISTINGS') activeCategory = 'MY_LISTINGS';
+        else if (activeSegTab === 'MARKET') activeCategory = marketCat;
         applyFilters();
     }
+}
+
+function selectMarketCat(btn) {
+    document.querySelectorAll('#marketCatFilters .chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    marketCat = btn.dataset.cat;
+    activeCategory = marketCat;
+    applyFilters();
+}
+
+function selectCat(btn) {
+    selectSegTab(btn);
 }
 
 function selectSubCat(btn) {

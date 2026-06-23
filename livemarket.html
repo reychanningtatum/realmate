@@ -73,23 +73,33 @@
         <i class="fas fa-plus"></i> Post Listing
       </button>
     </div>
-    <!-- Personal tabs -->
-    <div class="filter-chips filter-chips-personal" id="filterChipsPersonal">
-      <button class="chip chip-feed active" data-cat="FEED" onclick="selectCat(this)"><i class="fas fa-rss"></i> Feed</button>
-      <button class="chip chip-match" data-cat="MATCHES" onclick="selectCat(this)"><i class="fas fa-bolt"></i> My Matches</button>
-      <button class="chip chip-mine" data-cat="MY_LISTINGS" onclick="selectCat(this)"><i class="fas fa-user"></i> My Listings</button>
+    <!-- Segmented icon tabs -->
+    <div class="seg-tabs" id="segTabs">
+      <button class="seg-tab active" data-seg="FEED" onclick="selectSegTab(this)">
+        <i class="fas fa-rss"></i><span>Feed</span>
+      </button>
+      <button class="seg-tab" data-seg="MATCHES" onclick="selectSegTab(this)">
+        <i class="fas fa-bolt"></i><span>Matches</span>
+      </button>
+      <button class="seg-tab" data-seg="MY_LISTINGS" onclick="selectSegTab(this)">
+        <i class="fas fa-user"></i><span>Mine</span>
+      </button>
+      <button class="seg-tab" data-seg="MARKET" onclick="selectSegTab(this)">
+        <i class="fas fa-store"></i><span>Market</span>
+      </button>
     </div>
-    <!-- Market tabs -->
-    <div class="filter-chips filter-chips-market" id="filterChips">
-      <button class="chip" data-cat="ALL" onclick="selectCat(this)">All Listings</button>
-      <button class="chip" data-cat="FOR SALE" onclick="selectCat(this)">For Sale</button>
-      <button class="chip" data-cat="FOR RENT" onclick="selectCat(this)">For Rent</button>
-      <button class="chip" data-cat="FOR LEASE" onclick="selectCat(this)">For Lease</button>
-      <button class="chip" data-cat="WILLING TO BUY" onclick="selectCat(this)">Willing to Buy</button>
-      <button class="chip" data-cat="WILLING TO RENT" onclick="selectCat(this)">Willing to Rent</button>
-      <button class="chip" data-cat="WILLING TO LEASE" onclick="selectCat(this)">Willing to Lease</button>
+    <!-- Category filters (visible only under Market) -->
+    <div class="filter-chips" id="marketCatFilters" style="display:none;">
+      <button class="chip active" data-cat="ALL" onclick="selectMarketCat(this)">All</button>
+      <button class="chip" data-cat="FOR SALE" onclick="selectMarketCat(this)">For Sale</button>
+      <button class="chip" data-cat="FOR RENT" onclick="selectMarketCat(this)">For Rent</button>
+      <button class="chip" data-cat="FOR LEASE" onclick="selectMarketCat(this)">For Lease</button>
+      <button class="chip" data-cat="WILLING TO BUY" onclick="selectMarketCat(this)">Willing to Buy</button>
+      <button class="chip" data-cat="WILLING TO RENT" onclick="selectMarketCat(this)">Willing to Rent</button>
+      <button class="chip" data-cat="WILLING TO LEASE" onclick="selectMarketCat(this)">Willing to Lease</button>
     </div>
-    <div class="filter-chips my-listings-subfilter" id="myListingsSubfilter" style="display:none;">
+    <!-- My Listings sub-filter -->
+    <div class="filter-chips" id="myListingsSubfilter" style="display:none;">
       <button class="chip chip-sub active" data-sub="ALL" onclick="selectSubCat(this)">All</button>
       <button class="chip chip-sub" data-sub="FOR SALE" onclick="selectSubCat(this)">For Sale</button>
       <button class="chip chip-sub" data-sub="FOR RENT" onclick="selectSubCat(this)">For Rent</button>
