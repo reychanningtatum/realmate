@@ -96,6 +96,9 @@
       background: #f9fafb; border-radius: 10px; border: 1px solid #e5e7eb;
     }
     .ld-section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #9ca3af; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
+    @keyframes ldOrbit { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
+    @keyframes ldGlow { 0%,100% { text-shadow: 0 0 4px rgba(50,205,50,0.3); } 50% { text-shadow: 0 0 14px rgba(50,205,50,0.8), 0 0 28px rgba(50,205,50,0.3); } }
+    .ld-ai-icon { color: #32cd32; display: inline-block; animation: ldOrbit 5s linear infinite, ldGlow 2s ease-in-out infinite; }
     .ld-tags { display: flex; flex-wrap: wrap; gap: 6px; }
     .ld-tag {
       font-size: 12px; font-weight: 600; padding: 5px 12px;
@@ -317,7 +320,7 @@ async function loadListing() {
         <!-- AI-Detected tags -->
         ${hasTags ? `
         <div class="ld-ai-card">
-          <div class="ld-section-label"><i class="fas fa-brain" style="color:#32cd32;"></i> AI-Detected Details</div>
+          <div class="ld-section-label"><i class="fas fa-circle-nodes ld-ai-icon"></i> AI-Detected Details</div>
           <div class="ld-tags">
             ${p.locs.map(l => `<span class="ld-tag ld-tag-loc"><i class="fas fa-map-marker-alt"></i>${l}</span>`).join('')}
             ${p.unit ? `<span class="ld-tag ld-tag-unit"><i class="fas fa-bed"></i>${p.unit}</span>` : ''}
