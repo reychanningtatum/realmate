@@ -111,6 +111,57 @@ const PARTNER_MAP = {
     "FOR LEASE": "WILLING TO LEASE","WILLING TO LEASE": "FOR LEASE"
 };
 
+// ── Pinned listings ──────────────────────────────
+function getPinnedIds() {
+    try { return JSON.parse(localStorage.getItem('rm_pinned') || '[]'); } catch { return []; }
+}
+function togglePin(listingId, btn) {
+    let pins = getPinnedIds();
+    const id = String(listingId);
+    if (pins.includes(id)) {
+        pins = pins.filter(p => p !== id);
+        btn.innerHTML = '<i class="fas fa-thumbtack"></i>';
+        btn.title = 'Pin';
+        btn.classList.remove('pinned');
+    } else {
+        pins.push(id);
+        btn.innerHTML = '<i class="fas fa-thumbtack"></i>';
+        btn.title = 'Unpin';
+        btn.classList.add('pinned');
+    }
+    localStorage.setItem('rm_pinned', JSON.stringify(pins));
+}
+
+// ── Listing status ──────────────────────────────
+async function setListingStatus(listingId, status, btn) {
+    btn.disabled = true;
+    const { error } = await _sb.from('listings').update({ status }).eq('id', listingId);
+    btn.disabled = false;
+    if (error) { alert('Failed to update status'); return; }
+    applyFilters();
+}
+
+function buildStatusBadge(listing) {
+    if (listing.status === 'sold') return '<span class="listing-status-badge sold"><i class="fas fa-check-circle"></i> Sold</span>';
+    if (listing.status === 'negotiation') return '<span class="listing-status-badge negotiation"><i class="fas fa-handshake"></i> In Negotiation</span>';
+    return '';
+}
+
+function buildStatusButtons(listing) {
+    const localUser = JSON.parse(localStorage.getItem('user'));
+    if (!localUser || listing.user_name !== localUser.name) return '';
+    const isNeg = listing.status === 'negotiation';
+    const isSold = listing.status === 'sold';
+    return `<div class="listing-status-btns" onclick="event.stopPropagation();">
+        <button class="status-btn ${isNeg ? 'active' : ''}" onclick="setListingStatus('${listing.id}', ${isNeg ? 'null' : "'negotiation'"}, this)">
+            <i class="fas fa-handshake"></i> ${isNeg ? 'Remove' : 'In Negotiation'}
+        </button>
+        <button class="status-btn sold-btn ${isSold ? 'active' : ''}" onclick="setListingStatus('${listing.id}', ${isSold ? 'null' : "'sold'"}, this)">
+            <i class="fas fa-check-circle"></i> ${isSold ? 'Remove' : 'Sold'}
+        </button>
+    </div>`;
+}
+
 // ── Listing card ──────────────────────────────────
 // matchLabel: { myCategory, myContent } when this card matches one of the user's own listings
 function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchCount = 0) {
@@ -138,9 +189,11 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
         <div class="listing-card-body">
             <div class="listing-card-top">
                 ${catTag(listing.category)}
-                ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''}</button>` : ''}
+                ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} AI Match${myMatchCount !== 1 ? 'es' : ''}</button>` : ''}
                 <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
+                <button class="pin-btn ${getPinnedIds().includes(String(listing.id)) ? 'pinned' : ''}" onclick="event.stopPropagation(); togglePin('${listing.id}', this)" title="${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}"><i class="fas fa-thumbtack"></i></button>
             </div>
+            ${buildStatusBadge(listing)}
             <p class="listing-text">${safeText(listing.content)}</p>
             ${buildFMVBadge(fmvResult)}
             <div class="listing-card-user">
@@ -152,6 +205,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
                 </div>
                 ${listing.is_anonymous ? '' : mateButtonHtml(listing.user_name, 'btn-mate btn-mate-sm')}
             </div>
+            ${buildStatusButtons(listing)}
         </div>
     `;
 
@@ -740,6 +794,9 @@ function applyFilters() {
     } else if (activeCategory === 'MY_LISTINGS') {
         pool = allListings.filter(l => localUser && l.user_name === localUser.name);
         if (myListingsSubCat !== 'ALL') pool = pool.filter(l => l.category === myListingsSubCat);
+    } else if (activeCategory === 'PINNED') {
+        const pins = getPinnedIds();
+        pool = allListings.filter(l => pins.includes(String(l.id)));
     } else if (activeCategory === 'ALL') {
         pool = allListings.filter(othersOnly);
     } else {

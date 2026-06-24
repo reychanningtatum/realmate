@@ -479,6 +479,49 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 }
 .feed-courtesy span { color: var(--text-main); font-weight: 700; }
 
+/* ── Pin button ── */
+.pin-btn {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: none; background: transparent; color: #cbd5e1;
+  cursor: pointer; font-size: 12px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.pin-btn:hover { background: #f1f5f9; color: #64748b; }
+.pin-btn.pinned { color: #f59e0b; }
+.pin-btn.pinned:hover { color: #d97706; }
+
+/* ── Listing status badge ── */
+.listing-status-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 700; padding: 4px 10px;
+  border-radius: 6px; margin-bottom: 8px; text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.listing-status-badge.negotiation {
+  background: #fefce8; color: #ca8a04; border: 1px solid #fde68a;
+}
+.listing-status-badge.sold {
+  background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0;
+}
+
+/* ── Status buttons (owner only) ── */
+.listing-status-btns {
+  display: flex; gap: 6px; margin-top: 10px; padding-top: 10px;
+  border-top: 1px solid #f1f5f9;
+}
+.status-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 5px 10px; border-radius: 8px; font-size: 10px;
+  font-weight: 600; cursor: pointer; transition: all 0.15s;
+  border: 1px solid #e2e8f0; background: #f8fafc;
+  color: #64748b; font-family: inherit;
+}
+.status-btn:hover { border-color: #f59e0b; color: #f59e0b; background: #fffbeb; }
+.status-btn.active { background: #fefce8; color: #ca8a04; border-color: #fde68a; }
+.status-btn.sold-btn:hover { border-color: #16a34a; color: #16a34a; background: #f0fdf4; }
+.status-btn.sold-btn.active { background: #f0fdf4; color: #16a34a; border-color: #bbf7d0; }
+
 /* ═══ LISTINGS LAYOUT ═══ */
 .ledger-two-col {
   display: flex;
