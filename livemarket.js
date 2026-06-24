@@ -494,6 +494,7 @@ function selectSegTab(btn) {
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
             syncTopPadding();
+            window.scrollTo(0, 0);
             document.querySelector('.main-content')?.scrollTo(0, 0);
         });
     });
