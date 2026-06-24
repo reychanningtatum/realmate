@@ -138,6 +138,8 @@ async function setListingStatus(listingId, status, btn) {
     const { error } = await _sb.from('listings').update({ status }).eq('id', listingId);
     btn.disabled = false;
     if (error) { alert('Failed to update status'); return; }
+    const listing = allListings.find(l => String(l.id) === String(listingId));
+    if (listing) listing.status = status;
     applyFilters();
 }
 
