@@ -592,18 +592,19 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 .listing-card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
 .cat-tag {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-size: 10px; font-weight: 800; letter-spacing: 0.5px;
-  text-transform: uppercase; padding: 4px 10px;
-  border-radius: 4px; border: 1.5px solid;
-  background: #fff;
+  display: inline-flex; align-items: center;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.8px;
+  text-transform: uppercase; padding: 4px 8px;
+  border-radius: 3px; border: none;
+  background: #f1f5f9; color: #64748b;
+  font-family: 'Inter', sans-serif;
 }
-.cat-sale    { color: #0f172a; border-color: #0f172a; }
-.cat-rent    { color: #0f172a; border-color: #0f172a; }
-.cat-lease   { color: #0f172a; border-color: #0f172a; }
-.cat-wbuy    { color: #16a34a; border-color: #16a34a; }
-.cat-wrent   { color: #16a34a; border-color: #16a34a; }
-.cat-wlease  { color: #16a34a; border-color: #16a34a; }
+.cat-sale    { background: #0f172a; color: #e2e8f0; }
+.cat-rent    { background: #334155; color: #e2e8f0; }
+.cat-lease   { background: #475569; color: #f1f5f9; }
+.cat-wbuy    { background: #f1f5f9; color: #0f172a; }
+.cat-wrent   { background: #f1f5f9; color: #0f172a; }
+.cat-wlease  { background: #f1f5f9; color: #0f172a; }
 
 .listing-text {
   font-size: 13px; line-height: 1.6; color: #475569;
