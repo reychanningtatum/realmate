@@ -492,12 +492,15 @@ function selectSegTab(btn) {
         applyFilters();
     }
     requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            syncTopPadding();
-            window.scrollTo(0, 0);
-            document.querySelector('.main-content')?.scrollTo(0, 0);
-        });
+        syncTopPadding();
+        window.scrollTo(0, 0);
+        document.querySelector('.main-content')?.scrollTo(0, 0);
     });
+    setTimeout(() => {
+        syncTopPadding();
+        window.scrollTo(0, 0);
+        document.querySelector('.main-content')?.scrollTo(0, 0);
+    }, 200);
 }
 
 function onSearchInput() {
