@@ -337,7 +337,7 @@ h1,h2,h3 { font-family: 'Playfair Display', serif; }
 /* My Matches chip — blue variant */
 .chip.chip-match { border-color: rgba(50,205,50,0.3); color: #32cd32; background: linear-gradient(135deg, #0f172a, #1e3a5f); }
 .chip.chip-match:hover { background: linear-gradient(135deg, #0f172a, #16a34a); color: #fff; border-color: #32cd32; }
-.chip.chip-match.active { background: linear-gradient(135deg, #0f172a, #1e3a5f) !important; border-color: #32cd32 !important; color: #32cd32 !important; box-shadow: 0 0 10px rgba(50,205,50,0.2); }
+.chip.chip-match.active { background: linear-gradient(135deg, #0f172a, #16a34a) !important; border-color: #32cd32 !important; color: #fff !important; box-shadow: 0 0 12px rgba(50,205,50,0.3); }
 
 /* My Listings chip — green variant */
 .chip-mine { border-color: #86efac; color: #16a34a; }
