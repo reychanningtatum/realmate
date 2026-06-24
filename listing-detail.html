@@ -9,30 +9,47 @@
   <link rel="stylesheet" href="forum.css">
   <script src="theme.js"></script>
   <style>
-    /* Fixed header — warm/premium white */
+    /* Fixed header — dark, matching AI analysis */
     .ld-header {
       position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-      background: #fff;
+      background: linear-gradient(135deg, #0f172a 0%, #1a1a2e 50%, #0f172a 100%);
       display: flex; align-items: center; justify-content: space-between;
       padding: 10px 48px;
-      border-bottom: 1px solid #e2e8f0;
-      box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+      border-bottom: 2px solid #32cd32;
+      overflow: hidden;
+    }
+    .ld-header::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(50,205,50,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .ld-header::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, #32cd32, #3b82f6, #32cd32, transparent);
+      background-size: 200% 100%;
+      animation: ldGradientBar 4s linear infinite;
+    }
+    @keyframes ldGradientBar {
+      0% { background-position: 0% 0; }
+      100% { background-position: 200% 0; }
     }
     .ld-header .ld-back {
       display: inline-flex; align-items: center; gap: 5px;
-      font-size: 13px; font-weight: 600; color: #64748b;
-      cursor: pointer; padding: 7px 14px; border-radius: 10px;
-      border: 1px solid #e2e8f0; background: #f8fafc;
-      transition: all 0.15s;
+      font-size: 12px; font-weight: 600; color: #94a3b8;
+      cursor: pointer; padding: 6px 12px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06);
+      transition: all 0.15s; position: relative; z-index: 1;
     }
-    .ld-header .ld-back:hover { background: #f1f5f9; color: #0f172a; }
+    .ld-header .ld-back:hover { background: rgba(255,255,255,0.12); color: #fff; }
     .ld-header-right { display: flex; align-items: center; gap: 8px; }
     .ld-header-right .ld-badge {
-      background: #0f172a; color: #fff;
+      background: rgba(50,205,50,0.15); color: #32cd32;
+      border: 1px solid rgba(50,205,50,0.3);
       font-size: 10px; font-weight: 800; padding: 4px 10px;
-      border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;
+      border-radius: 50px; text-transform: uppercase; letter-spacing: 0.5px;
+      position: relative; z-index: 1;
     }
-    .ld-header-title { font-size: 16px; font-weight: 800; color: #0f172a; }
+    .ld-header-title { font-size: 16px; font-weight: 800; color: #fff; position: relative; z-index: 1; }
 
     .ld-page { max-width: 640px; margin: 0 auto; padding: 56px 16px 80px; }
 
@@ -148,9 +165,9 @@
       .ld-header { left: 240px; }
     }
 
-    html[data-theme="dark"] .ld-header { background: #111827; border-color: #1f2937; box-shadow: none; }
-    html[data-theme="dark"] .ld-header .ld-back { background: #1f2937; border-color: #374151; color: #9ca3af; }
-    html[data-theme="dark"] .ld-header-title { color: #f9fafb; }
+    html[data-theme="dark"] .ld-header { background: linear-gradient(135deg, #0f172a 0%, #1a1a2e 50%, #0f172a 100%); }
+    html[data-theme="dark"] .ld-header .ld-back { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); color: #94a3b8; }
+    html[data-theme="dark"] .ld-header-title { color: #fff; }
     html[data-theme="dark"] .ld-card { background: #111827; border-color: #1f2937; }
     html[data-theme="dark"] .ld-ai-card { background: #1f2937; border-color: #374151; }
     html[data-theme="dark"] .ld-section-label { color: #6b7280; }
