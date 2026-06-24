@@ -843,6 +843,24 @@ function selectCatByName(catName) {
     if (chip) selectCat(chip);
 }
 
+// ── Your Listing collapse/expand ──────────────────
+function toggleYourListing() {
+    const body = document.getElementById('yourListingBody');
+    const arrow = document.getElementById('yourListingArrow');
+    if (!body || !arrow) return;
+    body.classList.toggle('collapsed');
+    arrow.classList.toggle('collapsed');
+}
+
+function applyAutoMinimize() {
+    if (localStorage.getItem('rm_auto_minimize_listing') === '1') {
+        const body = document.getElementById('yourListingBody');
+        const arrow = document.getElementById('yourListingArrow');
+        if (body) body.classList.add('collapsed');
+        if (arrow) arrow.classList.add('collapsed');
+    }
+}
+
 // ── Load ledger ───────────────────────────────────
 async function loadLedger() {
     const grid = document.getElementById('listingsGrid');
@@ -913,6 +931,7 @@ function showMatchView(query, matches) {
     if (topWrap) topWrap.style.display = 'none';
     document.documentElement.style.setProperty('--top-fixed-height', '0px');
     document.getElementById('matchView').style.display = 'block';
+    applyAutoMinimize();
 
     // Your listing card — compact layout
     const imgs = query.image_urls?.length ? query.image_urls : (query.image_url ? [query.image_url] : []);

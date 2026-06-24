@@ -205,10 +205,15 @@
     </div>
 
     <div class="match-layout">
-      <!-- Your listing — sticky below header -->
+      <!-- Your listing — collapsible -->
       <div class="match-your-listing-sticky">
-        <p class="section-label" style="margin-bottom:6px;">Your Listing</p>
-        <div class="your-listing-card" id="yourListingCard"></div>
+        <div class="your-listing-header" onclick="toggleYourListing()">
+          <p class="section-label" style="margin:0;">Your Listing</p>
+          <i class="fas fa-chevron-up your-listing-arrow" id="yourListingArrow"></i>
+        </div>
+        <div class="your-listing-body" id="yourListingBody">
+          <div class="your-listing-card" id="yourListingCard"></div>
+        </div>
       </div>
       <!-- Matches -->
       <div class="match-results">

@@ -218,6 +218,17 @@
                         </label>
                     </div>
 
+                    <div class="pref-row">
+                        <div>
+                            <div class="pref-label">Auto Minimize Your Listing</div>
+                            <div class="pref-desc">Collapse your listing on AI Analysis page by default</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleAutoMinimizeSetting" onchange="this.checked ? localStorage.setItem('rm_auto_minimize_listing','1') : localStorage.removeItem('rm_auto_minimize_listing'); showSettingsNotificationToast('Preference saved.', 'success')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
                 </div>
             </div>
 
