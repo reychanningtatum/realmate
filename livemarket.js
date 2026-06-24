@@ -1516,7 +1516,7 @@ function syncTopPadding() {
     const wrap = document.querySelector('.top-fixed-wrap');
     if (!wrap) return;
     const h = wrap.offsetHeight;
-    document.documentElement.style.setProperty('--top-fixed-height', (h + 18) + 'px');
+    document.documentElement.style.setProperty('--top-fixed-height', (h + 28) + 'px');
 }
 syncTopPadding();
 window.addEventListener('resize', syncTopPadding);
