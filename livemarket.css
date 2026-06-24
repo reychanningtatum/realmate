@@ -650,7 +650,7 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   margin-bottom: 8px;
 }
 #matchView .match-layout {
-  padding-top: 56px;
+  padding-top: 48px;
 }
 .match-page-header .btn-back {
   background: rgba(255,255,255,0.1);

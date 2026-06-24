@@ -822,6 +822,8 @@ function exitMatchView() {
     document.getElementById('ledgerView').style.display = '';
     const fb = document.querySelector('.filter-bar');
     if (fb) fb.style.display = '';
+    const topWrap = document.querySelector('.top-fixed-wrap');
+    if (topWrap) topWrap.style.display = '';
     loadLedger();
 }
 
@@ -847,6 +849,8 @@ function showMatchView(query, matches) {
     document.getElementById('ledgerView').style.display = 'none';
     const fb = document.querySelector('.filter-bar');
     if (fb) fb.style.display = 'none';
+    const topWrap = document.querySelector('.top-fixed-wrap');
+    if (topWrap) topWrap.style.display = 'none';
     document.getElementById('matchView').style.display = 'block';
 
     // Your listing card — compact layout
