@@ -330,30 +330,49 @@ async function loadSummary() {
   `;
 
   // Render chart
-  if (allPrices.length >= 2) {
-    const ctx = document.getElementById('msChart').getContext('2d');
+  const chartEl = document.getElementById('msChart');
+  if (chartEl && allPrices.length >= 1) {
+    const ctx = chartEl.getContext('2d');
+    const hasBoth = sellerPrices.length > 0 && buyerPrices.length > 0;
+    let chartData;
+
+    if (hasBoth) {
+      chartData = {
+        labels: ['Supply (Ask)', 'Demand (Budget)', 'FMV'],
+        datasets: [{
+          label: 'Price',
+          data: [sellerAvg, buyerAvg, avg],
+          backgroundColor: ['#0f172a', '#32cd32', '#3b82f6'],
+          borderRadius: 8
+        }]
+      };
+    } else {
+      const sorted = [...allPrices].sort((a,b) => a - b);
+      chartData = {
+        labels: sorted.map((_,i) => 'L'+(i+1)),
+        datasets: [{
+          label: 'Price',
+          data: sorted,
+          backgroundColor: sorted.map(p => p >= avg ? '#0f172a' : '#94a3b8'),
+          borderRadius: 6
+        }]
+      };
+    }
+
     new Chart(ctx, {
       type: 'bar',
-      data: {
-        labels: sellerPrices.length && buyerPrices.length
-          ? ['Seller Prices', 'Buyer Budgets']
-          : allPrices.map((_,i) => 'Listing '+(i+1)),
-        datasets: sellerPrices.length && buyerPrices.length ? [
-          { label: 'Avg Ask', data: [sellerAvg, null], backgroundColor: '#0f172a', borderRadius: 6 },
-          { label: 'Avg Budget', data: [null, buyerAvg], backgroundColor: '#32cd32', borderRadius: 6 }
-        ] : [{
-          label: 'Price', data: allPrices, backgroundColor: '#0f172a', borderRadius: 6
-        }]
-      },
+      data: chartData,
       options: {
         responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: sellerPrices.length > 0 && buyerPrices.length > 0, labels: { font: { family: 'Inter', weight: 600, size: 11 } } } },
+        plugins: { legend: { display: false } },
         scales: {
           y: { ticks: { callback: v => formatP(v), font: { family: 'Inter', size: 10 } }, grid: { color: '#f3f4f6' } },
           x: { ticks: { font: { family: 'Inter', size: 10 } }, grid: { display: false } }
         }
       }
     });
+  } else if (chartEl) {
+    chartEl.parentElement.innerHTML = '<div style="text-align:center;padding:20px;color:#9ca3af;font-size:12px;">Not enough data for chart</div>';
   }
 }
 
