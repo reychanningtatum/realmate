@@ -349,6 +349,32 @@ function allKnownProjects() {
 // Patterns that often precede a project name in listing text
 const PROJECT_CONTEXT = /(?:project|tower|residences|suites|place|at|near|in|inside|unit\s+at|condo\s+at|property\s+at)\s+([A-Z][A-Za-z0-9]+(?:\s+[A-Z][A-Za-z0-9]+)*)/g;
 
+const MARKET_PAIRS = {
+    'FOR SALE': 'WILLING TO BUY', 'WILLING TO BUY': 'FOR SALE',
+    'FOR RENT': 'WILLING TO RENT', 'WILLING TO RENT': 'FOR RENT',
+    'FOR LEASE': 'WILLING TO LEASE', 'WILLING TO LEASE': 'FOR LEASE'
+};
+const MARKET_SEGMENTS = {
+    ownership: ['FOR SALE', 'WILLING TO BUY'],
+    rental: ['FOR RENT', 'WILLING TO RENT'],
+    lease: ['FOR LEASE', 'WILLING TO LEASE']
+};
+
+function getSegment(cat) {
+    for (const [seg, cats] of Object.entries(MARKET_SEGMENTS)) {
+        if (cats.includes(cat)) return seg;
+    }
+    return null;
+}
+
+function computeSentiment(supply, demand) {
+    if (demand.length > supply.length * 1.5) return 'Strong Buy';
+    if (demand.length > supply.length) return 'Buy';
+    if (supply.length > demand.length * 1.5) return 'Strong Sell';
+    if (supply.length > demand.length) return 'Sell';
+    return 'Neutral';
+}
+
 function buildMarketPrices(listings) {
     const buckets = {};
 
@@ -361,15 +387,15 @@ function buildMarketPrices(listings) {
         if (COMPANY_NAMES.some(c => proj.toLowerCase() === c)) return;
 
         const cat = l.category || '';
-        const isSeller = cat.startsWith('FOR');
-        const isBuyer = cat.startsWith('WILLING');
-        if (!isSeller && !isBuyer) return;
+        const segment = getSegment(cat);
+        if (!segment) return;
 
-        const key = `${proj.toLowerCase()}||${unit.toLowerCase()}`;
-        if (!buckets[key]) buckets[key] = { proj, unit, sellerPrices: [], buyerPrices: [], allPrices: [] };
+        const isSupply = cat.startsWith('FOR');
+        const key = `${proj.toLowerCase()}||${unit.toLowerCase()}||${segment}`;
+        if (!buckets[key]) buckets[key] = { proj, unit, segment, supplyPrices: [], demandPrices: [], allPrices: [] };
         buckets[key].allPrices.push(price);
-        if (isSeller) buckets[key].sellerPrices.push(price);
-        if (isBuyer) buckets[key].buyerPrices.push(price);
+        if (isSupply) buckets[key].supplyPrices.push(price);
+        else buckets[key].demandPrices.push(price);
     });
 
     return Object.values(buckets)
@@ -377,16 +403,13 @@ function buildMarketPrices(listings) {
             const avg = b.allPrices.reduce((s, p) => s + p, 0) / b.allPrices.length;
             const min = Math.min(...b.allPrices);
             const max = Math.max(...b.allPrices);
-            const sellerAvg = b.sellerPrices.length ? b.sellerPrices.reduce((s, p) => s + p, 0) / b.sellerPrices.length : null;
-            const buyerAvg = b.buyerPrices.length ? b.buyerPrices.reduce((s, p) => s + p, 0) / b.buyerPrices.length : null;
-            let sentiment = 'Neutral';
-            if (b.buyerPrices.length > b.sellerPrices.length * 1.5) sentiment = 'Strong Buy';
-            else if (b.buyerPrices.length > b.sellerPrices.length) sentiment = 'Buy';
-            else if (b.sellerPrices.length > b.buyerPrices.length * 1.5) sentiment = 'Strong Sell';
-            else if (b.sellerPrices.length > b.buyerPrices.length) sentiment = 'Sell';
-            return { ...b, avg, min, max, sellerAvg, buyerAvg, sentiment, count: b.allPrices.length, sellers: b.sellerPrices.length, buyers: b.buyerPrices.length };
+            const supplyAvg = b.supplyPrices.length ? b.supplyPrices.reduce((s, p) => s + p, 0) / b.supplyPrices.length : null;
+            const demandAvg = b.demandPrices.length ? b.demandPrices.reduce((s, p) => s + p, 0) / b.demandPrices.length : null;
+            const sentiment = computeSentiment(b.supplyPrices, b.demandPrices);
+            const segLabel = b.segment === 'ownership' ? '' : b.segment === 'rental' ? ' Rent' : ' Lease';
+            return { ...b, avg, min, max, supplyAvg, demandAvg, sentiment, segLabel, count: b.allPrices.length };
         })
-        .sort((a, b) => a.proj.localeCompare(b.proj));
+        .sort((a, b) => a.proj.localeCompare(b.proj) || a.segment.localeCompare(b.segment));
 }
 
 window._marketPrices = [];
@@ -415,10 +438,10 @@ function buildTicker(listings) {
             const spread = item.count > 1 && item.max > item.min
                 ? `<span class="count">${formatPrice(item.min)} – ${formatPrice(item.max)}</span>`
                 : '';
-            const key = encodeURIComponent(`${item.proj}||${item.unit}`);
+            const key = encodeURIComponent(`${item.proj}||${item.unit}||${item.segment}`);
             return `
                 <div class="ticker-item" onclick="location.href='market-summary.html?key=${key}'" style="cursor:pointer;">
-                    <span class="proj">${item.proj.toUpperCase()}</span>
+                    <span class="proj">${item.proj.toUpperCase()}${item.segLabel ? `<span style="font-size:9px;color:#64748b;font-weight:600;margin-left:4px;">${item.segLabel.toUpperCase()}</span>` : ''}</span>
                     <span class="unit">${item.unit}</span>
                     <span class="price">${formatPrice(item.avg)}</span>
                     ${spread}

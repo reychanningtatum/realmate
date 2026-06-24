@@ -171,26 +171,39 @@ function extractUnit(text) {
 }
 
 async function loadSummary() {
+  const SEGMENTS = {
+    ownership: { supply: ['FOR SALE'], demand: ['WILLING TO BUY'], label: 'Ownership' },
+    rental: { supply: ['FOR RENT'], demand: ['WILLING TO RENT'], label: 'Rental' },
+    lease: { supply: ['FOR LEASE'], demand: ['WILLING TO LEASE'], label: 'Lease' }
+  };
+
   const params = new URLSearchParams(location.search);
   const key = decodeURIComponent(params.get('key') || '');
-  const [projName, unitType] = key.split('||');
+  const parts = key.split('||');
+  const projName = parts[0];
+  const unitType = parts[1] || '';
+  const segment = parts[2] || 'ownership';
+  const segConfig = SEGMENTS[segment] || SEGMENTS.ownership;
+
   if (!projName) { document.getElementById('msContent').innerHTML = '<p>Project not found.</p>'; return; }
 
   const { data: listings } = await _sb.from('listings').select('*').eq('archived', false).order('created_at', { ascending: false });
   if (!listings) { document.getElementById('msContent').innerHTML = '<p>Failed to load data.</p>'; return; }
 
   const projLower = projName.toLowerCase();
-  const unitLower = (unitType || '').toLowerCase();
+  const unitLower = unitType.toLowerCase();
+  const allCats = [...segConfig.supply, ...segConfig.demand];
   const relevant = listings.filter(l => {
     const text = (l.content || '').toLowerCase();
     const hasProj = text.includes(projLower);
     const unit = extractUnit(l.content || '');
     const hasUnit = unitLower ? (unit || '').toLowerCase() === unitLower : true;
-    return hasProj && hasUnit;
+    const hasCat = allCats.includes(l.category);
+    return hasProj && hasUnit && hasCat;
   });
 
-  const sellers = relevant.filter(l => (l.category||'').startsWith('FOR'));
-  const buyers = relevant.filter(l => (l.category||'').startsWith('WILLING'));
+  const sellers = relevant.filter(l => segConfig.supply.includes(l.category));
+  const buyers = relevant.filter(l => segConfig.demand.includes(l.category));
   const allPrices = relevant.map(l => extractPrice(l.content||'')).filter(Boolean);
   const sellerPrices = sellers.map(l => extractPrice(l.content||'')).filter(Boolean);
   const buyerPrices = buyers.map(l => extractPrice(l.content||'')).filter(Boolean);
@@ -227,7 +240,7 @@ async function loadSummary() {
   container.innerHTML = `
     <div class="ms-hero">
       <div class="ms-hero-name">${projName}</div>
-      <div class="ms-hero-sub">${unitType || 'All Units'} · Condominium · BGC, Taguig</div>
+      <div class="ms-hero-sub">${unitType || 'All Units'} · ${segConfig.label} Market · Condominium</div>
       <div class="ms-hero-price">${formatP(avg)}</div>
       <div class="ms-hero-spread">${formatP(min)} – ${formatP(max)}</div>
       <div class="ms-sentiment ${sentClass}"><i class="fas fa-${sentClass === 'buy' ? 'arrow-trend-up' : sentClass === 'sell' ? 'arrow-trend-down' : 'minus'}"></i> ${sentiment}</div>

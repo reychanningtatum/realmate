@@ -166,6 +166,13 @@ async function loadOverview() {
   const { data: listings } = await _sb.from('listings').select('*').eq('archived', false);
   if (!listings) { document.getElementById('moContent').innerHTML = '<p>Failed to load.</p>'; return; }
 
+  const SEGS = {
+    ownership: { supply: ['FOR SALE'], demand: ['WILLING TO BUY'], label: '' },
+    rental: { supply: ['FOR RENT'], demand: ['WILLING TO RENT'], label: 'Rent' },
+    lease: { supply: ['FOR LEASE'], demand: ['WILLING TO LEASE'], label: 'Lease' }
+  };
+  function getSeg(cat) { for (const [s, c] of Object.entries(SEGS)) { if ([...c.supply,...c.demand].includes(cat)) return s; } return null; }
+
   const buckets = {};
   listings.forEach(l => {
     const text = l.content || '';
@@ -175,14 +182,14 @@ async function loadOverview() {
     if (!price || !unit || !proj) return;
     if (COMPANY_NAMES.some(c => proj.toLowerCase() === c)) return;
     const cat = l.category || '';
-    const isSeller = cat.startsWith('FOR');
-    const isBuyer = cat.startsWith('WILLING');
-    if (!isSeller && !isBuyer) return;
-    const key = `${proj.toLowerCase()}||${unit.toLowerCase()}`;
-    if (!buckets[key]) buckets[key] = { proj, unit, sellers: [], buyers: [], all: [] };
+    const seg = getSeg(cat);
+    if (!seg) return;
+    const isSupply = cat.startsWith('FOR');
+    const key = `${proj.toLowerCase()}||${unit.toLowerCase()}||${seg}`;
+    if (!buckets[key]) buckets[key] = { proj, unit, segment: seg, supply: [], demand: [], all: [] };
     buckets[key].all.push(price);
-    if (isSeller) buckets[key].sellers.push(price);
-    if (isBuyer) buckets[key].buyers.push(price);
+    if (isSupply) buckets[key].supply.push(price);
+    else buckets[key].demand.push(price);
   });
 
   const items = Object.values(buckets).map(b => {
@@ -190,11 +197,12 @@ async function loadOverview() {
     const min = Math.min(...b.all);
     const max = Math.max(...b.all);
     let sentiment = 'Neutral', sentClass = 'neutral';
-    if (b.buyers.length > b.sellers.length * 1.5) { sentiment = 'Strong Buy'; sentClass = 'buy'; }
-    else if (b.buyers.length > b.sellers.length) { sentiment = 'Buy'; sentClass = 'buy'; }
-    else if (b.sellers.length > b.buyers.length * 1.5) { sentiment = 'Strong Sell'; sentClass = 'sell'; }
-    else if (b.sellers.length > b.buyers.length) { sentiment = 'Sell'; sentClass = 'sell'; }
-    return { ...b, avg, min, max, sentiment, sentClass, count: b.all.length };
+    if (b.demand.length > b.supply.length * 1.5) { sentiment = 'Strong Buy'; sentClass = 'buy'; }
+    else if (b.demand.length > b.supply.length) { sentiment = 'Buy'; sentClass = 'buy'; }
+    else if (b.supply.length > b.demand.length * 1.5) { sentiment = 'Strong Sell'; sentClass = 'sell'; }
+    else if (b.supply.length > b.demand.length) { sentiment = 'Sell'; sentClass = 'sell'; }
+    const segLabel = SEGS[b.segment]?.label || '';
+    return { ...b, avg, min, max, sentiment, sentClass, segLabel, count: b.all.length };
   }).sort((a,b) => b.avg - a.avg);
 
   const totalProjects = new Set(items.map(i => i.proj.toLowerCase())).size;
@@ -231,10 +239,10 @@ async function loadOverview() {
         </thead>
         <tbody>
           ${items.map(item => {
-            const key = encodeURIComponent(`${item.proj}||${item.unit}`);
+            const key = encodeURIComponent(`${item.proj}||${item.unit}||${item.segment}`);
             return `<tr onclick="location.href='market-summary.html?key=${key}'">
               <td>
-                <div class="mo-proj-name">${item.proj}</div>
+                <div class="mo-proj-name">${item.proj}${item.segLabel ? ` <span style="font-size:10px;color:#9ca3af;font-weight:600;">${item.segLabel}</span>` : ''}</div>
                 <div class="mo-proj-unit">${item.unit}</div>
               </td>
               <td class="mo-price">${formatP(item.avg)}</td>
