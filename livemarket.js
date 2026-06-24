@@ -1515,7 +1515,8 @@ renderMarketReportPdf();
 function syncTopPadding() {
     const wrap = document.querySelector('.top-fixed-wrap');
     if (!wrap) return;
-    document.documentElement.style.setProperty('--top-fixed-height', wrap.offsetHeight + 'px');
+    const h = wrap.offsetHeight;
+    document.documentElement.style.setProperty('--top-fixed-height', (h + 8) + 'px');
 }
 syncTopPadding();
 window.addEventListener('resize', syncTopPadding);
