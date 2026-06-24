@@ -350,7 +350,7 @@ function allKnownProjects() {
 const PROJECT_CONTEXT = /(?:project|tower|residences|suites|place|at|near|in|inside|unit\s+at|condo\s+at|property\s+at)\s+([A-Z][A-Za-z0-9]+(?:\s+[A-Z][A-Za-z0-9]+)*)/g;
 
 function buildMarketPrices(listings) {
-    const buckets = {}; // key: "Project||Unit"
+    const buckets = {};
 
     listings.forEach(l => {
         const text = l.content || '';
@@ -358,23 +358,38 @@ function buildMarketPrices(listings) {
         const unit  = extractUnit(text);
         const proj  = extractProject(text);
         if (!price || !unit || !proj) return;
-
-        // Skip company/developer names — not actual project names
         if (COMPANY_NAMES.some(c => proj.toLowerCase() === c)) return;
+
+        const cat = l.category || '';
+        const isSeller = cat.startsWith('FOR');
+        const isBuyer = cat.startsWith('WILLING');
+        if (!isSeller && !isBuyer) return;
+
         const key = `${proj.toLowerCase()}||${unit.toLowerCase()}`;
-        if (!buckets[key]) buckets[key] = { proj, unit, prices: [] };
-        buckets[key].prices.push(price);
+        if (!buckets[key]) buckets[key] = { proj, unit, sellerPrices: [], buyerPrices: [], allPrices: [] };
+        buckets[key].allPrices.push(price);
+        if (isSeller) buckets[key].sellerPrices.push(price);
+        if (isBuyer) buckets[key].buyerPrices.push(price);
     });
 
     return Object.values(buckets)
         .map(b => {
-            const avg = b.prices.reduce((s, p) => s + p, 0) / b.prices.length;
-            const min = Math.min(...b.prices);
-            const max = Math.max(...b.prices);
-            return { ...b, avg, min, max, count: b.prices.length };
+            const avg = b.allPrices.reduce((s, p) => s + p, 0) / b.allPrices.length;
+            const min = Math.min(...b.allPrices);
+            const max = Math.max(...b.allPrices);
+            const sellerAvg = b.sellerPrices.length ? b.sellerPrices.reduce((s, p) => s + p, 0) / b.sellerPrices.length : null;
+            const buyerAvg = b.buyerPrices.length ? b.buyerPrices.reduce((s, p) => s + p, 0) / b.buyerPrices.length : null;
+            let sentiment = 'Neutral';
+            if (b.buyerPrices.length > b.sellerPrices.length * 1.5) sentiment = 'Strong Buy';
+            else if (b.buyerPrices.length > b.sellerPrices.length) sentiment = 'Buy';
+            else if (b.sellerPrices.length > b.buyerPrices.length * 1.5) sentiment = 'Strong Sell';
+            else if (b.sellerPrices.length > b.buyerPrices.length) sentiment = 'Sell';
+            return { ...b, avg, min, max, sellerAvg, buyerAvg, sentiment, count: b.allPrices.length, sellers: b.sellerPrices.length, buyers: b.buyerPrices.length };
         })
         .sort((a, b) => a.proj.localeCompare(b.proj));
 }
+
+window._marketPrices = [];
 
 function formatPrice(n) {
     if (n >= 1_000_000) return '₱' + (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
@@ -384,6 +399,7 @@ function formatPrice(n) {
 
 function buildTicker(listings) {
     const items = buildMarketPrices(listings);
+    window._marketPrices = items;
     const el = document.getElementById('tickerContent');
     if (!el) return;
 
@@ -399,16 +415,13 @@ function buildTicker(listings) {
             const spread = item.count > 1 && item.max > item.min
                 ? `<span class="count">${formatPrice(item.min)} – ${formatPrice(item.max)}</span>`
                 : '';
-            const sampleCount = item.count > 1
-                ? `<span class="count">${item.count} listings</span>`
-                : '';
+            const key = encodeURIComponent(`${item.proj}||${item.unit}`);
             return `
-                <div class="ticker-item">
+                <div class="ticker-item" onclick="location.href='market-summary.html?key=${key}'" style="cursor:pointer;">
                     <span class="proj">${item.proj.toUpperCase()}</span>
                     <span class="unit">${item.unit}</span>
                     <span class="price">${formatPrice(item.avg)}</span>
                     ${spread}
-                    ${sampleCount}
                 </div>
                 <span class="ticker-separator">·</span>
             `;
