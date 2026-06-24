@@ -824,6 +824,7 @@ function exitMatchView() {
     if (fb) fb.style.display = '';
     const topWrap = document.querySelector('.top-fixed-wrap');
     if (topWrap) topWrap.style.display = '';
+    syncTopPadding();
     loadLedger();
 }
 
@@ -851,6 +852,7 @@ function showMatchView(query, matches) {
     if (fb) fb.style.display = 'none';
     const topWrap = document.querySelector('.top-fixed-wrap');
     if (topWrap) topWrap.style.display = 'none';
+    document.documentElement.style.setProperty('--top-fixed-height', '0px');
     document.getElementById('matchView').style.display = 'block';
 
     // Your listing card — compact layout
