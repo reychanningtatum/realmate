@@ -335,9 +335,9 @@ h1,h2,h3 { font-family: 'Playfair Display', serif; }
 .chip.active { background: var(--primary); border-color: var(--primary); color: white; box-shadow: 0 2px 8px rgba(50,205,50,0.2); }
 
 /* My Matches chip — blue variant */
-.chip-match { border-color: #93c5fd; color: var(--ai-blue); }
-.chip-match:hover { border-color: var(--ai-blue); color: var(--ai-blue); background: var(--ai-blue-soft); }
-.chip-match.active { background: var(--ai-blue); border-color: var(--ai-blue); color: white; box-shadow: 0 2px 8px rgba(59,130,246,0.2); }
+.chip-match { border-color: rgba(50,205,50,0.3); color: #32cd32; background: linear-gradient(135deg, #0f172a, #1e3a5f); }
+.chip-match:hover { background: linear-gradient(135deg, #0f172a, #16a34a); color: #fff; border-color: #32cd32; }
+.chip-match.active { background: linear-gradient(135deg, #0f172a, #1e3a5f); border-color: #32cd32; color: #32cd32; box-shadow: 0 0 10px rgba(50,205,50,0.2); }
 
 /* My Listings chip — green variant */
 .chip-mine { border-color: #86efac; color: #16a34a; }
