@@ -9,28 +9,49 @@
   <link rel="stylesheet" href="forum.css">
   <script src="theme.js"></script>
   <style>
-    /* Fixed header */
-    .ld-header { position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: #0f172a; display: flex; align-items: center; justify-content: space-between; padding: 12px 48px; border-bottom: 2px solid #32cd32; }
-    .ld-header .ld-back { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #fff; cursor: pointer; padding: 8px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.1); transition: all 0.15s; }
-    .ld-header .ld-back:hover { background: rgba(255,255,255,0.18); }
-    .ld-header-right { display: flex; align-items: center; gap: 10px; }
-    .ld-header-right .ld-badge { background: rgba(50,205,50,0.15); border: 1px solid rgba(50,205,50,0.3); color: #32cd32; font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .ld-header-title { font-size: 18px; font-weight: 800; color: #fff; }
+    /* Fixed header — warm/premium white */
+    .ld-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      background: #fff;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 48px;
+      border-bottom: 1px solid #e2e8f0;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+    }
+    .ld-header .ld-back {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 13px; font-weight: 600; color: #64748b;
+      cursor: pointer; padding: 7px 14px; border-radius: 10px;
+      border: 1px solid #e2e8f0; background: #f8fafc;
+      transition: all 0.15s;
+    }
+    .ld-header .ld-back:hover { background: #f1f5f9; color: #0f172a; }
+    .ld-header-right { display: flex; align-items: center; gap: 8px; }
+    .ld-header-right .ld-badge {
+      background: #0f172a; color: #fff;
+      font-size: 10px; font-weight: 800; padding: 4px 10px;
+      border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .ld-header-title { font-size: 16px; font-weight: 800; color: #0f172a; }
 
-    .ld-page { max-width: 680px; margin: 0 auto; padding: 56px 16px 80px; }
+    .ld-page { max-width: 640px; margin: 0 auto; padding: 56px 16px 80px; }
 
     /* Card */
-    .ld-card { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.06); }
+    .ld-card {
+      background: #fff; border-radius: 16px; overflow: hidden;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+    }
 
     /* Images */
-    .ld-images { position: relative; overflow: hidden; }
+    .ld-images { position: relative; overflow: hidden; background: #f1f5f9; }
     .ld-images-scroll { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
     .ld-images-scroll::-webkit-scrollbar { display: none; }
     .ld-images-scroll img { width: 100%; min-width: 100%; max-height: 380px; object-fit: cover; scroll-snap-align: start; cursor: pointer; flex-shrink: 0; }
-    .ld-img-count { position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.6); color: #fff; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px; pointer-events: none; }
+    .ld-img-count { position: absolute; bottom: 10px; right: 10px; background: rgba(15,23,42,0.7); color: #fff; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px; pointer-events: none; backdrop-filter: blur(4px); }
     .ld-img-dots { display: flex; justify-content: center; gap: 5px; padding: 8px 0 2px; }
     .ld-img-dot { width: 6px; height: 6px; border-radius: 50%; background: #cbd5e1; transition: all 0.2s; }
-    .ld-img-dot.active { background: #32cd32; width: 16px; border-radius: 3px; }
+    .ld-img-dot.active { background: #0f172a; width: 16px; border-radius: 3px; }
 
     /* Lightbox */
     .ld-lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 99999; display: flex; align-items: center; justify-content: center; cursor: zoom-out; }
@@ -42,18 +63,22 @@
     .ld-lb-close { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.15); border: none; color: #fff; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
     /* Body */
-    .ld-body { padding: 16px 20px 20px; }
+    .ld-body { padding: 18px 20px 20px; }
 
-    /* User row — always on top */
-    .ld-user-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9; }
-    .ld-user-row img { width: 42px; height: 42px; border-radius: 12px; object-fit: cover; cursor: pointer; flex-shrink: 0; }
+    /* User row */
+    .ld-user-row {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 16px; padding: 12px 14px;
+      background: #f8fafc; border-radius: 12px;
+    }
+    .ld-user-row img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; cursor: pointer; flex-shrink: 0; border: 2px solid #e2e8f0; }
     .ld-user-name { font-size: 14px; font-weight: 700; color: var(--text-main); cursor: pointer; }
-    .ld-user-name:hover { color: #32cd32; }
+    .ld-user-name:hover { color: #0f172a; text-decoration: underline; }
     .ld-user-job { font-size: 11px; color: var(--text-sub); }
-    .ld-user-time { font-size: 11px; color: #cbd5e1; margin-left: auto; white-space: nowrap; }
+    .ld-user-time { font-size: 10px; color: #94a3b8; margin-left: auto; white-space: nowrap; display: flex; align-items: center; gap: 4px; }
 
     /* Category */
-    .ld-cat { display: inline-block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 12px; border-radius: 50px; margin-bottom: 10px; }
+    .ld-cat { display: inline-block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 12px; border-radius: 6px; margin-bottom: 12px; }
     .ld-cat-sale { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
     .ld-cat-rent { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
     .ld-cat-lease { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
@@ -62,13 +87,17 @@
     .ld-cat-wlease { background: #fdf4ff; color: #a855f7; border: 1px solid #e9d5ff; }
 
     /* Content */
-    .ld-content { font-size: 14px; line-height: 1.7; color: var(--text-main); white-space: pre-line; margin-bottom: 14px; }
+    .ld-content { font-size: 14px; line-height: 1.7; color: #374151; white-space: pre-line; margin-bottom: 16px; }
 
     /* AI tags */
-    .ld-ai-card { padding: 12px 14px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 14px; }
-    .ld-section-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: #94a3b8; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
+    .ld-ai-card {
+      padding: 14px 16px; margin-bottom: 16px;
+      background: linear-gradient(135deg, #f0fdf4 0%, #f8fafc 100%);
+      border-radius: 12px; border: 1px solid #d1fae5;
+    }
+    .ld-section-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: #16a34a; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
     .ld-tags { display: flex; flex-wrap: wrap; gap: 5px; }
-    .ld-tag { font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 50px; border: 1px solid; display: inline-flex; align-items: center; gap: 4px; }
+    .ld-tag { font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 6px; border: 1px solid; display: inline-flex; align-items: center; gap: 4px; }
     .ld-tag-loc { background: #f0fdf4; color: #16a34a; border-color: #bbf7d0; }
     .ld-tag-unit { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
     .ld-tag-project { background: #fefce8; color: #92400e; border-color: #fde68a; }
@@ -76,34 +105,47 @@
     .ld-tag-feature { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
 
     /* Action row */
-    .ld-action-row { display: flex; align-items: center; gap: 10px; padding-top: 14px; border-top: 1px solid #f1f5f9; }
+    .ld-action-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 0 0; margin-top: 4px;
+      border-top: 1px solid #f1f5f9;
+    }
 
     /* Buttons */
-    .btn-mate { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 50px; border: 1.5px solid #32cd32; background: #fff; color: #32cd32; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s; font-family: inherit; }
-    .btn-mate:hover:not(:disabled) { background: #32cd32; color: #fff; box-shadow: 0 2px 10px rgba(50,205,50,0.25); }
-    .mate-status-pending { border-color: #94a3b8; color: #94a3b8; cursor: default; opacity: 0.8; }
-    .mate-status-mates { border-color: #32cd32; background: rgba(50,205,50,0.08); color: #16a34a; cursor: default; }
+    .btn-mate { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 10px; border: 1.5px solid #0f172a; background: #0f172a; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .btn-mate:hover:not(:disabled) { background: #1e293b; box-shadow: 0 4px 14px rgba(15,23,42,0.2); }
+    .mate-status-pending { background: #f1f5f9; border-color: #e2e8f0; color: #94a3b8; cursor: default; }
+    .mate-status-mates { background: #f0fdf4; border-color: #bbf7d0; color: #16a34a; cursor: default; }
 
     .ld-loading { text-align: center; padding: 60px 20px; color: #94a3b8; }
 
     @media (max-width: 768px) {
       .ld-header { padding: 8px 14px; }
       .ld-header .ld-back { padding: 6px 10px; font-size: 11px; }
-      .ld-header-title { font-size: 14px; }
-      .ld-header-right .ld-badge { font-size: 9px; padding: 3px 8px; }
-      .ld-page { padding-top: 48px; padding-left: 10px; padding-right: 10px; }
+      .ld-header-title { font-size: 13px; }
+      .ld-header-right .ld-badge { font-size: 8px; padding: 3px 7px; }
+      .ld-page { padding-top: 46px; padding-left: 10px; padding-right: 10px; }
       .ld-body { padding: 14px 16px 16px; }
       .ld-images-scroll img { max-height: 280px; }
       .ld-content { font-size: 13px; line-height: 1.6; }
+      .ld-user-row { padding: 10px 12px; }
+      .ld-user-row img { width: 38px; height: 38px; }
     }
     @media (min-width: 769px) {
       .ld-header { left: 240px; }
     }
 
+    html[data-theme="dark"] .ld-header { background: #1e293b; border-color: #334155; box-shadow: none; }
+    html[data-theme="dark"] .ld-header .ld-back { background: #0f172a; border-color: #334155; color: #94a3b8; }
+    html[data-theme="dark"] .ld-header-title { color: #f1f5f9; }
     html[data-theme="dark"] .ld-card { background: #1e293b; border-color: #334155; }
     html[data-theme="dark"] .ld-ai-card { background: #0f172a; border-color: #334155; }
-    html[data-theme="dark"] .ld-user-row { border-color: #334155; }
+    html[data-theme="dark"] .ld-section-label { color: #32cd32; }
+    html[data-theme="dark"] .ld-user-row { background: #0f172a; border-color: #334155; }
+    html[data-theme="dark"] .ld-user-row img { border-color: #334155; }
     html[data-theme="dark"] .ld-action-row { border-color: #334155; }
+    html[data-theme="dark"] .ld-content { color: #94a3b8; }
+    html[data-theme="dark"] .btn-mate { background: #32cd32; border-color: #32cd32; color: #0f172a; }
   </style>
 </head>
 <body>
@@ -121,11 +163,9 @@
 </div>
 
 <div class="ld-header">
-  <button class="ld-back" onclick="history.back()"><i class="fas fa-chevron-left"></i> Back to Market</button>
-  <div class="ld-header-right">
-    <span class="ld-badge"><i class="fas fa-eye"></i> Listing</span>
-    <span class="ld-header-title">Listing Detail</span>
-  </div>
+  <button class="ld-back" onclick="history.back()"><i class="fas fa-chevron-left"></i> Back</button>
+  <span class="ld-header-title"><i class="fas fa-building" style="margin-right:5px; color:#94a3b8;"></i>Listing Detail</span>
+  <span class="ld-badge">VIEW</span>
 </div>
 
 <div class="main-content">
