@@ -593,18 +593,19 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 
 .cat-tag {
   display: inline-flex; align-items: center;
-  font-size: 10px; font-weight: 700; letter-spacing: 0.8px;
-  text-transform: uppercase; padding: 4px 8px;
-  border-radius: 3px; border: none;
-  background: #f1f5f9; color: #64748b;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
+  text-transform: uppercase; padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #fff; color: #111827;
   font-family: 'Inter', sans-serif;
 }
-.cat-sale    { background: #0f172a; color: #e2e8f0; }
-.cat-rent    { background: #334155; color: #e2e8f0; }
-.cat-lease   { background: #475569; color: #f1f5f9; }
-.cat-wbuy    { background: #f1f5f9; color: #0f172a; }
-.cat-wrent   { background: #f1f5f9; color: #0f172a; }
-.cat-wlease  { background: #f1f5f9; color: #0f172a; }
+.cat-sale    {}
+.cat-rent    {}
+.cat-lease   {}
+.cat-wbuy    {}
+.cat-wrent   {}
+.cat-wlease  {}
 
 .listing-text {
   font-size: 13px; line-height: 1.6; color: #475569;
