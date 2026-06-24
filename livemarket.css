@@ -598,12 +598,12 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   border-radius: 4px; border: 1.5px solid;
   background: #fff;
 }
-.cat-sale    { color: #dc2626; border-color: #dc2626; }
-.cat-rent    { color: #2563eb; border-color: #2563eb; }
-.cat-lease   { color: #7c3aed; border-color: #7c3aed; }
+.cat-sale    { color: #0f172a; border-color: #0f172a; }
+.cat-rent    { color: #0f172a; border-color: #0f172a; }
+.cat-lease   { color: #0f172a; border-color: #0f172a; }
 .cat-wbuy    { color: #16a34a; border-color: #16a34a; }
-.cat-wrent   { color: #ea580c; border-color: #ea580c; }
-.cat-wlease  { color: #0891b2; border-color: #0891b2; }
+.cat-wrent   { color: #16a34a; border-color: #16a34a; }
+.cat-wlease  { color: #16a34a; border-color: #16a34a; }
 
 .listing-text {
   font-size: 13px; line-height: 1.6; color: #475569;
