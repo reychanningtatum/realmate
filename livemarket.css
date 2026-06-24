@@ -180,15 +180,15 @@ h1,h2,h3 { font-family: 'Playfair Display', serif; }
 .accent { color: var(--primary); }
 
 .btn-post-listing {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--text-main); color: white;
-  border: none; border-radius: 14px;
-  padding: 12px 22px; font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; gap: 6px;
+  background: #111827; color: white;
+  border: 1px solid #111827; border-radius: 999px;
+  padding: 9px 18px; font-size: 13px; font-weight: 600;
   cursor: pointer; white-space: nowrap;
-  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
-  font-family: inherit;
+  transition: all 0.15s;
+  font-family: 'Inter', sans-serif; letter-spacing: 0.01em;
 }
-.btn-post-listing:hover { opacity: 0.88; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+.btn-post-listing:hover { background: #374151; border-color: #374151; }
 
 /* =========================================
    STATS STRIP

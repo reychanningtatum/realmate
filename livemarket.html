@@ -84,6 +84,9 @@
       <button class="seg-tab" data-seg="PORTFOLIO" onclick="selectSegTab(this)">
         <i class="fas fa-briefcase"></i><span>Portfolio</span>
       </button>
+      <button class="seg-tab" data-seg="AI_ENGINE" onclick="selectSegTab(this)">
+        <i class="fas fa-circle-nodes"></i><span>AI Match</span>
+      </button>
     </div>
     <!-- Category filters (visible only under Market) -->
     <div class="filter-chips" id="marketCatFilters" style="display:none;">
@@ -96,12 +99,17 @@
       <button class="chip" data-cat="WILLING TO RENT" onclick="selectMarketCat(this)">Willing to Rent</button>
       <button class="chip" data-cat="WILLING TO LEASE" onclick="selectMarketCat(this)">Willing to Lease</button>
     </div>
-    <!-- Portfolio sub-filter (Matches + My Listings) -->
+    <!-- Portfolio listing filters (direct) -->
     <div class="filter-chips" id="portfolioSubfilter" style="display:none;">
-      <button class="chip chip-sub chip-match active" data-psub="MATCHES" onclick="selectPortfolioSub(this)"><i class="fas fa-circle-nodes"></i> AI Matches</button>
-      <button class="chip chip-sub chip-mine" data-psub="MY_LISTINGS" onclick="selectPortfolioSub(this)"><i class="fas fa-list"></i> My Listings</button>
+      <button class="chip chip-sub active" data-sub="ALL" onclick="selectSubCat(this)">All</button>
+      <button class="chip chip-sub" data-sub="FOR SALE" onclick="selectSubCat(this)">For Sale</button>
+      <button class="chip chip-sub" data-sub="FOR RENT" onclick="selectSubCat(this)">For Rent</button>
+      <button class="chip chip-sub" data-sub="FOR LEASE" onclick="selectSubCat(this)">For Lease</button>
+      <button class="chip chip-sub" data-sub="WILLING TO BUY" onclick="selectSubCat(this)">Willing to Buy</button>
+      <button class="chip chip-sub" data-sub="WILLING TO RENT" onclick="selectSubCat(this)">Willing to Rent</button>
+      <button class="chip chip-sub" data-sub="WILLING TO LEASE" onclick="selectSubCat(this)">Willing to Lease</button>
     </div>
-    <!-- My Listings category sub-filter -->
+    <!-- Legacy sub-filter (hidden, kept for compatibility) -->
     <div class="filter-chips" id="myListingsSubfilter" style="display:none;">
       <button class="chip chip-sub active" data-sub="ALL" onclick="selectSubCat(this)">All</button>
       <button class="chip chip-sub" data-sub="FOR SALE" onclick="selectSubCat(this)">For Sale</button>
@@ -198,10 +206,9 @@
         <i class="fas fa-chevron-left"></i> Back
       </button>
       <div class="match-header-center">
-        <i class="fas fa-satellite-dish ai-satellite-icon" style="color:#32cd32;font-size:16px;"></i>
-        <span style="font-size:14px;font-weight:800;color:#e2e8f0;">Match Monitoring</span>
+        <i class="fas fa-circle-nodes" style="color:#32cd32;font-size:16px;animation:aiOrbit 5s linear infinite,aiGlow 2s ease-in-out infinite;display:inline-block;"></i>
+        <span style="font-size:15px;font-weight:800;color:#fff;">AI Match <span class="accent">Engine</span></span>
       </div>
-      <h2 style="font-size:16px; font-weight:800; margin:0; color:#fff;">AI <span class="accent">Analysis</span></h2>
     </div>
 
     <div class="match-layout">

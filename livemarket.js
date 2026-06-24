@@ -191,7 +191,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
         <div class="listing-card-body">
             <div class="listing-card-top">
                 ${catTag(listing.category)}
-                ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} AI Match${myMatchCount !== 1 ? 'es' : ''}</button>` : ''}
+                ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : ''}
                 <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
                 <button class="pin-btn ${getPinnedIds().includes(String(listing.id)) ? 'pinned' : ''}" onclick="event.stopPropagation(); togglePin('${listing.id}', this)" title="${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}"><i class="fas fa-thumbtack"></i></button>
             </div>
@@ -467,8 +467,6 @@ let activeSegTab = 'FEED';
 let marketCat = 'ALL';
 let myListingsSubCat = 'ALL';
 
-let portfolioSub = 'MATCHES';
-
 function selectSegTab(btn) {
     document.querySelectorAll('.seg-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
@@ -478,11 +476,9 @@ function selectSegTab(btn) {
     const listPane = document.getElementById('listingsTabPane');
     const catFilters = document.getElementById('marketCatFilters');
     const portfolioFilters = document.getElementById('portfolioSubfilter');
-    const subfilter = document.getElementById('myListingsSubfilter');
 
     catFilters.style.display = activeSegTab === 'MARKET' ? 'flex' : 'none';
     portfolioFilters.style.display = activeSegTab === 'PORTFOLIO' ? 'flex' : 'none';
-    subfilter.style.display = (activeSegTab === 'PORTFOLIO' && portfolioSub === 'MY_LISTINGS') ? 'flex' : 'none';
 
     if (activeSegTab === 'FEED') {
         feedPane.style.display = '';
@@ -490,21 +486,11 @@ function selectSegTab(btn) {
     } else {
         feedPane.style.display = 'none';
         listPane.style.display = '';
-        if (activeSegTab === 'PORTFOLIO') activeCategory = portfolioSub;
+        if (activeSegTab === 'PORTFOLIO') activeCategory = 'MY_LISTINGS';
+        else if (activeSegTab === 'AI_ENGINE') activeCategory = 'MATCHES';
         else if (activeSegTab === 'MARKET') activeCategory = marketCat;
         applyFilters();
     }
-    setTimeout(syncTopPadding, 50);
-}
-
-function selectPortfolioSub(btn) {
-    document.querySelectorAll('#portfolioSubfilter .chip').forEach(c => c.classList.remove('active'));
-    btn.classList.add('active');
-    portfolioSub = btn.dataset.psub;
-    activeCategory = portfolioSub;
-    const subfilter = document.getElementById('myListingsSubfilter');
-    subfilter.style.display = portfolioSub === 'MY_LISTINGS' ? 'flex' : 'none';
-    applyFilters();
     setTimeout(syncTopPadding, 50);
 }
 
