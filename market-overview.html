@@ -9,76 +9,88 @@
   <link rel="stylesheet" href="forum.css">
   <script src="theme.js"></script>
   <style>
-    .mo-header {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-      background: linear-gradient(135deg, #0f172a 0%, #1a1a2e 50%, #0f172a 100%);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 48px; border-bottom: 2px solid #32cd32; overflow: hidden;
-    }
-    .mo-header::after {
-      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, #32cd32, #3b82f6, #32cd32, transparent);
-      background-size: 200% 100%; animation: moBar 4s linear infinite;
-    }
+    * { box-sizing: border-box; }
+    .mo-header { position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: linear-gradient(135deg, #0f172a 0%, #1a1a2e 50%, #0f172a 100%); display: flex; align-items: center; justify-content: space-between; padding: 10px 48px; border-bottom: 2px solid #32cd32; overflow: hidden; }
+    .mo-header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #32cd32, #3b82f6, #32cd32, transparent); background-size: 200% 100%; animation: moBar 4s linear infinite; }
     @keyframes moBar { 0% { background-position: 0% 0; } 100% { background-position: 200% 0; } }
     .mo-back { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: #94a3b8; cursor: pointer; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); transition: all 0.15s; position: relative; z-index: 1; }
     .mo-back:hover { background: rgba(255,255,255,0.12); color: #fff; }
     .mo-title { font-size: 16px; font-weight: 800; color: #fff; position: relative; z-index: 1; }
+    .mo-page { max-width: 860px; margin: 0 auto; padding: 56px 16px 80px; font-family: 'Inter', sans-serif; }
 
-    .mo-page { max-width: 800px; margin: 0 auto; padding: 58px 16px 80px; font-family: 'Inter', sans-serif; }
+    /* Breadth */
+    .mo-breadth { display: flex; gap: 8px; margin-bottom: 16px; }
+    .mo-breadth-item { flex: 1; background: #0f172a; border-radius: 10px; padding: 12px; text-align: center; }
+    .mo-breadth-num { font-size: 20px; font-weight: 800; }
+    .mo-breadth-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #64748b; margin-top: 2px; }
+    .mo-breadth-up .mo-breadth-num { color: #32cd32; }
+    .mo-breadth-down .mo-breadth-num { color: #ef4444; }
+    .mo-breadth-flat .mo-breadth-num { color: #94a3b8; }
 
-    .mo-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-    .mo-sum-card { background: #0f172a; border-radius: 12px; padding: 16px; text-align: center; }
-    .mo-sum-num { font-size: 24px; font-weight: 800; color: #fff; }
-    .mo-sum-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; margin-top: 4px; }
+    /* Leaders */
+    .mo-leaders { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
+    .mo-leader-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px 14px; }
+    .mo-leader-title { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #9ca3af; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
+    .mo-leader-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 3px 0; }
+    .mo-leader-name { font-weight: 700; color: #111827; }
+    .mo-leader-val { font-weight: 800; }
 
-    .mo-section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #9ca3af; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    /* Heatmap */
+    .mo-section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #9ca3af; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .mo-heatmap { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+    .mo-heat-cell { padding: 10px 14px; border-radius: 8px; font-size: 11px; font-weight: 700; color: #fff; cursor: pointer; transition: transform 0.1s; min-width: 80px; text-align: center; }
+    .mo-heat-cell:hover { transform: scale(1.04); }
+    .mo-heat-cell .hc-name { font-size: 10px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mo-heat-cell .hc-score { font-size: 16px; font-weight: 800; margin-top: 2px; }
 
-    .mo-table { width: 100%; border-collapse: collapse; }
-    .mo-table th { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #9ca3af; text-align: left; padding: 8px 12px; border-bottom: 1px solid #e5e7eb; }
-    .mo-table td { padding: 12px; border-bottom: 1px solid #f3f4f6; font-size: 13px; color: #374151; }
-    .mo-table tr { cursor: pointer; transition: background 0.1s; }
-    .mo-table tbody tr:hover { background: #f9fafb; }
-    .mo-proj-name { font-weight: 700; color: #111827; }
-    .mo-proj-unit { font-size: 11px; color: #9ca3af; }
-    .mo-price { font-weight: 800; color: #111827; }
-    .mo-spread { font-size: 11px; color: #9ca3af; }
-    .mo-sent { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; }
+    /* AI Panel */
+    @keyframes moOrbit { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes moGlow { 0%,100% { text-shadow: 0 0 4px rgba(50,205,50,0.3); } 50% { text-shadow: 0 0 14px rgba(50,205,50,0.8); } }
+    .mo-ai-icon { color: #32cd32; display: inline-block; animation: moOrbit 5s linear infinite, moGlow 2s ease-in-out infinite; }
+    .mo-ai-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+    .mo-ai-insight { font-size: 13px; line-height: 1.6; color: #374151; padding: 4px 0; display: flex; align-items: flex-start; gap: 8px; }
+    .mo-ai-insight i { color: #32cd32; margin-top: 3px; flex-shrink: 0; font-size: 10px; }
+
+    /* Watchlist */
+    .mo-card-list { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; }
+    .mo-card-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: background 0.1s; }
+    .mo-card-item:hover { background: #f9fafb; }
+    .mo-card-item:last-child { border: none; }
+    .mo-card-left { flex: 1; min-width: 0; }
+    .mo-card-right { text-align: right; flex-shrink: 0; }
+    .mo-proj-name { font-weight: 700; color: #111827; font-size: 13px; }
+    .mo-proj-sub { font-size: 10px; color: #9ca3af; margin-top: 1px; }
+    .mo-price { font-weight: 800; color: #111827; font-size: 15px; }
+    .mo-scores { display: flex; gap: 4px; margin-top: 4px; }
+    .mo-score-pill { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
+    .mo-sent { font-size: 9px; font-weight: 700; padding: 3px 7px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px; }
     .mo-sent-buy { background: rgba(50,205,50,0.12); color: #16a34a; }
     .mo-sent-sell { background: rgba(239,68,68,0.12); color: #dc2626; }
     .mo-sent-neutral { background: #f3f4f6; color: #6b7280; }
 
     .mo-loading { text-align: center; padding: 80px 20px; color: #9ca3af; }
 
-    /* Mobile cards instead of table */
-    .mo-card-list { display: none; }
-    .mo-card-item {
-      display: flex; align-items: center; gap: 12px;
-      padding: 14px 16px; border-bottom: 1px solid #f3f4f6; cursor: pointer;
-      transition: background 0.1s;
-    }
-    .mo-card-item:hover { background: #f9fafb; }
-    .mo-card-item:last-child { border: none; }
-    .mo-card-left { flex: 1; min-width: 0; }
-    .mo-card-right { text-align: right; flex-shrink: 0; }
-
     @media (max-width: 768px) {
       .mo-header { padding: 8px 14px; }
-      .mo-page { padding-top: 50px; padding-left: 12px; padding-right: 12px; }
-      .mo-summary { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-      .mo-sum-card { padding: 12px 8px; }
-      .mo-sum-num { font-size: 18px; }
-      .mo-sum-label { font-size: 9px; }
-      .mo-table-wrap { display: none; }
-      .mo-card-list { display: block; background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; overflow: hidden; }
+      .mo-page { padding-top: 48px; }
+      .mo-breadth { gap: 6px; }
+      .mo-breadth-item { padding: 10px 6px; }
+      .mo-breadth-num { font-size: 16px; }
+      .mo-leaders { grid-template-columns: 1fr 1fr; gap: 6px; }
+      .mo-leader-card { padding: 10px 12px; }
+      .mo-heatmap { gap: 4px; }
+      .mo-heat-cell { padding: 8px 10px; min-width: 70px; }
     }
     @media (min-width: 769px) { .mo-header { left: 240px; } }
 
-    html[data-theme="dark"] .mo-table th { border-color: #334155; color: #64748b; }
-    html[data-theme="dark"] .mo-table td { border-color: #1f2937; color: #94a3b8; }
-    html[data-theme="dark"] .mo-table tbody tr:hover { background: #1e293b; }
-    html[data-theme="dark"] .mo-proj-name { color: #f1f5f9; }
-    html[data-theme="dark"] .mo-price { color: #f1f5f9; }
+    html[data-theme="dark"] .mo-leader-card { background: #1e293b; border-color: #334155; }
+    html[data-theme="dark"] .mo-leader-name { color: #f1f5f9; }
+    html[data-theme="dark"] .mo-card-list { background: #1e293b; border-color: #334155; }
+    html[data-theme="dark"] .mo-card-item { border-color: #334155; }
+    html[data-theme="dark"] .mo-card-item:hover { background: #0f172a; }
+    html[data-theme="dark"] .mo-proj-name, html[data-theme="dark"] .mo-price { color: #f1f5f9; }
+    html[data-theme="dark"] .mo-ai-card { background: #1e293b; border-color: #334155; }
+    html[data-theme="dark"] .mo-ai-insight { color: #94a3b8; }
   </style>
 </head>
 <body>
@@ -130,158 +142,152 @@
 <script src="notif-badge.js"></script>
 <script>
 const _sb = supabase.createClient('https://wmegpgrfrtprhuzmgjma.supabase.co', 'sb_publishable_Rm_fIBDUfu3DEyLj0_bWZw_qEqo8cd4');
-
-const KNOWN_PROJECTS = [
-  'One Maridien','Two Maridien','Verve One','Verve Two',
-  'Park Triangle Residences','Gentry Residences','Park East Place',
-  'Two Serendra','Kroma','Lerato',
-  'The Columns Ayala Avenue','The Columns Legazpi Village',
-  'Senta','Mondia','Treveia','Venare','Lumira','Mirala',
-  'Venido','Aveia','TREC','The Residences At Greenbelt',
-];
+const KNOWN_PROJECTS = ['One Maridien','Two Maridien','Verve One','Verve Two','Park Triangle Residences','Gentry Residences','Park East Place','Two Serendra','Kroma','Lerato','The Columns Ayala Avenue','The Columns Legazpi Village','Senta','Mondia','Treveia','Venare','Lumira','Mirala','Venido','Aveia','TREC','The Residences At Greenbelt'];
 const COMPANY_NAMES = ['alveo land corp','alveo land','alveo','smdc','dmci','ayala','megaworld','filinvest','rockwell','camella','avida','amaia','federal'];
 
-function formatP(n) {
-  if (n >= 1e6) return '₱' + (n/1e6).toFixed(1).replace(/\.0$/,'') + 'M';
-  if (n >= 1e3) return '₱' + (n/1e3).toFixed(0) + 'K';
-  return '₱' + n.toFixed(0);
-}
-
-function extractPrice(text) {
-  const lower = text.toLowerCase();
-  let m = lower.match(/(\d+\.?\d*)\s*m(?:illion)?/);
-  if (m) return parseFloat(m[1]) * 1e6;
-  m = text.replace(/,/g,'').match(/\b(\d{7,9})\b/);
-  if (m) return parseFloat(m[1]);
-  return null;
-}
-
-function extractUnit(text) {
-  const lower = text.toLowerCase();
-  if (/\bstudio\b/.test(lower)) return 'Studio';
-  if (/\b1\s*br\b|1\s*bed/i.test(text)) return '1BR';
-  if (/\b2\s*br\b|2\s*bed/i.test(text)) return '2BR';
-  if (/\b3\s*br\b|3\s*bed/i.test(text)) return '3BR';
-  if (/\b4\s*br\b|4\s*bed/i.test(text)) return '4BR';
-  return null;
-}
-
-function extractProject(text) {
-  const upper = text.toUpperCase();
-  let earliest = Infinity, found = null;
-  for (const proj of KNOWN_PROJECTS) {
-    const idx = upper.indexOf(proj.toUpperCase());
-    if (idx !== -1 && idx < earliest) { earliest = idx; found = proj; }
-  }
-  return found;
-}
+function fmtP(n) { if(n>=1e6) return '₱'+(n/1e6).toFixed(1).replace(/\.0$/,'')+'M'; if(n>=1e3) return '₱'+(n/1e3).toFixed(0)+'K'; return '₱'+n.toFixed(0); }
+function extractPrice(t) { let m=t.toLowerCase().match(/(\d+\.?\d*)\s*m(?:illion)?/); if(m) return parseFloat(m[1])*1e6; m=t.replace(/,/g,'').match(/\b(\d{7,9})\b/); return m?parseFloat(m[1]):null; }
+function extractUnit(t) { const l=t.toLowerCase(); if(/\bstudio\b/.test(l)) return 'Studio'; if(/\b1\s*br\b|1\s*bed/i.test(t)) return '1BR'; if(/\b2\s*br\b|2\s*bed/i.test(t)) return '2BR'; if(/\b3\s*br\b|3\s*bed/i.test(t)) return '3BR'; if(/\b4\s*br\b|4\s*bed/i.test(t)) return '4BR'; return null; }
+function extractProject(t) { const u=t.toUpperCase(); let e=Infinity,f=null; for(const p of KNOWN_PROJECTS){const i=u.indexOf(p.toUpperCase()); if(i!==-1&&i<e){e=i;f=p;}} return f; }
+function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
 
 async function loadOverview() {
   const { data: listings } = await _sb.from('listings').select('*').eq('archived', false);
   if (!listings) { document.getElementById('moContent').innerHTML = '<p>Failed to load.</p>'; return; }
 
-  const SEGS = {
-    ownership: { supply: ['FOR SALE'], demand: ['WILLING TO BUY'], label: '' },
-    rental: { supply: ['FOR RENT'], demand: ['WILLING TO RENT'], label: 'Rent' },
-    lease: { supply: ['FOR LEASE'], demand: ['WILLING TO LEASE'], label: 'Lease' }
-  };
-  function getSeg(cat) { for (const [s, c] of Object.entries(SEGS)) { if ([...c.supply,...c.demand].includes(cat)) return s; } return null; }
-
+  const now = Date.now();
+  const DAY = 86400000;
   const buckets = {};
+
   listings.forEach(l => {
     const text = l.content || '';
     const price = extractPrice(text);
     const unit = extractUnit(text);
     const proj = extractProject(text);
-    if (!price || !unit || !proj) return;
-    if (COMPANY_NAMES.some(c => proj.toLowerCase() === c)) return;
+    if (!proj) return;
     const cat = l.category || '';
-    const seg = getSeg(cat);
-    if (!seg) return;
     const isSupply = cat.startsWith('FOR');
-    const key = `${proj.toLowerCase()}||${unit.toLowerCase()}||${seg}`;
-    if (!buckets[key]) buckets[key] = { proj, unit, segment: seg, supply: [], demand: [], all: [] };
-    buckets[key].all.push(price);
-    if (isSupply) buckets[key].supply.push(price);
-    else buckets[key].demand.push(price);
+    const isDemand = cat.startsWith('WILLING');
+    if (!isSupply && !isDemand) return;
+
+    const pk = proj.toLowerCase();
+    if (!buckets[pk]) buckets[pk] = { proj, prices: [], supply: 0, demand: 0, sold: 0, negotiation: 0, recent7d: 0, recent30d: 0, units: new Set() };
+    if (price) buckets[pk].prices.push(price);
+    if (isSupply) buckets[pk].supply++;
+    if (isDemand) buckets[pk].demand++;
+    if (l.status === 'sold') buckets[pk].sold++;
+    if (l.status === 'negotiation') buckets[pk].negotiation++;
+    if (unit) buckets[pk].units.add(unit);
+    const age = now - new Date(l.created_at).getTime();
+    if (age < 7 * DAY) buckets[pk].recent7d++;
+    if (age < 30 * DAY) buckets[pk].recent30d++;
   });
 
   const items = Object.values(buckets).map(b => {
-    const avg = b.all.reduce((s,p)=>s+p,0) / b.all.length;
-    const min = Math.min(...b.all);
-    const max = Math.max(...b.all);
-    let sentiment = 'Neutral', sentClass = 'neutral';
-    if (b.demand.length > b.supply.length * 1.5) { sentiment = 'Strong Buy'; sentClass = 'buy'; }
-    else if (b.demand.length > b.supply.length) { sentiment = 'Buy'; sentClass = 'buy'; }
-    else if (b.supply.length > b.demand.length * 1.5) { sentiment = 'Strong Sell'; sentClass = 'sell'; }
-    else if (b.supply.length > b.demand.length) { sentiment = 'Sell'; sentClass = 'sell'; }
-    const segLabel = SEGS[b.segment]?.label || '';
-    return { ...b, avg, min, max, sentiment, sentClass, segLabel, count: b.all.length };
-  }).sort((a,b) => b.avg - a.avg);
+    const total = b.supply + b.demand;
+    const avg = b.prices.length ? b.prices.reduce((s,p)=>s+p,0)/b.prices.length : 0;
+    const min = b.prices.length ? Math.min(...b.prices) : 0;
+    const max = b.prices.length ? Math.max(...b.prices) : 0;
+    const spread = avg > 0 ? ((max - min) / avg) * 100 : 0;
 
-  const totalProjects = new Set(items.map(i => i.proj.toLowerCase())).size;
-  const totalListings = items.reduce((s,i) => s + i.count, 0);
-  const avgPrice = items.length ? items.reduce((s,i) => s + i.avg, 0) / items.length : 0;
+    const demandScore = clamp(Math.round((b.demand / Math.max(total, 1)) * 100 + b.recent7d * 5), 0, 99);
+    const supplyScore = clamp(Math.round((b.supply / Math.max(total, 1)) * 100 + b.recent7d * 3), 0, 99);
+    const liquidityScore = clamp(Math.round(((b.sold + b.negotiation) / Math.max(total, 1)) * 100 + b.sold * 15 + b.negotiation * 8), 0, 99);
+    const momentumScore = clamp(Math.round(b.recent7d * 12 + b.recent30d * 3 + (b.demand > b.supply ? 15 : 0)), 0, 99);
+    const volatilityScore = clamp(Math.round(spread * 2), 0, 99);
+    const compositeScore = Math.round(demandScore * 0.3 + momentumScore * 0.25 + liquidityScore * 0.25 + (100 - volatilityScore) * 0.2);
+
+    let sentiment = 'Neutral', sentClass = 'neutral';
+    if (compositeScore >= 70) { sentiment = 'Strong Buy'; sentClass = 'buy'; }
+    else if (compositeScore >= 55) { sentiment = 'Buy'; sentClass = 'buy'; }
+    else if (compositeScore <= 30) { sentiment = 'Strong Sell'; sentClass = 'sell'; }
+    else if (compositeScore <= 45) { sentiment = 'Sell'; sentClass = 'sell'; }
+
+    let confidence = 'Low';
+    if (total >= 8) confidence = 'Very High';
+    else if (total >= 5) confidence = 'High';
+    else if (total >= 3) confidence = 'Moderate';
+
+    return { ...b, avg, min, max, total, demandScore, supplyScore, liquidityScore, momentumScore, volatilityScore, compositeScore, sentiment, sentClass, confidence, unitCount: b.units.size };
+  }).sort((a,b) => b.compositeScore - a.compositeScore);
+
+  const up = items.filter(i => i.sentClass === 'buy').length;
+  const down = items.filter(i => i.sentClass === 'sell').length;
+  const flat = items.filter(i => i.sentClass === 'neutral').length;
+
+  const topGainers = [...items].sort((a,b) => b.momentumScore - a.momentumScore).slice(0,3);
+  const highDemand = [...items].sort((a,b) => b.demandScore - a.demandScore).slice(0,3);
+  const mostLiquid = [...items].sort((a,b) => b.liquidityScore - a.liquidityScore).slice(0,3);
+  const fastGrow = [...items].sort((a,b) => b.momentumScore - a.momentumScore).slice(0,3);
+
+  // AI Insights
+  const insights = [];
+  if (up > down) insights.push(`${up} of ${items.length} tracked projects show bullish sentiment — market leans toward growth.`);
+  else if (down > up) insights.push(`${down} of ${items.length} tracked projects show bearish sentiment — caution advised.`);
+  else insights.push('Market sentiment is balanced across tracked projects.');
+  if (highDemand[0]) insights.push(`${highDemand[0].proj} leads demand with a score of ${highDemand[0].demandScore}/100.`);
+  if (mostLiquid[0] && mostLiquid[0].liquidityScore > 30) insights.push(`${mostLiquid[0].proj} shows strongest liquidity — active negotiation and transaction activity.`);
+  if (items.some(i => i.volatilityScore > 60)) insights.push('Some projects exhibit elevated volatility — pricing may fluctuate significantly.');
+
+  function heatColor(score) {
+    if (score >= 70) return '#15803d';
+    if (score >= 55) return '#22c55e';
+    if (score >= 45) return '#6b7280';
+    if (score >= 30) return '#f87171';
+    return '#dc2626';
+  }
+
+  function leaderHtml(arr, valFn) {
+    return arr.map(i => `<div class="mo-leader-item"><span class="mo-leader-name">${i.proj}</span><span class="mo-leader-val" style="color:${heatColor(valFn(i))}">${valFn(i)}</span></div>`).join('');
+  }
 
   const container = document.getElementById('moContent');
   container.innerHTML = `
-    <div class="mo-summary">
-      <div class="mo-sum-card">
-        <div class="mo-sum-num">${totalProjects}</div>
-        <div class="mo-sum-label">Projects</div>
-      </div>
-      <div class="mo-sum-card">
-        <div class="mo-sum-num">${totalListings}</div>
-        <div class="mo-sum-label">Data Points</div>
-      </div>
-      <div class="mo-sum-card">
-        <div class="mo-sum-num">${formatP(avgPrice)}</div>
-        <div class="mo-sum-label">Avg Market Value</div>
-      </div>
+    <div class="mo-breadth">
+      <div class="mo-breadth-item mo-breadth-up"><div class="mo-breadth-num">${up}</div><div class="mo-breadth-label">Bullish</div></div>
+      <div class="mo-breadth-item mo-breadth-flat"><div class="mo-breadth-num">${flat}</div><div class="mo-breadth-label">Neutral</div></div>
+      <div class="mo-breadth-item mo-breadth-down"><div class="mo-breadth-num">${down}</div><div class="mo-breadth-label">Bearish</div></div>
     </div>
 
-    <div class="mo-section-title"><i class="fas fa-list" style="color:#32cd32;"></i> Market Watchlist</div>
-
-    <!-- Desktop table -->
-    <div class="mo-table-wrap" style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;">
-      <table class="mo-table">
-        <thead>
-          <tr>
-            <th>Project</th>
-            <th>Market Value</th>
-            <th>Range</th>
-            <th>Sentiment</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${items.map(item => {
-            const key = encodeURIComponent(`${item.proj}||${item.unit}||${item.segment}`);
-            return `<tr onclick="location.href='market-summary.html?key=${key}'">
-              <td>
-                <div class="mo-proj-name">${item.proj}${item.segLabel ? ` <span style="font-size:10px;color:#9ca3af;font-weight:600;">${item.segLabel}</span>` : ''}</div>
-                <div class="mo-proj-unit">${item.unit}</div>
-              </td>
-              <td class="mo-price">${formatP(item.avg)}</td>
-              <td class="mo-spread">${formatP(item.min)} – ${formatP(item.max)}</td>
-              <td><span class="mo-sent mo-sent-${item.sentClass}">${item.sentiment}</span></td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
+    <div class="mo-leaders">
+      <div class="mo-leader-card"><div class="mo-leader-title"><i class="fas fa-fire" style="color:#f59e0b;"></i> Highest Demand</div>${leaderHtml(highDemand, i=>i.demandScore)}</div>
+      <div class="mo-leader-card"><div class="mo-leader-title"><i class="fas fa-rocket" style="color:#32cd32;"></i> Fastest Growing</div>${leaderHtml(fastGrow, i=>i.momentumScore)}</div>
+      <div class="mo-leader-card"><div class="mo-leader-title"><i class="fas fa-droplet" style="color:#3b82f6;"></i> Most Liquid</div>${leaderHtml(mostLiquid, i=>i.liquidityScore)}</div>
+      <div class="mo-leader-card"><div class="mo-leader-title"><i class="fas fa-arrow-trend-up" style="color:#22c55e;"></i> Top Composite</div>${leaderHtml(items.slice(0,3), i=>i.compositeScore)}</div>
     </div>
 
-    <!-- Mobile cards -->
+    <div class="mo-section-title"><i class="fas fa-th" style="color:#32cd32;"></i> Market Heatmap</div>
+    <div class="mo-heatmap">
+      ${items.map(i => {
+        const key = encodeURIComponent(`${i.proj}||${Array.from(i.units)[0]||''}||ownership`);
+        return `<div class="mo-heat-cell" style="background:${heatColor(i.compositeScore)};" onclick="location.href='market-summary.html?key=${key}'"><div class="hc-name">${i.proj}</div><div class="hc-score">${i.compositeScore}</div></div>`;
+      }).join('')}
+    </div>
+
+    <div class="mo-section-title"><i class="fas fa-circle-nodes mo-ai-icon"></i> AI Market Intelligence</div>
+    <div class="mo-ai-card">
+      ${insights.map(i => `<div class="mo-ai-insight"><i class="fas fa-circle-check"></i><span>${i}</span></div>`).join('')}
+    </div>
+
+    <div class="mo-section-title"><i class="fas fa-list" style="color:#32cd32;"></i> Watchlist</div>
     <div class="mo-card-list">
-      ${items.map(item => {
-        const key = encodeURIComponent(`${item.proj}||${item.unit}||${item.segment}`);
+      ${items.map(i => {
+        const key = encodeURIComponent(`${i.proj}||${Array.from(i.units)[0]||''}||ownership`);
         return `<div class="mo-card-item" onclick="location.href='market-summary.html?key=${key}'">
           <div class="mo-card-left">
-            <div class="mo-proj-name">${item.proj}${item.segLabel ? ` <span style="font-size:10px;color:#9ca3af;font-weight:600;">${item.segLabel}</span>` : ''}</div>
-            <div style="font-size:11px;color:#9ca3af;margin-top:2px;">${item.unit} · ${formatP(item.min)} – ${formatP(item.max)}</div>
+            <div class="mo-proj-name">${i.proj}</div>
+            <div class="mo-proj-sub">${Array.from(i.units).join(', ') || 'Various'} · ${i.confidence} confidence</div>
+            <div class="mo-scores">
+              <span class="mo-score-pill" style="background:rgba(50,205,50,0.1);color:#16a34a;">D ${i.demandScore}</span>
+              <span class="mo-score-pill" style="background:rgba(59,130,246,0.1);color:#2563eb;">S ${i.supplyScore}</span>
+              <span class="mo-score-pill" style="background:rgba(139,92,246,0.1);color:#7c3aed;">L ${i.liquidityScore}</span>
+              <span class="mo-score-pill" style="background:rgba(249,115,22,0.1);color:#ea580c;">M ${i.momentumScore}</span>
+              <span class="mo-score-pill" style="background:rgba(107,114,128,0.1);color:#6b7280;">V ${i.volatilityScore}</span>
+            </div>
           </div>
           <div class="mo-card-right">
-            <div class="mo-price">${formatP(item.avg)}</div>
-            <span class="mo-sent mo-sent-${item.sentClass}" style="margin-top:4px;">${item.sentiment}</span>
+            <div class="mo-price">${i.avg ? fmtP(i.avg) : '—'}</div>
+            <span class="mo-sent mo-sent-${i.sentClass}">${i.sentiment}</span>
           </div>
         </div>`;
       }).join('')}
