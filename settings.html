@@ -218,10 +218,10 @@
                         </label>
                     </div>
 
-                    <div class="pref-row">
+                    <div style="display:flex; align-items:center; justify-content:space-between; background:#f8fafc; border:1px solid var(--border); border-radius:14px; padding:16px 18px;">
                         <div>
-                            <div class="pref-label">Auto Minimize Your Listing</div>
-                            <div class="pref-desc">Collapse your listing on AI Analysis page by default</div>
+                            <div style="font-size:14px; font-weight:700; color:var(--text-main);">Auto Minimize Your Listing</div>
+                            <div style="font-size:12px; color:var(--text-sub); margin-top:3px;">Collapse your listing on AI Analysis page by default.</div>
                         </div>
                         <label class="switch">
                             <input type="checkbox" id="toggleAutoMinimizeSetting" onchange="this.checked ? localStorage.setItem('rm_auto_minimize_listing','1') : localStorage.removeItem('rm_auto_minimize_listing'); showSettingsNotificationToast('Preference saved.', 'success')">
