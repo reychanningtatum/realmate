@@ -637,34 +637,50 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   position: fixed;
   top: 0; left: 240px; right: 0;
   z-index: 200;
-  background: #0f172a;
-  padding: 8px 48px;
+  background: linear-gradient(135deg, #0f172a 0%, #1a1a2e 50%, #0f172a 100%);
+  padding: 10px 48px;
   border-bottom: 2px solid var(--primary);
+  overflow: hidden;
+}
+.match-page-header::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(50,205,50,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.match-page-header::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, #32cd32, #3b82f6, #32cd32, transparent);
+  background-size: 200% 100%;
+  animation: aiGradientBar 4s linear infinite;
 }
 .match-your-listing-sticky {
   position: sticky;
-  top: 42px;
+  top: 48px;
   z-index: 98;
   background: var(--bg);
-  padding: 8px 0 12px;
+  padding: 8px 0 10px;
   margin-bottom: 8px;
+  border-bottom: 1px solid var(--border);
 }
 #matchView .match-layout {
-  padding-top: 48px;
+  padding-top: 52px;
 }
 .match-page-header .btn-back {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: #fff;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #94a3b8;
   padding: 6px 12px;
   font-size: 12px;
   border-radius: 8px;
+  position: relative; z-index: 1;
 }
 .match-page-header .btn-back:hover {
-  background: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.12);
+  color: #fff;
 }
 .match-header-center {
-  display: flex; align-items: center; gap: 5px;
+  display: flex; align-items: center; gap: 6px;
+  position: relative; z-index: 1;
 }
 .btn-back {
   display: inline-flex; align-items: center; gap: 8px;
@@ -700,9 +716,11 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 
 /* ── Your listing card ── */
 .your-listing-card {
-  background: white; border-radius: var(--card-curve);
-  border: 2px solid var(--border);
-  padding: 20px; position: sticky; top: 70px;
+  background: linear-gradient(135deg, #f8fafc 0%, #fff 100%);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  padding: 16px; position: sticky; top: 70px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
 }
 .your-listing-cat {
   display: inline-flex; align-items: center;
@@ -726,27 +744,36 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 .match-results-header {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 14px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #0f172a, #1a1a2e);
+  border-radius: 12px;
+}
+.match-results-header .section-label {
+  color: #94a3b8; margin: 0;
 }
 .match-count-badge {
-  background: var(--ai-blue-soft); color: var(--ai-blue);
+  background: rgba(50,205,50,0.15); color: #32cd32;
+  border: 1px solid rgba(50,205,50,0.3);
   border-radius: 50px; padding: 4px 12px;
   font-size: 12px; font-weight: 700;
 }
 
 /* ── Individual match card ── */
 .match-card {
-  background: white; border-radius: var(--card-curve);
+  background: white; border-radius: 16px;
   border: 1px solid var(--border);
-  padding: 22px; margin-bottom: 16px;
+  padding: 20px; margin-bottom: 14px;
   position: relative; overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 .match-card::before {
   content: ''; position: absolute;
-  top: 0; left: 0; width: 4px; height: 100%;
-  background: var(--ai-blue);
+  top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, #32cd32, #3b82f6, #32cd32);
+  background-size: 200% 100%;
+  animation: aiGradientBar 4s linear infinite;
 }
-.match-card:hover { transform: translateY(-3px); box-shadow: 0 16px 36px rgba(0,0,0,0.09); }
+.match-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.08); }
 
 .match-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; gap: 10px; }
 .match-user { display: flex; align-items: center; gap: 12px; }
@@ -926,9 +953,15 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
   .match-page-header .btn-back {
     padding: 5px 10px; font-size: 11px; gap: 4px;
   }
-  .match-header-center { gap: 3px; }
-  .match-header-center .ai-satellite-icon { font-size: 12px !important; }
-  .match-header-center span { font-size: 9px !important; }
+  .match-page-header { left: 0; padding: 8px 12px; }
+  .match-page-header .btn-back { padding: 5px 10px; font-size: 11px; }
+  .match-header-center .ai-satellite-icon { font-size: 13px !important; }
+  .match-header-center span { font-size: 11px !important; }
+  .match-page-header h2 { font-size: 13px !important; }
+  .match-your-listing-sticky { top: 44px; }
+  #matchView .match-layout { padding-top: 48px; }
+  .match-card { padding: 14px; margin-bottom: 10px; }
+  .match-results-header { padding: 8px 12px; border-radius: 10px; }
   #matchView .match-layout { padding-top: 42px; }
   .match-your-listing-sticky { top: 36px; padding: 2px 0 6px; }
   .match-layout { gap: 12px; }
