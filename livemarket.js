@@ -491,7 +491,8 @@ function selectSegTab(btn) {
         else if (activeSegTab === 'MARKET') activeCategory = marketCat;
         applyFilters();
     }
-    setTimeout(syncTopPadding, 50);
+    setTimeout(syncTopPadding, 100);
+    setTimeout(syncTopPadding, 300);
 }
 
 function onSearchInput() {
