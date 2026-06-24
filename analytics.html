@@ -27,57 +27,71 @@
   <div style="margin-top:auto"><div class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Sign Out</span></div></div>
 </div>
 
-<!-- Fixed top ticker -->
-<div class="top-ticker-wrap" id="tickerWrap">
-  <div class="top-ticker" id="topTicker"><span class="ticker-inner" id="tickerInner"></span></div>
+<!-- Fixed header -->
+<style>
+  .cap-header { position: fixed; top: 0; left: 240px; right: 0; z-index: 200; background: linear-gradient(135deg, #0f172a 0%, #1a1a2e 50%, #0f172a 100%); display: flex; align-items: center; justify-content: space-between; padding: 10px 48px; border-bottom: 2px solid #32cd32; overflow: hidden; }
+  .cap-header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #32cd32, #3b82f6, #32cd32, transparent); background-size: 200% 100%; animation: capBar 4s linear infinite; }
+  @keyframes capBar { 0% { background-position: 0% 0; } 100% { background-position: 200% 0; } }
+  .cap-back { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: #94a3b8; cursor: pointer; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); transition: all 0.15s; position: relative; z-index: 1; }
+  .cap-back:hover { background: rgba(255,255,255,0.12); color: #fff; }
+  .cap-title { font-size: 16px; font-weight: 800; color: #fff; position: relative; z-index: 1; }
+  .cap-page { max-width: 900px; margin: 0 auto; padding: 28px 16px 80px; }
+  @media (max-width: 768px) {
+    .cap-header { left: 0; padding: 8px 14px; }
+    .cap-page { padding-top: 6px; }
+  }
+</style>
+
+<div class="cap-header">
+  <button class="cap-back" onclick="location.href='livemarket.html'"><i class="fas fa-chevron-left"></i> Back</button>
+  <span class="cap-title"><i class="fas fa-chart-area" style="margin-right:5px;color:#32cd32;"></i>Capital Appreciation</span>
 </div>
 
 <!-- Main content -->
 <div class="main-content">
 
-  <div id="capAppSection" style="max-width:1200px; margin:24px auto 0; padding:0 16px;">
+  <div id="capAppSection" class="cap-page">
 
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
       <div>
-        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:#64748b; margin-bottom:4px;">
-          <i class="fas fa-chart-area" style="color:#32cd32; margin-right:6px;"></i>Capital Appreciation Tracker
+        <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#9ca3af; margin-bottom:2px;">
+          <i class="fas fa-chart-area" style="color:#32cd32; margin-right:4px;"></i>Project Price History
         </div>
-        <h2 style="font-size:22px; font-weight:800; color:var(--text-main,#0f172a); margin:0; letter-spacing:-0.5px;">Project Price History</h2>
       </div>
-      <div id="capProjectTabs" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+      <div id="capProjectTabs" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
     </div>
 
     <!-- Chart card -->
-    <div style="background:#0f172a; border-radius:20px; padding:28px 28px 20px; position:relative; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.18);">
-      <div style="position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(50,205,50,0.12) 0%,transparent 70%);pointer-events:none;"></div>
-      <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+    <div style="background:#0f172a; border-radius:14px; padding:20px 20px 16px; position:relative; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+      <div style="position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(50,205,50,0.08) 0%,transparent 70%);pointer-events:none;"></div>
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
         <div>
-          <div id="capProjectName" style="font-size:18px; font-weight:800; color:#fff; letter-spacing:-0.3px;">Sequoia — Two Serendra, BGC</div>
-          <div id="capProjectSub" style="font-size:12px; color:#64748b; margin-top:3px;">Alveo Land · Condominium · BGC, Taguig</div>
+          <div id="capProjectName" style="font-size:16px; font-weight:800; color:#fff; letter-spacing:-0.02em;">Sequoia — Two Serendra, BGC</div>
+          <div id="capProjectSub" style="font-size:11px; color:#64748b; margin-top:2px;">Alveo Land · Condominium · BGC, Taguig</div>
         </div>
         <div style="text-align:right;">
-          <div id="capCurrentPrice" style="font-size:22px; font-weight:800; color:#32cd32; letter-spacing:-0.5px;">₱295K – ₱315K</div>
-          <div id="capCurrentLabel" style="font-size:11px; color:#64748b; margin-top:2px;">per sqm · 2026 (Current)</div>
+          <div id="capCurrentPrice" style="font-size:20px; font-weight:800; color:#32cd32; letter-spacing:-0.02em;">₱295K – ₱315K</div>
+          <div id="capCurrentLabel" style="font-size:10px; color:#64748b; margin-top:2px;">per sqm · 2026 (Current)</div>
         </div>
       </div>
-      <div id="capStatPills" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;"></div>
-      <div style="position:relative; height:260px;">
+      <div id="capStatPills" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;"></div>
+      <div style="position:relative; height:240px;">
         <canvas id="capChartCanvas"></canvas>
       </div>
-      <div id="capAnnotations" style="display:flex; gap:12px; flex-wrap:wrap; margin-top:16px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.06);"></div>
+      <div id="capAnnotations" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.06);"></div>
     </div>
 
     <!-- Key takeaways -->
-    <div id="capTakeaways" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; margin-top:16px;"></div>
+    <div id="capTakeaways" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px; margin-top:12px;"></div>
 
     <!-- Rental Yield -->
     <div id="capRentalYield"></div>
 
     <!-- Disclosure -->
-    <div style="margin-top:24px; padding:14px 18px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; display:flex; gap:10px; align-items:flex-start;">
-      <i class="fas fa-circle-info" style="color:#94a3b8; font-size:14px; margin-top:2px; flex-shrink:0;"></i>
-      <p style="margin:0; font-size:11px; color:#64748b; line-height:1.6;">
-        <strong style="color:#475569;">Disclaimer:</strong> All price data and yield estimates presented here are based on secondary market transactions and publicly available market intelligence. These figures are approximations and do not reflect, supersede, or replace the official pricing, valuations, or projections issued by the project developer. Actual values may vary. This information is for reference purposes only and should not be construed as financial or investment advice.
+    <div style="margin-top:16px; padding:12px 16px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; display:flex; gap:8px; align-items:flex-start;">
+      <i class="fas fa-circle-info" style="color:#9ca3af; font-size:12px; margin-top:2px; flex-shrink:0;"></i>
+      <p style="margin:0; font-size:10px; color:#6b7280; line-height:1.5;">
+        <strong style="color:#374151;">Disclaimer:</strong> All price data and yield estimates presented here are based on secondary market transactions and publicly available market intelligence. These figures are approximations and do not reflect, supersede, or replace the official pricing, valuations, or projections issued by the project developer. Actual values may vary. This information is for reference purposes only and should not be construed as financial or investment advice.
       </p>
     </div>
 
