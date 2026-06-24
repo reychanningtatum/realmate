@@ -150,6 +150,7 @@ const KNOWN_PROJECTS = ['One Maridien','Two Maridien','Verve One','Verve Two','P
 const COMPANY_NAMES = ['alveo land corp','alveo land','alveo','smdc','dmci','ayala','megaworld','filinvest','rockwell','camella','avida','amaia','federal'];
 
 function fmtP(n) { if(n>=1e6) return '₱'+(n/1e6).toFixed(1).replace(/\.0$/,'')+'M'; if(n>=1e3) return '₱'+(n/1e3).toFixed(0)+'K'; return '₱'+n.toFixed(0); }
+function extractSqm(t) { const m = t.match(/(\d+)\s*(?:sqm|sq\.?\s*m)/i); return m ? parseInt(m[1]) : null; }
 function extractPrice(t) { let m=t.toLowerCase().match(/(\d+\.?\d*)\s*m(?:illion)?/); if(m) return parseFloat(m[1])*1e6; m=t.replace(/,/g,'').match(/\b(\d{7,9})\b/); return m?parseFloat(m[1]):null; }
 function extractUnit(t) { const l=t.toLowerCase(); if(/\bstudio\b/.test(l)) return 'Studio'; if(/\b1\s*br\b|1\s*bed/i.test(t)) return '1BR'; if(/\b2\s*br\b|2\s*bed/i.test(t)) return '2BR'; if(/\b3\s*br\b|3\s*bed/i.test(t)) return '3BR'; if(/\b4\s*br\b|4\s*bed/i.test(t)) return '4BR'; return null; }
 function extractProject(t) { const u=t.toUpperCase(); let e=Infinity,f=null; for(const p of KNOWN_PROJECTS){const i=u.indexOf(p.toUpperCase()); if(i!==-1&&i<e){e=i;f=p;}} return f; }
@@ -175,8 +176,10 @@ async function loadOverview() {
     if (!isSupply && !isDemand) return;
 
     const pk = proj.toLowerCase();
-    if (!buckets[pk]) buckets[pk] = { proj, prices: [], supply: 0, demand: 0, sold: 0, negotiation: 0, recent7d: 0, recent30d: 0, units: new Set() };
+    if (!buckets[pk]) buckets[pk] = { proj, prices: [], sqms: [], supply: 0, demand: 0, sold: 0, negotiation: 0, recent7d: 0, recent30d: 0, units: new Set() };
     if (price) buckets[pk].prices.push(price);
+    const sqm = extractSqm(text);
+    if (price && sqm) buckets[pk].sqms.push({ price, sqm });
     if (isSupply) buckets[pk].supply++;
     if (isDemand) buckets[pk].demand++;
     if (l.status === 'sold') buckets[pk].sold++;
@@ -212,7 +215,10 @@ async function loadOverview() {
     else if (total >= 5) confidence = 'High';
     else if (total >= 3) confidence = 'Moderate';
 
-    return { ...b, avg, min, max, total, demandScore, supplyScore, liquidityScore, momentumScore, volatilityScore, compositeScore, sentiment, sentClass, confidence, unitCount: b.units.size };
+    const fmvUnit = avg;
+    const fmvSqm = b.sqms.length ? b.sqms.reduce((s,d) => s + d.price / d.sqm, 0) / b.sqms.length : null;
+
+    return { ...b, avg, min, max, total, fmvUnit, fmvSqm, demandScore, supplyScore, liquidityScore, momentumScore, volatilityScore, compositeScore, sentiment, sentClass, confidence, unitCount: b.units.size };
   }).sort((a,b) => b.compositeScore - a.compositeScore);
 
   const up = items.filter(i => i.sentClass === 'buy').length;
@@ -232,6 +238,11 @@ async function loadOverview() {
   if (highDemand[0]) insights.push(`${highDemand[0].proj} leads demand with a score of ${highDemand[0].demandScore}/100.`);
   if (mostLiquid[0] && mostLiquid[0].liquidityScore > 30) insights.push(`${mostLiquid[0].proj} shows strongest liquidity — active negotiation and transaction activity.`);
   if (items.some(i => i.volatilityScore > 60)) insights.push('Some projects exhibit elevated volatility — pricing may fluctuate significantly.');
+  const topFmv = [...items].filter(i => i.fmvUnit > 0).sort((a,b) => b.fmvUnit - a.fmvUnit);
+  if (topFmv[0]) insights.push(`${topFmv[0].proj} commands the highest FMV at ${fmtP(topFmv[0].fmvUnit)} per unit.`);
+  if (topFmv[0] && topFmv[0].demandScore > 60) insights.push(`Demand growth is supporting upward FMV pressure on ${topFmv[0].proj}.`);
+
+  const fmvRanked = topFmv.slice(0, 5);
 
   function heatColor(score) {
     if (score >= 70) return '#15803d';
@@ -259,6 +270,24 @@ async function loadOverview() {
       <div class="mo-leader-card"><div class="mo-leader-title"><i class="fas fa-droplet" style="color:#3b82f6;"></i> Most Liquid</div>${leaderHtml(mostLiquid, i=>i.liquidityScore)}</div>
       <div class="mo-leader-card"><div class="mo-leader-title"><i class="fas fa-arrow-trend-up" style="color:#22c55e;"></i> Top Composite</div>${leaderHtml(items.slice(0,3), i=>i.compositeScore)}</div>
     </div>
+
+    ${fmvRanked.length ? `
+    <div class="mo-section-title"><i class="fas fa-trophy" style="color:#f59e0b;"></i> Highest FMV Projects</div>
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;margin-bottom:16px;">
+      ${fmvRanked.map((i, idx) => `
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #f3f4f6;cursor:pointer;" onclick="location.href='market-summary.html?key=${encodeURIComponent(i.proj+'||'+(Array.from(i.units)[0]||'')+'||ownership')}'">
+          <span style="width:22px;height:22px;border-radius:50%;background:#0f172a;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${idx+1}</span>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;font-weight:700;color:#111827;">${i.proj}</div>
+            <div style="font-size:10px;color:#9ca3af;">${Array.from(i.units).join(', ') || 'Various'}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:15px;font-weight:800;color:#111827;">${fmtP(i.fmvUnit)}</div>
+            ${i.fmvSqm ? `<div style="font-size:10px;color:#9ca3af;">${fmtP(i.fmvSqm)}/sqm</div>` : ''}
+          </div>
+        </div>
+      `).join('')}
+    </div>` : ''}
 
     <div class="mo-section-title"><i class="fas fa-th" style="color:#32cd32;"></i> Market Heatmap</div>
     <div class="mo-heatmap">
@@ -290,8 +319,9 @@ async function loadOverview() {
             </div>
           </div>
           <div class="mo-card-right">
-            <div class="mo-price">${i.avg ? fmtP(i.avg) : '—'}</div>
-            <span class="mo-sent mo-sent-${i.sentClass}">${i.sentiment}</span>
+            <div class="mo-price">${i.fmvUnit ? fmtP(i.fmvUnit) : '—'}</div>
+            ${i.fmvSqm ? `<div style="font-size:10px;color:#9ca3af;margin-top:1px;">${fmtP(i.fmvSqm)}/sqm</div>` : ''}
+            <span class="mo-sent mo-sent-${i.sentClass}" style="margin-top:4px;">${i.sentiment}</span>
           </div>
         </div>`;
       }).join('')}

@@ -211,6 +211,14 @@ async function loadSummary() {
   const avg = allPrices.length ? allPrices.reduce((s,p)=>s+p,0)/allPrices.length : 0;
   const min = allPrices.length ? Math.min(...allPrices) : 0;
   const max = allPrices.length ? Math.max(...allPrices) : 0;
+
+  // FMV per sqm
+  const sqmData = relevant.map(l => {
+    const p = extractPrice(l.content||'');
+    const m = (l.content||'').match(/(\d+)\s*(?:sqm|sq\.?\s*m)/i);
+    return (p && m) ? { price: p, sqm: parseInt(m[1]) } : null;
+  }).filter(Boolean);
+  const fmvSqm = sqmData.length ? sqmData.reduce((s,d) => s + d.price / d.sqm, 0) / sqmData.length : null;
   const sellerAvg = sellerPrices.length ? sellerPrices.reduce((s,p)=>s+p,0)/sellerPrices.length : null;
   const buyerAvg = buyerPrices.length ? buyerPrices.reduce((s,p)=>s+p,0)/buyerPrices.length : null;
 
@@ -232,6 +240,9 @@ async function loadSummary() {
   if (sellerAvg && buyerAvg && buyerAvg < sellerAvg * 0.8) insights.push('Significant price gap between sellers and buyers — negotiation expected.');
   if (allPrices.length >= 3) insights.push(`Market value ranges from ${formatP(min)} to ${formatP(max)} based on ${allPrices.length} data points.`);
   if (relevant.length <= 2) insights.push('Limited market data available — prices may not fully reflect market conditions.');
+  if (fmvSqm) insights.push(`FMV per sqm is ${formatP(fmvSqm)} — ${fmvSqm > 300000 ? 'premium segment pricing' : fmvSqm > 200000 ? 'mid-to-high market positioning' : 'accessible market entry point'}.`);
+  if (avg && sellerAvg && avg > sellerAvg) insights.push('FMV remains above average asking price — demand is supporting upward pressure.');
+  if (avg && buyerAvg && avg < buyerAvg) insights.push('FMV is below average buyer budget — favorable conditions for sellers.');
 
   // Recent activity
   const recent = relevant.slice(0, 6);
@@ -241,16 +252,22 @@ async function loadSummary() {
     <div class="ms-hero">
       <div class="ms-hero-name">${projName}</div>
       <div class="ms-hero-sub">${unitType || 'All Units'} · ${segConfig.label} Market · Condominium</div>
+      <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.08em;margin-top:14px;">FMV Per Unit</div>
       <div class="ms-hero-price">${formatP(avg)}</div>
+      ${fmvSqm ? `<div style="font-size:14px;color:#94a3b8;font-weight:700;margin-top:2px;">${formatP(fmvSqm)}<span style="font-size:11px;font-weight:600;">/sqm</span></div>` : ''}
       <div class="ms-hero-spread">${formatP(min)} – ${formatP(max)}</div>
       <div class="ms-sentiment ${sentClass}"><i class="fas fa-${sentClass === 'buy' ? 'arrow-trend-up' : sentClass === 'sell' ? 'arrow-trend-down' : 'minus'}"></i> ${sentiment}</div>
     </div>
 
     <div class="ms-stats">
       <div class="ms-stat">
-        <div class="ms-stat-label">Market Value</div>
+        <div class="ms-stat-label">FMV Per Unit</div>
         <div class="ms-stat-value">${formatP(avg)}</div>
       </div>
+      ${fmvSqm ? `<div class="ms-stat">
+        <div class="ms-stat-label">FMV / sqm</div>
+        <div class="ms-stat-value" style="font-size:16px;">${formatP(fmvSqm)}</div>
+      </div>` : ''}
       <div class="ms-stat">
         <div class="ms-stat-label">Highest</div>
         <div class="ms-stat-value">${formatP(max)}</div>
