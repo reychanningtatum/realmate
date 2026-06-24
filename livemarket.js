@@ -494,6 +494,15 @@ function selectSegTab(btn) {
     setTimeout(syncTopPadding, 50);
 }
 
+function onSearchInput() {
+    const q = (document.getElementById('searchInput')?.value || '').trim();
+    if (q && activeSegTab === 'FEED') {
+        const marketTab = document.querySelector('.seg-tab[data-seg="MARKET"]');
+        if (marketTab) selectSegTab(marketTab);
+    }
+    applyFilters();
+}
+
 function selectMarketCat(btn) {
     document.querySelectorAll('#marketCatFilters .chip').forEach(c => c.classList.remove('active'));
     btn.classList.add('active');
