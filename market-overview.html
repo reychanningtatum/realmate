@@ -50,13 +50,27 @@
 
     .mo-loading { text-align: center; padding: 80px 20px; color: #9ca3af; }
 
+    /* Mobile cards instead of table */
+    .mo-card-list { display: none; }
+    .mo-card-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px; border-bottom: 1px solid #f3f4f6; cursor: pointer;
+      transition: background 0.1s;
+    }
+    .mo-card-item:hover { background: #f9fafb; }
+    .mo-card-item:last-child { border: none; }
+    .mo-card-left { flex: 1; min-width: 0; }
+    .mo-card-right { text-align: right; flex-shrink: 0; }
+
     @media (max-width: 768px) {
       .mo-header { padding: 8px 14px; }
-      .mo-page { padding-top: 50px; }
-      .mo-summary { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-      .mo-sum-num { font-size: 20px; }
-      .mo-table { display: block; overflow-x: auto; }
-      .mo-table th, .mo-table td { padding: 10px 10px; white-space: nowrap; }
+      .mo-page { padding-top: 50px; padding-left: 12px; padding-right: 12px; }
+      .mo-summary { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+      .mo-sum-card { padding: 12px 8px; }
+      .mo-sum-num { font-size: 18px; }
+      .mo-sum-label { font-size: 9px; }
+      .mo-table-wrap { display: none; }
+      .mo-card-list { display: block; background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; overflow: hidden; }
     }
     @media (min-width: 769px) { .mo-header { left: 240px; } }
 
@@ -227,7 +241,9 @@ async function loadOverview() {
     </div>
 
     <div class="mo-section-title"><i class="fas fa-list" style="color:#32cd32;"></i> Market Watchlist</div>
-    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;">
+
+    <!-- Desktop table -->
+    <div class="mo-table-wrap" style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;">
       <table class="mo-table">
         <thead>
           <tr>
@@ -252,6 +268,23 @@ async function loadOverview() {
           }).join('')}
         </tbody>
       </table>
+    </div>
+
+    <!-- Mobile cards -->
+    <div class="mo-card-list">
+      ${items.map(item => {
+        const key = encodeURIComponent(`${item.proj}||${item.unit}||${item.segment}`);
+        return `<div class="mo-card-item" onclick="location.href='market-summary.html?key=${key}'">
+          <div class="mo-card-left">
+            <div class="mo-proj-name">${item.proj}${item.segLabel ? ` <span style="font-size:10px;color:#9ca3af;font-weight:600;">${item.segLabel}</span>` : ''}</div>
+            <div style="font-size:11px;color:#9ca3af;margin-top:2px;">${item.unit} · ${formatP(item.min)} – ${formatP(item.max)}</div>
+          </div>
+          <div class="mo-card-right">
+            <div class="mo-price">${formatP(item.avg)}</div>
+            <span class="mo-sent mo-sent-${item.sentClass}" style="margin-top:4px;">${item.sentiment}</span>
+          </div>
+        </div>`;
+      }).join('')}
     </div>
   `;
 }
