@@ -853,11 +853,15 @@ function toggleYourListing() {
 }
 
 function applyAutoMinimize() {
-    if (localStorage.getItem('rm_auto_minimize_listing') === '1') {
-        const body = document.getElementById('yourListingBody');
-        const arrow = document.getElementById('yourListingArrow');
-        if (body) body.classList.add('collapsed');
-        if (arrow) arrow.classList.add('collapsed');
+    const body = document.getElementById('yourListingBody');
+    const arrow = document.getElementById('yourListingArrow');
+    if (!body || !arrow) return;
+    if (localStorage.getItem('rm_auto_open_listing') === '1') {
+        body.classList.remove('collapsed');
+        arrow.classList.remove('collapsed');
+    } else {
+        body.classList.add('collapsed');
+        arrow.classList.add('collapsed');
     }
 }
 

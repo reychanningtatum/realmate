@@ -279,8 +279,8 @@ function initMarketPrefToggles() {
     if (autoMuteToggle)   autoMuteToggle.checked   = localStorage.getItem('rm_automute_video') === '1';
     if (showGraphsToggle) showGraphsToggle.checked = localStorage.getItem('rm_show_graphs')    !== '0';
     if (pdfToggle)        pdfToggle.checked        = localStorage.getItem('rm_hide_pdf')       !== '1';
-    const autoMinToggle = document.getElementById('toggleAutoMinimizeSetting');
-    if (autoMinToggle)  autoMinToggle.checked  = localStorage.getItem('rm_auto_minimize_listing') === '1';
+    const autoOpenToggle = document.getElementById('toggleAutoOpenListingSetting');
+    if (autoOpenToggle)  autoOpenToggle.checked  = localStorage.getItem('rm_auto_open_listing') === '1';
 }
 
 function saveMarketPref(key, hide) {
