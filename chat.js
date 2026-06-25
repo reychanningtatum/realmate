@@ -181,7 +181,7 @@ async function loadConversations() {
             const tempParts = await chatGet('conversation_participants', `select=conversation_id,user_id&conversation_id=in.(${idStr})`);
             tempParts.forEach(p => { if (p.user_id !== currentUser.id && !otherIds.includes(p.user_id)) otherIds.push(p.user_id); });
             if (!otherIds.length) return [];
-            return chatGet('profiles', `select=id,full_name,avatar_url,job_title,last_seen&id=in.(${otherIds.map(i => `"${i}"`).join(',')})`);
+            return chatGet('profiles', `select=id,full_name,avatar_url,job_title,last_seen,show_active_status&id=in.(${otherIds.map(i => `"${i}"`).join(',')})`);
         })(),
         chatGet('messages', `select=*&conversation_id=in.(${idStr})&order=created_at.desc`),
         chatGet('messages', `select=conversation_id&conversation_id=in.(${idStr})&sender_id=neq.${currentUser.id}&is_read=eq.false`)
@@ -207,7 +207,8 @@ async function loadConversations() {
                 name: prof.full_name || 'Unknown',
                 image: prof.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(prof.full_name || 'U')}&background=random&color=fff`,
                 job: prof.job_title || '',
-                last_seen: prof.last_seen
+                last_seen: prof.last_seen,
+                show_active_status: prof.show_active_status !== false
             },
             lastMessage: lastMsgMap[cid] || null,
             unreadCount: unreadMap[cid] || 0
@@ -238,7 +239,7 @@ function renderConvList(filter) {
 
     list.innerHTML = items.map(c => {
         const active = c.id === activeConversationId ? ' active' : '';
-        const online = isUserOnline(c.otherUser.id) ? '<div class="online-dot"></div>' : '';
+        const online = (c.otherUser.show_active_status && isUserOnline(c.otherUser.id)) ? '<div class="online-dot"></div>' : '';
         const lm = c.lastMessage;
         let preview = '';
         if (lm) {
@@ -338,6 +339,11 @@ function backToConvList() {
 function updateHeaderStatus() {
     const el = document.getElementById('chatHeaderStatus');
     if (!activeOtherUser) return;
+
+    if (!activeOtherUser.show_active_status) {
+        el.textContent = '';
+        return;
+    }
 
     if (isUserOnline(activeOtherUser.id)) {
         el.innerHTML = '<span class="status-online">● Online</span>';

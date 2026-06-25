@@ -243,6 +243,7 @@ window.onload = () => {
     updateLiveIdentityCardPreview();
     initMarketPrefToggles();
     initThemeButtons();
+    initActiveStatusToggle();
 };
 
 function initThemeButtons() {
@@ -290,4 +291,38 @@ function saveMarketPref(key, hide) {
         localStorage.removeItem(key);
     }
     showSettingsNotificationToast('Preference saved.', 'success');
+}
+
+// ===== ACTIVE STATUS PRIVACY =====
+async function initActiveStatusToggle() {
+    const toggle = document.getElementById('toggleActiveStatus');
+    if (!toggle) return;
+    const u = JSON.parse(localStorage.getItem('user'));
+    if (!u || !u.id) { toggle.checked = true; return; }
+
+    try {
+        const res = await fetch(`${supabaseUrl}/rest/v1/profiles?select=show_active_status&id=eq.${u.id}`, {
+            headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
+        });
+        const data = await res.json();
+        toggle.checked = (data && data[0] && data[0].show_active_status !== false);
+    } catch (e) {
+        toggle.checked = true;
+    }
+}
+
+async function saveActiveStatusPref(enabled) {
+    const u = JSON.parse(localStorage.getItem('user'));
+    if (!u || !u.id) return;
+
+    try {
+        await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${u.id}`, {
+            method: 'PATCH',
+            headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ show_active_status: enabled })
+        });
+        showSettingsNotificationToast(enabled ? 'Active status visible to others.' : 'Active status hidden from others.', 'success');
+    } catch (e) {
+        showSettingsNotificationToast('Failed to save preference.', 'error');
+    }
 }
