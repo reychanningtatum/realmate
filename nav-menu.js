@@ -10,14 +10,20 @@ document.addEventListener('click', () => {
     if (menu) menu.classList.remove('open');
 });
 
-// Load user avatar into nav button
-document.addEventListener('DOMContentLoaded', () => {
+// Load user avatar into nav button (retries until user data is available)
+function loadNavAvatar() {
     const avatar = document.getElementById('navAvatar');
-    if (!avatar) return;
+    if (!avatar && !document.getElementById('navAvatarPill')) return;
     const user = JSON.parse(localStorage.getItem('user'));
-    if (!user) return;
+    if (!user || !user.id) return false;
 
-    const wrap = avatar.closest('.mob-nav-avatar-wrap');
+    const target = avatar || document.getElementById('navAvatarPill');
+    if (!target) return false;
+
+    // Already rendered with correct image
+    if (target.id === 'navAvatarPill' && target.dataset.uid === user.id) return true;
+
+    const wrap = target.closest('.mob-nav-avatar-wrap');
     if (wrap) {
         wrap.style.cssText += 'display:flex;flex-direction:column;align-items:center;gap:2px;';
     }
@@ -27,12 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
         : `background:#32cd32;`;
     const initial = user.image ? '' : (user.name || 'U').charAt(0).toUpperCase();
 
-    // Remove existing <span>Me</span> sibling to avoid duplicate
-    const existingSpan = avatar.parentElement?.querySelector('span');
-    if (existingSpan) existingSpan.remove();
+    const existingSpan = target.parentElement?.querySelector(':scope > span');
+    if (existingSpan && target.id === 'navAvatar') existingSpan.remove();
 
-    avatar.outerHTML = `
-        <div id="navAvatarPill" onclick="toggleNavMenu(event)" style="display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;">
+    target.outerHTML = `
+        <div id="navAvatarPill" data-uid="${user.id}" onclick="toggleNavMenu(event)" style="display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;">
             <div style="position:relative;display:inline-block;">
                 <div style="width:28px;height:28px;border-radius:50%;overflow:hidden;${imgStyle}display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;">
                     ${initial}
@@ -45,4 +50,14 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <span style="font-size:10px;color:#64748b;">Me</span>
         </div>`;
+    return true;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (!loadNavAvatar()) {
+        let attempts = 0;
+        const retry = setInterval(() => {
+            if (loadNavAvatar() || ++attempts > 15) clearInterval(retry);
+        }, 300);
+    }
 });
