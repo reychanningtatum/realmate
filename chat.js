@@ -170,7 +170,10 @@ function resetInactivityTimer() {
 
 // ===== LOAD CONVERSATIONS =====
 async function loadConversations() {
-    const myParts = await chatGet('conversation_participants', `select=conversation_id,deleted_at&user_id=eq.${currentUser.id}`);
+    let myParts = await chatGet('conversation_participants', `select=conversation_id,deleted_at&user_id=eq.${currentUser.id}`);
+    if (myParts && myParts.code) {
+        myParts = await chatGet('conversation_participants', `select=conversation_id&user_id=eq.${currentUser.id}`);
+    }
     if (!myParts.length) { conversations = []; renderConvList(); return; }
 
     const deletedMap = {};
