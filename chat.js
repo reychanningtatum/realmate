@@ -194,8 +194,10 @@ function clearConvSearch() {
 
 // ===== OPEN CONVERSATION =====
 async function openConversation(convId) {
+    console.log('[Chat] openConversation called with:', convId);
     const conv = conversations.find(c => c.id === convId);
-    if (!conv) return;
+    if (!conv) { console.log('[Chat] conv not found!'); return; }
+    console.log('[Chat] Opening conv with:', conv.otherUser.name);
 
     // Unsub old channels first
     unsubMessages();
@@ -221,6 +223,7 @@ async function openConversation(convId) {
     const container = document.getElementById('chatMessages');
     container.innerHTML = '';
     const msgs = await chatGet('messages', `select=*&conversation_id=eq.${convId}&order=created_at.asc`);
+    console.log('[Chat] Loaded', msgs.length, 'messages for convId:', convId);
 
     // Guard: user may have switched conversations while we were fetching
     if (activeConversationId !== convId) return;
