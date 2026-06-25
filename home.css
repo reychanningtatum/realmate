@@ -669,12 +669,12 @@ html[data-theme="light"] .nav-item.active { background: rgba(50,205,50,0.10); co
   justify-content: space-evenly; align-items: center; padding: 0;
 }
 .mob-nav-item {
-  display: flex; flex-direction: column; align-items: center; gap: 3px;
-  color: #94a3b8; text-decoration: none; font-size: 10px; font-weight: 600;
-  flex: 1; padding: 8px 2px; border-radius: 12px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  color: #94a3b8; text-decoration: none; font-size: 9px; font-weight: 600;
+  flex: 1; padding: 6px 1px; border-radius: 10px; min-width: 0;
 }
-.mob-nav-item i { font-size: 20px; }
-.mob-nav-item span { display: block; font-size: 10px; }
+.mob-nav-item i { font-size: 18px; }
+.mob-nav-item span { display: block; font-size: 9px; white-space: nowrap; }
 .mob-nav-item.active { color: #32cd32; }
 .mob-nav-item:hover { color: #32cd32; }
 
@@ -682,9 +682,9 @@ html[data-theme="light"] .nav-item.active { background: rgba(50,205,50,0.10); co
 .mob-nav-item.mob-nav-center {
   position: relative;
   top: -5px;
-  width: 52px;
-  height: 52px;
-  min-width: 52px;
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
   padding: 0;
   border-radius: 50%;
   background: #fff;
