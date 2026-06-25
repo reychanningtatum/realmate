@@ -367,7 +367,18 @@ function addDateSep(container, text) {
 function addMsgBubble(container, m) {
     const isOwn = m.sender_id === currentUser.id;
     const side = isOwn ? 'own' : 'other';
-    const time = new Date(m.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+    const dt = new Date(m.created_at);
+    const now = new Date();
+    const diffMs = now - dt;
+    const isToday = dt.toDateString() === now.toDateString();
+    const isYesterday = new Date(now - 86400000).toDateString() === dt.toDateString();
+    const timeStr = dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    let fullTimestamp;
+    if (isToday) fullTimestamp = `Today at ${timeStr}`;
+    else if (isYesterday) fullTimestamp = `Yesterday at ${timeStr}`;
+    else fullTimestamp = `${dt.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} • ${timeStr}`;
+
     let receipt = '';
     if (isOwn) {
         receipt = m.is_read
@@ -380,7 +391,7 @@ function addMsgBubble(container, m) {
     if (type === 'TEXT') {
         bubble = `<div class="chat-msg-bubble">${esc(m.message_text || '')}</div>`;
     } else if (type === 'IMAGE') {
-        bubble = `<div class="chat-msg-bubble chat-msg-image-bubble"><img class="chat-msg-image" src="${m.file_url}" alt="Image" onclick="openLightbox('${m.file_url}')" loading="lazy"></div>`;
+        bubble = `<div class="chat-msg-bubble chat-msg-image-bubble"><img class="chat-msg-image" src="${m.file_url}" alt="Image" onclick="event.stopPropagation();openLightbox('${m.file_url}')" loading="lazy"></div>`;
     } else if (type === 'PDF') {
         bubble = fileBubble(m, '📄', true);
     } else if (type === 'DOC' || type === 'DOCX') {
@@ -389,7 +400,7 @@ function addMsgBubble(container, m) {
         bubble = fileBubble(m, '📊', false);
     }
 
-    const html = `<div class="chat-msg-row ${side}" data-msg-id="${m.id}"><div>${bubble}<div class="chat-msg-meta" style="justify-content:${isOwn ? 'flex-end' : 'flex-start'}"><span class="chat-msg-time">${time}</span>${receipt}</div></div></div>`;
+    const html = `<div class="chat-msg-row ${side}" data-msg-id="${m.id}" onclick="toggleMsgTimestamp(this)"><div class="chat-msg-tap-ts" data-ts="${esc(fullTimestamp)}">${fullTimestamp}</div><div>${bubble}<div class="chat-msg-meta" style="justify-content:${isOwn ? 'flex-end' : 'flex-start'}">${receipt}</div></div></div>`;
 
     container.insertAdjacentHTML('beforeend', html);
 }
@@ -714,6 +725,23 @@ function fmtConvTime(ts) {
 }
 function fmtSize(b) { if (b < 1024) return b + ' B'; if (b < 1048576) return (b / 1024).toFixed(1) + ' KB'; return (b / 1048576).toFixed(1) + ' MB'; }
 function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+// ===== MESSAGE TIMESTAMPS (tap to reveal) =====
+function toggleMsgTimestamp(row) {
+    const ts = row.querySelector('.chat-msg-tap-ts');
+    if (!ts) return;
+    const wasOpen = ts.classList.contains('visible');
+
+    document.querySelectorAll('.chat-msg-tap-ts.visible').forEach(el => el.classList.remove('visible'));
+
+    if (!wasOpen) ts.classList.add('visible');
+}
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.chat-msg-row')) {
+        document.querySelectorAll('.chat-msg-tap-ts.visible').forEach(el => el.classList.remove('visible'));
+    }
+});
 
 // ===== CHAT SETTINGS (Active Status) =====
 function toggleChatSettings() {

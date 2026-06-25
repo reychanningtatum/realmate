@@ -520,28 +520,45 @@
   border: 1px solid var(--chat-border);
 }
 
-/* Message Time + Read Receipt */
+/* Tap-to-reveal timestamp (Messenger-style) */
+.chat-msg-tap-ts {
+  display: none;
+  text-align: center;
+  font-size: 11px;
+  color: var(--chat-sub);
+  padding: 4px 0 6px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  user-select: none;
+}
+
+.chat-msg-tap-ts.visible {
+  display: block;
+  opacity: 1;
+}
+
+/* Read Receipt (no persistent time) */
 .chat-msg-meta {
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-top: 4px;
-}
-
-.chat-msg-time {
-  font-size: 10px;
-  opacity: 0.6;
+  margin-top: 2px;
+  min-height: 14px;
 }
 
 .chat-msg-receipt {
-  font-size: 12px;
+  font-size: 11px;
   display: flex;
   align-items: center;
 }
 
 .chat-msg-receipt .seen { color: #3b82f6; }
-.chat-msg-receipt .delivered { opacity: 0.7; }
-.chat-msg-receipt .sent { opacity: 0.5; }
+.chat-msg-receipt .delivered { opacity: 0.6; }
+.chat-msg-receipt .sent { opacity: 0.4; }
+
+/* Make message rows tappable */
+.chat-msg-row { cursor: pointer; }
 
 /* Typing Indicator */
 .chat-typing-indicator {
