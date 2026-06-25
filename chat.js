@@ -144,21 +144,16 @@ async function loadConversations() {
 // ===== RENDER CONVERSATION LIST =====
 function renderConvList(filter) {
     const list = document.getElementById('chatConvList');
-    const empty = document.getElementById('chatConvEmpty');
     const lf = (filter || '').toLowerCase();
     const items = lf ? conversations.filter(c => c.otherUser.name.toLowerCase().includes(lf)) : conversations;
 
     if (!items.length) {
-        empty.style.display = 'block';
-        empty.innerHTML = lf
-            ? `<i class="fas fa-search" style="font-size:28px;color:var(--chat-border);margin-bottom:8px;display:block;"></i>No results`
-            : `<i class="fas fa-comments" style="font-size:32px;color:var(--chat-border);margin-bottom:8px;display:block;"></i>No conversations yet`;
-        list.innerHTML = '';
-        list.appendChild(empty);
+        list.innerHTML = lf
+            ? `<div class="chat-conv-empty"><i class="fas fa-search" style="font-size:28px;color:var(--chat-border);margin-bottom:8px;display:block;"></i>No results</div>`
+            : `<div class="chat-conv-empty"><i class="fas fa-comments" style="font-size:32px;color:var(--chat-border);margin-bottom:8px;display:block;"></i>No conversations yet</div>`;
         return;
     }
 
-    empty.style.display = 'none';
     list.innerHTML = items.map(c => {
         const active = c.id === activeConversationId ? ' active' : '';
         const online = isUserOnline(c.otherUser.last_seen) ? '<div class="online-dot"></div>' : '';
@@ -194,10 +189,8 @@ function clearConvSearch() {
 
 // ===== OPEN CONVERSATION =====
 async function openConversation(convId) {
-    console.log('[Chat] openConversation called with:', convId);
     const conv = conversations.find(c => c.id === convId);
-    if (!conv) { console.log('[Chat] conv not found!'); return; }
-    console.log('[Chat] Opening conv with:', conv.otherUser.name);
+    if (!conv) return;
 
     // Unsub old channels first
     unsubMessages();
@@ -223,7 +216,6 @@ async function openConversation(convId) {
     const container = document.getElementById('chatMessages');
     container.innerHTML = '';
     const msgs = await chatGet('messages', `select=*&conversation_id=eq.${convId}&order=created_at.asc`);
-    console.log('[Chat] Loaded', msgs.length, 'messages for convId:', convId);
 
     // Guard: user may have switched conversations while we were fetching
     if (activeConversationId !== convId) return;
