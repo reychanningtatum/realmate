@@ -266,14 +266,16 @@ function renderConvList(filter) {
         const time = lm ? fmtConvTime(lm.created_at) : '';
         const badge = c.unreadCount > 0 ? `<span class="chat-unread-badge">${c.unreadCount > 99 ? '99+' : c.unreadCount}</span>` : '';
 
-        return `<div class="chat-conv-item${active}" onclick="openConversation('${c.id}')" style="position:relative;">
-            <button class="chat-conv-delete" onclick="event.stopPropagation();promptDeleteChat('${c.id}')" title="Delete chat"><i class="fas fa-trash-can"></i></button>
-            <div class="chat-conv-avatar"><img src="${c.otherUser.image}" alt="">${online}</div>
-            <div class="chat-conv-info">
-                <div class="chat-conv-name">${esc(c.otherUser.name)}</div>
-                <div class="chat-conv-last">${esc(preview.length > 40 ? preview.slice(0, 40) + '…' : preview)}</div>
+        return `<div class="chat-conv-swipe-wrap" data-conv-id="${c.id}">
+            <div class="chat-conv-item${active}" onclick="openConversation('${c.id}')">
+                <div class="chat-conv-avatar"><img src="${c.otherUser.image}" alt="">${online}</div>
+                <div class="chat-conv-info">
+                    <div class="chat-conv-name">${esc(c.otherUser.name)}</div>
+                    <div class="chat-conv-last">${esc(preview.length > 40 ? preview.slice(0, 40) + '…' : preview)}</div>
+                </div>
+                <div class="chat-conv-meta"><span class="chat-conv-time">${time}</span>${badge}</div>
             </div>
-            <div class="chat-conv-meta"><span class="chat-conv-time">${time}</span>${badge}</div>
+            <div class="chat-conv-swipe-action" onclick="promptDeleteChat('${c.id}')"><i class="fas fa-trash-can"></i><span>Delete</span></div>
         </div>`;
     }).join('');
 }
@@ -944,6 +946,60 @@ async function saveChatActiveStatus(enabled) {
         presenceChannel.track({ user_id: currentUser.id, online_at: new Date().toISOString() });
     }
 }
+
+// ===== SWIPE-TO-DELETE CONVERSATIONS =====
+(function() {
+    let startX = 0, currentWrap = null, swiping = false;
+    const THRESHOLD = 60;
+
+    document.addEventListener('touchstart', (e) => {
+        const wrap = e.target.closest('.chat-conv-swipe-wrap');
+        if (!wrap) return;
+
+        // Close any other open swipe
+        document.querySelectorAll('.chat-conv-swipe-wrap.swiped').forEach(w => {
+            if (w !== wrap) w.classList.remove('swiped');
+        });
+
+        startX = e.touches[0].clientX;
+        currentWrap = wrap;
+        swiping = false;
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!currentWrap) return;
+        const dx = e.touches[0].clientX - startX;
+        if (dx < -15) swiping = true;
+        if (swiping) {
+            const item = currentWrap.querySelector('.chat-conv-item');
+            const move = Math.max(Math.min(dx, 0), -80);
+            item.style.transition = 'none';
+            item.style.transform = `translateX(${move}px)`;
+        }
+    }, { passive: true });
+
+    document.addEventListener('touchend', () => {
+        if (!currentWrap) return;
+        const item = currentWrap.querySelector('.chat-conv-item');
+        item.style.transition = '';
+        const current = parseFloat(item.style.transform.replace(/[^-\d.]/g, '') || 0);
+        if (current < -THRESHOLD) {
+            currentWrap.classList.add('swiped');
+        } else {
+            currentWrap.classList.remove('swiped');
+        }
+        item.style.transform = '';
+        currentWrap = null;
+        swiping = false;
+    });
+
+    // Close swipe when tapping elsewhere
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.chat-conv-swipe-wrap')) {
+            document.querySelectorAll('.chat-conv-swipe-wrap.swiped').forEach(w => w.classList.remove('swiped'));
+        }
+    });
+})();
 
 // ===== MOBILE KEYBOARD HANDLING (iOS Safari) =====
 function setupMobileKeyboard() {

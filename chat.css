@@ -1041,29 +1041,49 @@ html[data-theme="dark"] .chat-settings-label { color: #f1f5f9; }
   background: rgba(50,205,50,0.08);
 }
 
-/* ===== DELETE CHAT BUTTON ===== */
-.chat-conv-delete {
-  display: none;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: none;
-  background: #fef2f2;
-  color: #ef4444;
-  font-size: 12px;
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  z-index: 5;
-  transition: background 0.12s;
+/* ===== SWIPE-TO-DELETE CONVERSATION ===== */
+.chat-conv-swipe-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  margin-bottom: 2px;
 }
 
-.chat-conv-item:hover .chat-conv-delete,
-.chat-conv-item:active .chat-conv-delete { display: flex; }
-.chat-conv-delete:hover { background: #fee2e2; }
+.chat-conv-swipe-wrap .chat-conv-item {
+  position: relative;
+  z-index: 2;
+  background: var(--chat-white);
+  transition: transform 0.25s ease;
+  margin-bottom: 0;
+}
+
+.chat-conv-swipe-action {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 80px;
+  background: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  z-index: 1;
+  border-radius: 0 12px 12px 0;
+  gap: 4px;
+  flex-direction: column;
+}
+
+.chat-conv-swipe-action i { font-size: 16px; }
+.chat-conv-swipe-action span { font-size: 10px; font-weight: 600; }
+
+.chat-conv-swipe-wrap.swiped .chat-conv-item {
+  transform: translateX(-80px);
+}
 
 /* Dark theme additions */
 html[data-theme="dark"] .chat-ctx-menu { background: #1e293b; border-color: #334155; }
@@ -1072,7 +1092,7 @@ html[data-theme="dark"] .chat-ctx-menu button:hover { background: #0f172a; }
 html[data-theme="dark"] .chat-modal { background: #1e293b; }
 html[data-theme="dark"] .chat-modal h3 { color: #f1f5f9; }
 html[data-theme="dark"] .chat-msg-unsent { border-color: #334155; color: #64748b; }
-html[data-theme="dark"] .chat-conv-delete { background: rgba(239,68,68,0.1); }
+html[data-theme="dark"] .chat-conv-swipe-wrap .chat-conv-item { background: #1e293b; }
 
 /* ===== SEARCH HIGHLIGHT ===== */
 .chat-search-highlight {
