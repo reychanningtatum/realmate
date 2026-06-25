@@ -902,6 +902,178 @@ html[data-theme="dark"] .chat-settings-panel { background: #1e293b; border-color
 html[data-theme="dark"] .chat-settings-header { border-color: #334155; color: #f1f5f9; }
 html[data-theme="dark"] .chat-settings-label { color: #f1f5f9; }
 
+/* ===== CONTEXT MENU ===== */
+.chat-ctx-menu {
+  display: none;
+  position: fixed;
+  z-index: 9998;
+  background: var(--chat-white);
+  border: 1px solid var(--chat-border);
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.14);
+  padding: 6px;
+  min-width: 150px;
+  animation: ctxIn 0.12s ease-out;
+}
+
+.chat-ctx-menu.open { display: block; }
+
+@keyframes ctxIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.chat-ctx-menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: none;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  color: var(--chat-text);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.chat-ctx-menu button:hover { background: var(--chat-bg); }
+.chat-ctx-menu button i { width: 16px; text-align: center; color: var(--chat-sub); font-size: 14px; }
+
+#ctxUnsend { color: #ef4444; }
+#ctxUnsend i { color: #ef4444; }
+
+/* ===== CONFIRMATION MODALS ===== */
+.chat-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0,0,0,0.4);
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-modal-overlay.open { display: flex; }
+
+.chat-modal {
+  background: var(--chat-white);
+  border-radius: 20px;
+  padding: 28px 24px;
+  max-width: 340px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  animation: ctxIn 0.15s ease-out;
+}
+
+.chat-modal-icon {
+  font-size: 36px;
+  color: var(--chat-accent);
+  margin-bottom: 14px;
+}
+
+.chat-modal h3 {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--chat-text);
+  margin: 0 0 8px;
+}
+
+.chat-modal p {
+  font-size: 13px;
+  color: var(--chat-sub);
+  margin: 0 0 22px;
+  line-height: 1.5;
+}
+
+.chat-modal-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-modal-cancel {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--chat-border);
+  background: var(--chat-white);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  color: var(--chat-text);
+}
+
+.chat-modal-confirm {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: var(--chat-accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+}
+
+.chat-modal-danger { background: #ef4444; }
+
+/* ===== UNSENT MESSAGE ===== */
+.chat-msg-unsent {
+  font-size: 13px;
+  font-style: italic;
+  opacity: 0.55;
+  padding: 10px 14px;
+  border-radius: 18px;
+  border: 1px dashed var(--chat-border);
+  background: transparent;
+  color: var(--chat-sub);
+}
+
+.chat-msg-row.own .chat-msg-unsent {
+  border-color: rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.6);
+  background: rgba(50,205,50,0.08);
+}
+
+/* ===== DELETE CHAT BUTTON ===== */
+.chat-conv-delete {
+  display: none;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: #fef2f2;
+  color: #ef4444;
+  font-size: 12px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  transition: background 0.12s;
+}
+
+.chat-conv-item:hover .chat-conv-delete,
+.chat-conv-item:active .chat-conv-delete { display: flex; }
+.chat-conv-delete:hover { background: #fee2e2; }
+
+/* Dark theme additions */
+html[data-theme="dark"] .chat-ctx-menu { background: #1e293b; border-color: #334155; }
+html[data-theme="dark"] .chat-ctx-menu button { color: #f1f5f9; }
+html[data-theme="dark"] .chat-ctx-menu button:hover { background: #0f172a; }
+html[data-theme="dark"] .chat-modal { background: #1e293b; }
+html[data-theme="dark"] .chat-modal h3 { color: #f1f5f9; }
+html[data-theme="dark"] .chat-msg-unsent { border-color: #334155; color: #64748b; }
+html[data-theme="dark"] .chat-conv-delete { background: rgba(239,68,68,0.1); }
+
 /* ===== SEARCH HIGHLIGHT ===== */
 .chat-search-highlight {
   background: rgba(50, 205, 50, 0.3);

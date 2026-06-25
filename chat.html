@@ -142,6 +142,38 @@
   </div>
 </div>
 
+<!-- Message Context Menu -->
+<div class="chat-ctx-menu" id="chatCtxMenu">
+  <button id="ctxCopy" onclick="ctxCopyText()"><i class="fas fa-copy"></i> Copy</button>
+  <button id="ctxUnsend" onclick="ctxUnsendMsg()"><i class="fas fa-rotate-left"></i> Unsend</button>
+</div>
+
+<!-- Unsend Confirmation Modal -->
+<div class="chat-modal-overlay" id="unsendModal">
+  <div class="chat-modal">
+    <div class="chat-modal-icon"><i class="fas fa-rotate-left"></i></div>
+    <h3>Unsend this message?</h3>
+    <p>This message will be removed for everyone in this conversation.</p>
+    <div class="chat-modal-actions">
+      <button class="chat-modal-cancel" onclick="closeUnsendModal()">Cancel</button>
+      <button class="chat-modal-confirm" onclick="confirmUnsend()">Unsend</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Chat Confirmation Modal -->
+<div class="chat-modal-overlay" id="deleteChatModal">
+  <div class="chat-modal">
+    <div class="chat-modal-icon" style="color:#ef4444;"><i class="fas fa-trash-can"></i></div>
+    <h3>Delete this chat from your inbox?</h3>
+    <p>This chat will only be removed from your account. The other participant will still have access to the conversation.</p>
+    <div class="chat-modal-actions">
+      <button class="chat-modal-cancel" onclick="closeDeleteChatModal()">Cancel</button>
+      <button class="chat-modal-confirm chat-modal-danger" onclick="confirmDeleteChat()">Delete</button>
+    </div>
+  </div>
+</div>
+
 <!-- Image Lightbox -->
 <div class="chat-lightbox" id="chatLightbox" onclick="closeLightbox()">
   <button class="chat-lightbox-close"><i class="fas fa-times"></i></button>
@@ -166,7 +198,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="compress.js"></script>
 <script src="auth-guard.js"></script>
-<script src="chat.js?v=9"></script>
+<script src="chat.js?v=10"></script>
 <script src="notif-badge.js"></script>
 
 <!-- Mobile Bottom Navigation -->

@@ -170,8 +170,11 @@ function resetInactivityTimer() {
 
 // ===== LOAD CONVERSATIONS =====
 async function loadConversations() {
-    const myParts = await chatGet('conversation_participants', `select=conversation_id&user_id=eq.${currentUser.id}`);
+    const myParts = await chatGet('conversation_participants', `select=conversation_id,deleted_at&user_id=eq.${currentUser.id}`);
     if (!myParts.length) { conversations = []; renderConvList(); return; }
+
+    const deletedMap = {};
+    myParts.forEach(p => { if (p.deleted_at) deletedMap[p.conversation_id] = p.deleted_at; });
 
     const ids = myParts.map(p => p.conversation_id);
     const idStr = ids.map(id => `"${id}"`).join(',');
@@ -202,6 +205,11 @@ async function loadConversations() {
         const other = allParts.find(p => p.conversation_id === cid && p.user_id !== currentUser.id);
         const prof = other ? profileMap[other.user_id] : null;
         if (!prof) return null;
+
+        const lm = lastMsgMap[cid] || null;
+        const deletedAt = deletedMap[cid];
+        if (deletedAt && (!lm || new Date(lm.created_at) <= new Date(deletedAt))) return null;
+
         return {
             id: cid,
             otherUser: {
@@ -212,7 +220,7 @@ async function loadConversations() {
                 last_seen: prof.last_seen,
                 show_active_status: prof.show_active_status !== false
             },
-            lastMessage: lastMsgMap[cid] || null,
+            lastMessage: lm,
             unreadCount: unreadMap[cid] || 0
         };
     }).filter(Boolean);
@@ -245,13 +253,18 @@ function renderConvList(filter) {
         const lm = c.lastMessage;
         let preview = '';
         if (lm) {
-            preview = lm.sender_id === currentUser.id ? 'You: ' : '';
-            preview += lm.message_type === 'TEXT' ? (lm.message_text || '') : `📎 ${lm.file_name || lm.message_type}`;
+            if (lm.is_unsent) {
+                preview = lm.sender_id === currentUser.id ? 'You unsent a message' : 'Message unsent';
+            } else {
+                preview = lm.sender_id === currentUser.id ? 'You: ' : '';
+                preview += lm.message_type === 'TEXT' ? (lm.message_text || '') : `📎 ${lm.file_name || lm.message_type}`;
+            }
         }
         const time = lm ? fmtConvTime(lm.created_at) : '';
         const badge = c.unreadCount > 0 ? `<span class="chat-unread-badge">${c.unreadCount > 99 ? '99+' : c.unreadCount}</span>` : '';
 
-        return `<div class="chat-conv-item${active}" onclick="openConversation('${c.id}')">
+        return `<div class="chat-conv-item${active}" onclick="openConversation('${c.id}')" style="position:relative;">
+            <button class="chat-conv-delete" onclick="event.stopPropagation();promptDeleteChat('${c.id}')" title="Delete chat"><i class="fas fa-trash-can"></i></button>
             <div class="chat-conv-avatar"><img src="${c.otherUser.image}" alt="">${online}</div>
             <div class="chat-conv-info">
                 <div class="chat-conv-name">${esc(c.otherUser.name)}</div>
@@ -370,7 +383,6 @@ function addMsgBubble(container, m) {
 
     const dt = new Date(m.created_at);
     const now = new Date();
-    const diffMs = now - dt;
     const isToday = dt.toDateString() === now.toDateString();
     const isYesterday = new Date(now - 86400000).toDateString() === dt.toDateString();
     const timeStr = dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
@@ -378,6 +390,14 @@ function addMsgBubble(container, m) {
     if (isToday) fullTimestamp = `Today at ${timeStr}`;
     else if (isYesterday) fullTimestamp = `Yesterday at ${timeStr}`;
     else fullTimestamp = `${dt.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} • ${timeStr}`;
+
+    // Unsent message
+    if (m.is_unsent) {
+        const label = isOwn ? 'You unsent a message' : 'This message was unsent';
+        const html = `<div class="chat-msg-row ${side}" data-msg-id="${m.id}" onclick="toggleMsgTimestamp(this)"><div class="chat-msg-tap-ts">${fullTimestamp}</div><div><div class="chat-msg-unsent"><i class="fas fa-ban" style="margin-right:4px;font-size:11px;"></i>${label}</div></div></div>`;
+        container.insertAdjacentHTML('beforeend', html);
+        return;
+    }
 
     let receipt = '';
     if (isOwn) {
@@ -400,7 +420,9 @@ function addMsgBubble(container, m) {
         bubble = fileBubble(m, '📊', false);
     }
 
-    const html = `<div class="chat-msg-row ${side}" data-msg-id="${m.id}" onclick="toggleMsgTimestamp(this)"><div class="chat-msg-tap-ts" data-ts="${esc(fullTimestamp)}">${fullTimestamp}</div><div>${bubble}<div class="chat-msg-meta" style="justify-content:${isOwn ? 'flex-end' : 'flex-start'}">${receipt}</div></div></div>`;
+    const ctxAttr = `oncontextmenu="event.preventDefault();showCtxMenu(event,this)" data-msg-text="${esc(m.message_text || '')}" data-msg-type="${type}" data-msg-sender="${m.sender_id}"`;
+
+    const html = `<div class="chat-msg-row ${side}" data-msg-id="${m.id}" onclick="toggleMsgTimestamp(this)" ${ctxAttr}><div class="chat-msg-tap-ts">${fullTimestamp}</div><div>${bubble}<div class="chat-msg-meta" style="justify-content:${isOwn ? 'flex-end' : 'flex-start'}">${receipt}</div></div></div>`;
 
     container.insertAdjacentHTML('beforeend', html);
 }
@@ -596,6 +618,19 @@ function subscribeMessages(convId) {
         .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages', filter: `conversation_id=eq.${convId}` },
             (payload) => {
                 const m = payload.new;
+                if (m.is_unsent) {
+                    const row = document.querySelector(`[data-msg-id="${m.id}"]`);
+                    if (row) {
+                        const isOwn = m.sender_id === currentUser.id;
+                        const label = isOwn ? 'You unsent a message' : 'This message was unsent';
+                        const inner = row.querySelector('div:nth-child(2)');
+                        if (inner) inner.innerHTML = `<div class="chat-msg-unsent"><i class="fas fa-ban" style="margin-right:4px;font-size:11px;"></i>${label}</div>`;
+                        row.removeAttribute('oncontextmenu');
+                    }
+                    const conv = conversations.find(c => c.id === convId);
+                    if (conv) { conv.lastMessage = m; sortAndRenderConvs(); }
+                    return;
+                }
                 if (m.sender_id === currentUser.id && m.is_read) {
                     const el = document.querySelector(`[data-msg-id="${m.id}"] .chat-msg-receipt`);
                     if (el) el.innerHTML = '<span class="seen">✓✓</span>';
@@ -725,6 +760,142 @@ function fmtConvTime(ts) {
 }
 function fmtSize(b) { if (b < 1024) return b + ' B'; if (b < 1048576) return (b / 1024).toFixed(1) + ' KB'; return (b / 1048576).toFixed(1) + ' MB'; }
 function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+// ===== CONTEXT MENU (long press / right click) =====
+let ctxTargetRow = null;
+let longPressTimer = null;
+
+function showCtxMenu(e, row) {
+    e.preventDefault();
+    e.stopPropagation();
+    ctxTargetRow = row;
+
+    const menu = document.getElementById('chatCtxMenu');
+    const msgType = row.getAttribute('data-msg-type');
+    const senderId = row.getAttribute('data-msg-sender');
+
+    document.getElementById('ctxCopy').style.display = (msgType === 'TEXT') ? 'flex' : 'none';
+    document.getElementById('ctxUnsend').style.display = (senderId === currentUser.id) ? 'flex' : 'none';
+
+    let x = e.clientX || e.touches?.[0]?.clientX || 0;
+    let y = e.clientY || e.touches?.[0]?.clientY || 0;
+
+    menu.classList.add('open');
+    const mw = menu.offsetWidth, mh = menu.offsetHeight;
+    if (x + mw > window.innerWidth) x = window.innerWidth - mw - 8;
+    if (y + mh > window.innerHeight) y = window.innerHeight - mh - 8;
+    if (x < 4) x = 4;
+    if (y < 4) y = 4;
+    menu.style.left = x + 'px';
+    menu.style.top = y + 'px';
+}
+
+function hideCtxMenu() {
+    document.getElementById('chatCtxMenu').classList.remove('open');
+    ctxTargetRow = null;
+}
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.chat-ctx-menu')) hideCtxMenu();
+});
+
+// Long press for mobile
+document.addEventListener('touchstart', (e) => {
+    const row = e.target.closest('.chat-msg-row[oncontextmenu]');
+    if (!row) return;
+    longPressTimer = setTimeout(() => {
+        const touch = e.touches[0];
+        showCtxMenu({ preventDefault() {}, stopPropagation() {}, clientX: touch.clientX, clientY: touch.clientY }, row);
+    }, 500);
+}, { passive: true });
+
+document.addEventListener('touchend', () => { clearTimeout(longPressTimer); });
+document.addEventListener('touchmove', () => { clearTimeout(longPressTimer); });
+
+// ===== COPY TEXT =====
+function ctxCopyText() {
+    if (!ctxTargetRow) return;
+    const text = ctxTargetRow.getAttribute('data-msg-text') || '';
+    navigator.clipboard.writeText(text).catch(() => {});
+    hideCtxMenu();
+}
+
+// ===== UNSEND MESSAGE =====
+let unsendMsgId = null;
+
+function ctxUnsendMsg() {
+    if (!ctxTargetRow) return;
+    unsendMsgId = ctxTargetRow.getAttribute('data-msg-id');
+    hideCtxMenu();
+    document.getElementById('unsendModal').classList.add('open');
+}
+
+function closeUnsendModal() {
+    document.getElementById('unsendModal').classList.remove('open');
+    unsendMsgId = null;
+}
+
+async function confirmUnsend() {
+    if (!unsendMsgId) return;
+    const msgId = unsendMsgId;
+    closeUnsendModal();
+
+    await chatUpdate('messages', `id=eq.${msgId}&sender_id=eq.${currentUser.id}`, {
+        is_unsent: true,
+        message_text: null,
+        file_url: null,
+        file_name: null,
+        file_size: null
+    });
+
+    const row = document.querySelector(`[data-msg-id="${msgId}"]`);
+    if (row) {
+        const inner = row.querySelector('div:nth-child(2)');
+        if (inner) inner.innerHTML = '<div class="chat-msg-unsent"><i class="fas fa-ban" style="margin-right:4px;font-size:11px;"></i>You unsent a message</div>';
+        row.removeAttribute('oncontextmenu');
+    }
+
+    if (activeConversationId) {
+        const conv = conversations.find(c => c.id === activeConversationId);
+        if (conv && conv.lastMessage && conv.lastMessage.id === msgId) {
+            conv.lastMessage.is_unsent = true;
+            conv.lastMessage.message_text = null;
+            sortAndRenderConvs();
+        }
+    }
+}
+
+// ===== DELETE CHAT (for me only) =====
+let deleteChatId = null;
+
+function promptDeleteChat(convId) {
+    deleteChatId = convId;
+    document.getElementById('deleteChatModal').classList.add('open');
+}
+
+function closeDeleteChatModal() {
+    document.getElementById('deleteChatModal').classList.remove('open');
+    deleteChatId = null;
+}
+
+async function confirmDeleteChat() {
+    if (!deleteChatId) return;
+    const convId = deleteChatId;
+    closeDeleteChatModal();
+
+    await chatUpdate('conversation_participants',
+        `conversation_id=eq.${convId}&user_id=eq.${currentUser.id}`,
+        { deleted_at: new Date().toISOString() }
+    );
+
+    conversations = conversations.filter(c => c.id !== convId);
+
+    if (activeConversationId === convId) {
+        backToConvList();
+    }
+
+    renderConvList();
+}
 
 // ===== MESSAGE TIMESTAMPS (tap to reveal) =====
 function toggleMsgTimestamp(row) {
