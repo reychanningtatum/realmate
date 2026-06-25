@@ -31,8 +31,32 @@
   <!-- LEFT PANEL — Conversations -->
   <div class="chat-sidebar" id="chatSidebar">
     <div class="chat-sidebar-header">
-      <div class="chat-sidebar-title">Chat</div>
-      <div class="chat-search-wrap">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="chat-sidebar-title" style="margin-bottom:0;">Chat</div>
+        <button class="chat-settings-btn" onclick="toggleChatSettings()" title="Chat Settings">
+          <i class="fas fa-gear"></i>
+        </button>
+      </div>
+
+      <!-- Chat Settings Dropdown -->
+      <div class="chat-settings-panel" id="chatSettingsPanel">
+        <div class="chat-settings-header">
+          <span>Chat Settings</span>
+          <button onclick="toggleChatSettings()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="chat-settings-row">
+          <div>
+            <div class="chat-settings-label">Active Status</div>
+            <div class="chat-settings-desc">Show others when you're online</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="chatActiveToggle" onchange="saveChatActiveStatus(this.checked)" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="chat-search-wrap" style="margin-top:12px;">
         <i class="fas fa-search chat-search-icon"></i>
         <input type="text" class="chat-search-input" id="chatConvSearch"
                placeholder="Search conversations…" oninput="searchConversations(this.value)" autocomplete="off">
@@ -142,7 +166,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="compress.js"></script>
 <script src="auth-guard.js"></script>
-<script src="chat.js?v=6"></script>
+<script src="chat.js?v=7"></script>
 <script src="notif-badge.js"></script>
 
 <!-- Mobile Bottom Navigation -->

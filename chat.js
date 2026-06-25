@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     setupPresence();
     setupLastSeenEvents();
+    loadChatActiveStatus();
 
     await loadConversations();
     setupRealtimeConversations();
@@ -712,3 +713,31 @@ function fmtConvTime(ts) {
 }
 function fmtSize(b) { if (b < 1024) return b + ' B'; if (b < 1048576) return (b / 1024).toFixed(1) + ' KB'; return (b / 1048576).toFixed(1) + ' MB'; }
 function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+// ===== CHAT SETTINGS (Active Status) =====
+function toggleChatSettings() {
+    const panel = document.getElementById('chatSettingsPanel');
+    panel.classList.toggle('open');
+}
+
+async function loadChatActiveStatus() {
+    const toggle = document.getElementById('chatActiveToggle');
+    if (!toggle || !currentUser) return;
+    try {
+        const data = await chatGet('profiles', `select=show_active_status&id=eq.${currentUser.id}`);
+        toggle.checked = (data && data[0] && data[0].show_active_status !== false);
+    } catch (e) {
+        toggle.checked = true;
+    }
+}
+
+async function saveChatActiveStatus(enabled) {
+    if (!currentUser) return;
+    chatUpdate('profiles', `id=eq.${currentUser.id}`, { show_active_status: enabled });
+
+    if (!enabled && presenceChannel) {
+        presenceChannel.untrack();
+    } else if (enabled && presenceChannel) {
+        presenceChannel.track({ user_id: currentUser.id, online_at: new Date().toISOString() });
+    }
+}
