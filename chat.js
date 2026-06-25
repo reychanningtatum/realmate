@@ -23,6 +23,12 @@ let typingChannel = null;
 let messagesChannel = null;
 let convChannel = null;
 
+// ===== PRESENCE STATE =====
+let presenceChannel = null;
+let onlineUsers = {};
+let inactivityTimer = null;
+const INACTIVITY_TIMEOUT = 5 * 60 * 1000;
+
 // ===== REST HELPERS =====
 async function chatGet(table, query) {
     try {
@@ -54,8 +60,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     currentUser = await waitForUser();
     if (!currentUser) return;
 
-    chatUpdate('profiles', `id=eq.${currentUser.id}`, { last_seen: new Date().toISOString() });
-    setInterval(() => chatUpdate('profiles', `id=eq.${currentUser.id}`, { last_seen: new Date().toISOString() }), 60000);
+    setupPresence();
+    setupLastSeenEvents();
 
     await loadConversations();
     setupRealtimeConversations();
@@ -82,6 +88,82 @@ function waitForUser() {
         };
         tick();
     });
+}
+
+// ===== PRESENCE (zero DB writes for online status) =====
+function setupPresence() {
+    presenceChannel = _chatSupa.channel('online-users', {
+        config: { presence: { key: currentUser.id } }
+    });
+
+    presenceChannel.on('presence', { event: 'sync' }, () => {
+        const state = presenceChannel.presenceState();
+        onlineUsers = {};
+        Object.keys(state).forEach(userId => { onlineUsers[userId] = true; });
+        refreshOnlineUI();
+    });
+
+    presenceChannel.on('presence', { event: 'join' }, ({ key }) => {
+        onlineUsers[key] = true;
+        refreshOnlineUI();
+    });
+
+    presenceChannel.on('presence', { event: 'leave' }, ({ key }) => {
+        delete onlineUsers[key];
+        refreshOnlineUI();
+    });
+
+    presenceChannel.subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') {
+            await presenceChannel.track({ user_id: currentUser.id, online_at: new Date().toISOString() });
+        }
+    });
+}
+
+function isUserOnline(userId) {
+    return !!onlineUsers[userId];
+}
+
+function refreshOnlineUI() {
+    renderConvList();
+    if (activeOtherUser) updateHeaderStatus();
+}
+
+// ===== LAST SEEN (write only on disconnect/idle/background) =====
+function writeLastSeen() {
+    if (!currentUser) return;
+    chatUpdate('profiles', `id=eq.${currentUser.id}`, { last_seen: new Date().toISOString() });
+}
+
+function setupLastSeenEvents() {
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            writeLastSeen();
+        } else {
+            resetInactivityTimer();
+            if (presenceChannel) {
+                presenceChannel.track({ user_id: currentUser.id, online_at: new Date().toISOString() });
+            }
+        }
+    });
+
+    window.addEventListener('beforeunload', writeLastSeen);
+
+    window.addEventListener('pagehide', writeLastSeen);
+
+    ['mousemove', 'keydown', 'touchstart', 'scroll'].forEach(evt => {
+        document.addEventListener(evt, resetInactivityTimer, { passive: true });
+    });
+
+    resetInactivityTimer();
+}
+
+function resetInactivityTimer() {
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(() => {
+        writeLastSeen();
+        if (presenceChannel) presenceChannel.untrack();
+    }, INACTIVITY_TIMEOUT);
 }
 
 // ===== LOAD CONVERSATIONS =====
@@ -156,7 +238,7 @@ function renderConvList(filter) {
 
     list.innerHTML = items.map(c => {
         const active = c.id === activeConversationId ? ' active' : '';
-        const online = isUserOnline(c.otherUser.last_seen) ? '<div class="online-dot"></div>' : '';
+        const online = isUserOnline(c.otherUser.id) ? '<div class="online-dot"></div>' : '';
         const lm = c.lastMessage;
         let preview = '';
         if (lm) {
@@ -192,7 +274,6 @@ async function openConversation(convId) {
     const conv = conversations.find(c => c.id === convId);
     if (!conv) return;
 
-    // Unsub old channels first
     unsubMessages();
 
     activeConversationId = convId;
@@ -212,12 +293,10 @@ async function openConversation(convId) {
 
     renderConvList();
 
-    // Clear and load messages
     const container = document.getElementById('chatMessages');
     container.innerHTML = '';
     const msgs = await chatGet('messages', `select=*&conversation_id=eq.${convId}&order=created_at.asc`);
 
-    // Guard: user may have switched conversations while we were fetching
     if (activeConversationId !== convId) return;
 
     if (!msgs.length) {
@@ -259,9 +338,14 @@ function backToConvList() {
 function updateHeaderStatus() {
     const el = document.getElementById('chatHeaderStatus');
     if (!activeOtherUser) return;
-    if (isUserOnline(activeOtherUser.last_seen)) el.innerHTML = '<span class="status-online">● Online</span>';
-    else if (activeOtherUser.last_seen) el.textContent = `Last seen ${fmtLastSeen(activeOtherUser.last_seen)}`;
-    else el.textContent = 'Offline';
+
+    if (isUserOnline(activeOtherUser.id)) {
+        el.innerHTML = '<span class="status-online">● Online</span>';
+    } else if (activeOtherUser.last_seen) {
+        el.textContent = `Last seen ${fmtLastSeen(activeOtherUser.last_seen)}`;
+    } else {
+        el.textContent = 'Offline';
+    }
 }
 
 // ===== DOM HELPERS =====
@@ -350,7 +434,6 @@ async function doSendText(text, convId) {
     });
     if (msg && activeConversationId === convId) {
         const container = document.getElementById('chatMessages');
-        // Clear "no messages" placeholder
         if (container.querySelector('div[style*="text-align"]')) container.innerHTML = '';
         const d = new Date(msg.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         const lastSep = container.querySelectorAll('.chat-date-sep');
@@ -359,7 +442,6 @@ async function doSendText(text, convId) {
         addMsgBubble(container, msg);
         container.scrollTop = container.scrollHeight;
     }
-    // Update conv list
     const conv = conversations.find(c => c.id === convId);
     if (conv && msg) { conv.lastMessage = msg; sortAndRenderConvs(); }
 }
@@ -607,13 +689,13 @@ function openLightbox(url) { document.getElementById('chatLightboxImg').src = ur
 function closeLightbox() { document.getElementById('chatLightbox').classList.remove('active'); }
 
 // ===== UTILS =====
-function isUserOnline(ls) { return ls && (Date.now() - new Date(ls).getTime()) < 120000; }
 function fmtLastSeen(ls) {
     if (!ls) return 'a while ago';
     const s = Math.floor((Date.now() - new Date(ls).getTime()) / 1000);
     if (s < 60) return 'just now';
     if (s < 3600) return `${Math.floor(s / 60)} min${Math.floor(s / 60) > 1 ? 's' : ''} ago`;
     if (s < 86400) return `${Math.floor(s / 3600)} hr${Math.floor(s / 3600) > 1 ? 's' : ''} ago`;
+    if (s < 172800) return 'yesterday';
     return new Date(ls).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 function fmtConvTime(ts) {
