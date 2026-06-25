@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     setupPresence();
     setupLastSeenEvents();
+    setupMobileKeyboard();
     loadChatActiveStatus();
 
     await loadConversations();
@@ -739,5 +740,60 @@ async function saveChatActiveStatus(enabled) {
         presenceChannel.untrack();
     } else if (enabled && presenceChannel) {
         presenceChannel.track({ user_id: currentUser.id, online_at: new Date().toISOString() });
+    }
+}
+
+// ===== MOBILE KEYBOARD HANDLING (iOS Safari) =====
+function setupMobileKeyboard() {
+    if (window.innerWidth > 768) return;
+
+    const container = document.querySelector('.chat-container');
+    const composer = document.getElementById('chatComposerInput');
+    if (!container || !composer) return;
+
+    const vv = window.visualViewport;
+    if (!vv) return;
+
+    let keyboardOpen = false;
+
+    function onViewportResize() {
+        const keyboardNow = vv.height < window.innerHeight * 0.75;
+
+        if (keyboardNow && !keyboardOpen) {
+            keyboardOpen = true;
+            container.classList.add('keyboard-open');
+            container.style.height = vv.height + 'px';
+            scrollMessagesToBottom();
+        } else if (keyboardNow && keyboardOpen) {
+            container.style.height = vv.height + 'px';
+        } else if (!keyboardNow && keyboardOpen) {
+            keyboardOpen = false;
+            container.classList.remove('keyboard-open');
+            container.style.height = '';
+        }
+    }
+
+    vv.addEventListener('resize', onViewportResize);
+
+    composer.addEventListener('focus', () => {
+        setTimeout(() => {
+            onViewportResize();
+            scrollMessagesToBottom();
+        }, 300);
+    });
+
+    composer.addEventListener('blur', () => {
+        setTimeout(() => {
+            keyboardOpen = false;
+            container.classList.remove('keyboard-open');
+            container.style.height = '';
+        }, 100);
+    });
+}
+
+function scrollMessagesToBottom() {
+    const msgs = document.getElementById('chatMessages');
+    if (msgs) {
+        requestAnimationFrame(() => { msgs.scrollTop = msgs.scrollHeight; });
     }
 }
