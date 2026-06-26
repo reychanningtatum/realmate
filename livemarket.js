@@ -613,16 +613,14 @@ function selectSegTab(btn) {
         applyFilters();
     }
     syncTopPadding();
-    requestAnimationFrame(() => {
+    const scrollToTop = () => {
         syncTopPadding();
+        const mc = document.querySelector('.main-content');
+        if (mc) mc.scrollTop = 0;
         window.scrollTo(0, 0);
-        document.querySelector('.main-content')?.scrollTo(0, 0);
-    });
-    setTimeout(() => {
-        syncTopPadding();
-        window.scrollTo(0, 0);
-        document.querySelector('.main-content')?.scrollTo(0, 0);
-    }, 100);
+    };
+    requestAnimationFrame(scrollToTop);
+    setTimeout(scrollToTop, 100);
     setTimeout(syncTopPadding, 300);
 }
 
