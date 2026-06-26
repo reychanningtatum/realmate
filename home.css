@@ -711,7 +711,12 @@ html[data-theme="light"] .nav-item.active { background: rgba(50,205,50,0.10); co
   box-shadow: 0 3px 10px rgba(0,0,0,0.15), 0 1px 4px rgba(0,0,0,0.08);
   flex-shrink: 0;
 }
-.mob-nav-item.mob-nav-center span { font-size: 7px; color: #94a3b8; font-weight: 700; white-space: nowrap; letter-spacing: -0.2px; line-height: 1; }
+.mob-nav-item.mob-nav-center span {
+  font-size: 9px; color: #94a3b8; font-weight: 600;
+  white-space: nowrap; line-height: 1;
+  position: absolute; bottom: -2px; left: 50%;
+  transform: translateX(-50%);
+}
 .mob-nav-item.mob-nav-center.active,
 .mob-nav-item.mob-nav-center.active:hover { background: transparent !important; box-shadow: none !important; }
 .mob-nav-item.mob-nav-center.active i { color: #fff; background: #32cd32; border-color: #32cd32; box-shadow: 0 4px 14px rgba(50,205,50,0.4), 0 2px 6px rgba(0,0,0,0.10); }
