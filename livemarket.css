@@ -600,7 +600,7 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   color: white; font-size: 20px; font-weight: 800;
 }
 
-.listing-card-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 12px; }
+.listing-card-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 15px; }
 
 .listing-card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
