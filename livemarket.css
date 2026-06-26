@@ -568,10 +568,20 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 }
 .listing-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
 
-.listing-card-images { position: relative; }
-.listing-card-images img.single-img {
-  width: 100%; height: 220px; object-fit: cover; display: block;
+/* Horizontal layout: image left, details right */
+.lc-horizontal {
+  display: flex; gap: 0;
 }
+.lc-horizontal .listing-card-images {
+  width: 42%; min-width: 42%; flex-shrink: 0; position: relative;
+}
+.lc-horizontal .listing-card-images img.single-img {
+  width: 100%; height: 100%; min-height: 220px; object-fit: cover; display: block;
+}
+.lc-right {
+  flex: 1; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; min-width: 0;
+}
+
 .listing-img-counter {
   position: absolute; bottom: 10px; right: 10px;
   background: rgba(0,0,0,0.6); color: #fff;
@@ -582,71 +592,86 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 }
 .listing-img-counter i { font-size: 10px; }
 
-.listing-card-body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 6px; }
-
-.listing-card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+.listing-card-body { padding: 0; }
+.listing-card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 2px; }
 
 .cat-tag {
   display: inline-flex; align-items: center;
   font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
-  text-transform: uppercase; padding: 5px 12px;
-  border-radius: 6px;
-  border: none;
-  font-family: 'Inter', sans-serif;
+  text-transform: uppercase; padding: 4px 10px;
+  border-radius: 4px; border: 1.5px solid;
+  font-family: 'Inter', sans-serif; background: transparent;
 }
-.cat-sale    { background: #f0fdf4; color: #16a34a; }
-.cat-rent    { background: #eff6ff; color: #2563eb; }
-.cat-lease   { background: #faf5ff; color: #7c3aed; }
-.cat-wbuy    { background: #fff7ed; color: #ea580c; }
-.cat-wrent   { background: #fef3c7; color: #b45309; }
-.cat-wlease  { background: #fce7f3; color: #be185d; }
+.cat-sale    { color: #16a34a; border-color: #16a34a; }
+.cat-rent    { color: #2563eb; border-color: #2563eb; }
+.cat-lease   { color: #7c3aed; border-color: #7c3aed; }
+.cat-wbuy    { color: #ea580c; border-color: #ea580c; }
+.cat-wrent   { color: #b45309; border-color: #b45309; }
+.cat-wlease  { color: #be185d; border-color: #be185d; }
 
-/* Property presentation */
-.lc-project-name {
-  font-size: 20px; font-weight: 800; color: var(--text-main);
-  letter-spacing: -0.5px; line-height: 1.2;
-  font-family: 'Inter', sans-serif;
-}
-.lc-price {
-  font-size: 22px; font-weight: 800; color: #32cd32;
-  letter-spacing: -0.5px; line-height: 1;
-  margin: 2px 0;
-}
-.lc-location {
-  font-size: 13px; font-weight: 500; color: var(--text-sub);
+/* Auto-detected label */
+.lc-auto-detect-label {
+  font-size: 10px; font-weight: 700; color: #94a3b8;
+  text-transform: uppercase; letter-spacing: 0.8px;
   display: flex; align-items: center; gap: 5px;
-  margin-bottom: 4px;
-}
-.lc-location i { font-size: 11px; color: #94a3b8; }
-
-.lc-details-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 0; margin: 6px 0;
-  border: 1px solid var(--border); border-radius: 12px;
-  overflow: hidden;
-}
-.lc-detail {
-  display: flex; flex-direction: column; gap: 2px;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--border);
-  border-right: 1px solid var(--border);
-}
-.lc-detail:nth-child(2n) { border-right: none; }
-.lc-detail:nth-last-child(-n+2) { border-bottom: none; }
-.lc-detail:last-child:nth-child(odd) { grid-column: 1 / -1; border-right: none; }
-.lc-detail-label { font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
-.lc-detail-value { font-size: 13px; font-weight: 700; color: var(--text-main); }
-
-.lc-auto-label {
-  font-size: 10px; color: #94a3b8; font-weight: 500;
-  display: flex; align-items: center; gap: 4px;
   margin: 2px 0;
 }
-.lc-auto-label i { font-size: 10px; color: #d4a017; }
+.lc-auto-detect-label i { font-size: 11px; color: #94a3b8; }
+
+/* Project name */
+.lc-project-name {
+  font-size: 18px; font-weight: 800; color: var(--text-main);
+  letter-spacing: -0.3px; line-height: 1.2;
+  font-family: 'Inter', sans-serif;
+  text-transform: uppercase;
+}
+
+.lc-unit-line {
+  font-size: 14px; font-weight: 700; color: var(--text-main);
+  line-height: 1.3;
+}
+
+/* Details table */
+.lc-details-tbl {
+  width: 100%; border-collapse: collapse; margin: 6px 0 2px;
+}
+.lc-tbl-key {
+  font-size: 12px; font-weight: 500; color: #94a3b8;
+  padding: 4px 0; width: 90px; vertical-align: top;
+}
+.lc-tbl-val {
+  font-size: 13px; font-weight: 600; color: var(--text-main);
+  padding: 4px 0;
+}
+.lc-price-val {
+  font-size: 16px; font-weight: 800; color: #32cd32;
+}
+.lc-price-psm {
+  font-size: 11px; font-weight: 500; color: #94a3b8;
+  margin-left: 6px;
+}
+
+/* Auto-detected banner */
+.lc-auto-banner {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 20px;
+  background: #f0fdf4; border-top: 1px solid #e2e8f0;
+}
+.lc-auto-banner-inner {
+  display: flex; align-items: center; gap: 10px; flex: 1;
+}
+.lc-auto-banner-inner > i {
+  font-size: 16px; color: #32cd32; flex-shrink: 0;
+}
+.lc-auto-banner-title {
+  font-size: 12px; font-weight: 700; color: var(--text-main);
+}
+.lc-auto-banner-sub {
+  font-size: 11px; color: var(--text-sub); line-height: 1.4;
+}
 
 .lc-caption {
-  margin-top: 4px; padding-top: 8px;
-  border-top: 1px solid var(--border);
+  padding: 10px 20px 4px;
 }
 
 .listing-text {
@@ -656,8 +681,7 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 
 .listing-card-user {
   display: flex; align-items: center; gap: 10px;
-  padding: 12px 14px; margin-top: 6px;
-  background: #f8fafc; border-radius: 12px;
+  padding: 12px 20px;
 }
 .listing-card-user img {
   width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
@@ -669,18 +693,29 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 
 .listing-card-date { font-size: 10px; color: #94a3b8; margin-left: auto; white-space: nowrap; flex-shrink: 0; }
 
-/* Dark theme for new card elements */
+/* Status buttons spacing */
+.listing-status-btns { padding: 0 20px 12px; }
+
+/* Mobile: stack vertically */
+@media (max-width: 600px) {
+  .lc-horizontal { flex-direction: column; }
+  .lc-horizontal .listing-card-images { width: 100%; min-width: 100%; }
+  .lc-horizontal .listing-card-images img.single-img { min-height: 180px; height: 180px; }
+}
+
+/* Dark theme */
 html[data-theme="dark"] .lc-project-name { color: #f1f5f9; }
-html[data-theme="dark"] .lc-details-grid { border-color: #334155; }
-html[data-theme="dark"] .lc-detail { border-color: #334155; }
-html[data-theme="dark"] .lc-detail-value { color: #f1f5f9; }
+html[data-theme="dark"] .lc-unit-line { color: #e2e8f0; }
+html[data-theme="dark"] .lc-tbl-val { color: #f1f5f9; }
+html[data-theme="dark"] .lc-auto-banner { background: rgba(50,205,50,0.06); border-color: #334155; }
+html[data-theme="dark"] .lc-auto-banner-title { color: #f1f5f9; }
 html[data-theme="dark"] .lc-caption { border-color: #334155; }
-html[data-theme="dark"] .cat-sale { background: rgba(22,163,74,0.12); }
-html[data-theme="dark"] .cat-rent { background: rgba(37,99,235,0.12); }
-html[data-theme="dark"] .cat-lease { background: rgba(124,58,237,0.12); }
-html[data-theme="dark"] .cat-wbuy { background: rgba(234,88,12,0.12); }
-html[data-theme="dark"] .cat-wrent { background: rgba(180,83,9,0.12); }
-html[data-theme="dark"] .cat-wlease { background: rgba(190,24,93,0.12); }
+html[data-theme="dark"] .cat-sale { color: #4ade80; border-color: #4ade80; }
+html[data-theme="dark"] .cat-rent { color: #60a5fa; border-color: #60a5fa; }
+html[data-theme="dark"] .cat-lease { color: #a78bfa; border-color: #a78bfa; }
+html[data-theme="dark"] .cat-wbuy { color: #fb923c; border-color: #fb923c; }
+html[data-theme="dark"] .cat-wrent { color: #fbbf24; border-color: #fbbf24; }
+html[data-theme="dark"] .cat-wlease { color: #f472b6; border-color: #f472b6; }
 
 /* ── FMV Badge ── */
 .fmv-badge {
@@ -1070,8 +1105,6 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
   .feed-pdf-strip { gap: 8px; }
   .listings-grid { grid-template-columns: 1fr; gap: 14px; }
 
-  .listing-card-images img.single-img { height: 180px; }
-  .listing-img-grid { height: 180px; }
 
   /* Match view — mobile optimized */
   .match-page-header {

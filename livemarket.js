@@ -166,22 +166,26 @@ function buildPropertyPresentation(listing) {
     if (developer) details.push(['Developer', developer]);
     if (rfo) details.push(['Status', rfo]);
 
-    const projectHtml = project
-        ? `<div class="lc-project-name">${project}</div>`
-        : '';
-    const priceHtml = price
-        ? `<div class="lc-price">${formatPriceDisplay(price)}</div>`
-        : '';
-    const locationHtml = location
-        ? `<div class="lc-location"><i class="fas fa-map-marker-alt"></i> ${location}</div>`
-        : '';
-    const detailsHtml = details.length
-        ? `<div class="lc-details-grid">${details.map(([k, v]) => `<div class="lc-detail"><span class="lc-detail-label">${k}</span><span class="lc-detail-value">${v}</span></div>`).join('')}</div>`
-        : '';
+    const pricePerSqm = (price && sqm) ? Math.round(price / parseFloat(sqm)).toLocaleString() : null;
 
-    const hasPresentation = project || price || location || details.length;
+    const rows = [];
+    if (unit) rows.push(['Unit Type', unit]);
+    if (sqm) rows.push(['Unit Size', sqm]);
+    if (lotArea) rows.push(['Lot Area', lotArea]);
+    const priceRow = price
+        ? `<tr><td class="lc-tbl-key">Price</td><td class="lc-tbl-val"><span class="lc-price-val">₱${price.toLocaleString()}</span>${pricePerSqm ? `<span class="lc-price-psm">₱${pricePerSqm}/sqm</span>` : ''}</td></tr>`
+        : '';
+    if (location) rows.push(['Location', `<i class="fas fa-map-marker-alt" style="color:#94a3b8;font-size:10px;margin-right:3px;"></i> ${location}`]);
+    if (bathrooms) rows.push(['Bathrooms', bathrooms]);
+    if (tower) rows.push(['Tower', tower]);
+    if (parking) rows.push(['Parking', parking]);
+    if (furnishing) rows.push(['Furnishing', furnishing]);
+    if (developer) rows.push(['Developer', developer]);
+    if (rfo) rows.push(['Status', rfo]);
 
-    return { projectHtml, priceHtml, locationHtml, detailsHtml, hasPresentation };
+    const hasPresentation = project || price || location || rows.length;
+
+    return { project, price, location, rows, priceRow, hasPresentation, unit };
 }
 
 let _lbImgs = [], _lbIdx = 0;
@@ -293,41 +297,59 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
 
     const pres = buildPropertyPresentation(listing);
     const captionText = (listing.content || '').trim();
-    const captionHtml = pres.hasPresentation && captionText
+
+    const projectName = pres.project || '';
+    const unitLine = pres.unit || '';
+
+    const detailRows = pres.rows.map(([k, v]) => `<tr><td class="lc-tbl-key">${k}</td><td class="lc-tbl-val">${v}</td></tr>`).join('');
+
+    const autoDetectedBanner = pres.hasPresentation ? `
+        <div class="lc-auto-banner">
+            <div class="lc-auto-banner-inner">
+                <i class="fas fa-bolt"></i>
+                <div>
+                    <div class="lc-auto-banner-title">Auto-detected &amp; posted by Realmate</div>
+                    <div class="lc-auto-banner-sub">Realmate automatically extracted the project, unit type, size, price, and location.</div>
+                </div>
+            </div>
+            <i class="fas fa-circle-check" style="color:#32cd32;font-size:18px;flex-shrink:0;"></i>
+        </div>` : '';
+
+    const captionHtml = captionText && pres.hasPresentation
         ? `<div class="lc-caption"><p class="listing-text">${safeText(captionText)}</p></div>`
-        : (!pres.hasPresentation ? `<p class="listing-text">${safeText(captionText)}</p>` : '');
-    const autoLabel = pres.hasPresentation ? `<div class="lc-auto-label"><i class="fas fa-sparkles"></i> Auto-formatted by Realmate</div>` : '';
+        : (!pres.hasPresentation ? `<p class="listing-text" style="padding:0 20px 12px;">${safeText(captionText)}</p>` : '');
 
     card.innerHTML = `
         ${matchBanner}
-        ${imagesHtml(listing)}
-        <div class="listing-card-body">
-            <div class="listing-card-top">
-                ${catTag(listing.category)}
-                ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : ''}
-                <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
-                <button class="pin-btn ${getPinnedIds().includes(String(listing.id)) ? 'pinned' : ''}" onclick="event.stopPropagation(); togglePin('${listing.id}', this)" title="${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}"><i class="fas fa-thumbtack"></i></button>
-            </div>
-            ${buildStatusBadge(listing)}
-            ${pres.projectHtml}
-            ${pres.priceHtml}
-            ${pres.locationHtml}
-            ${pres.detailsHtml}
-            ${autoLabel}
-            ${captionHtml}
-            ${buildFMVBadge(fmvResult)}
-            <div class="listing-card-user">
-                <img src="${listing.user_img || avatarFallback(listing.user_name)}"
-                     onerror="this.src='${avatarFallback(listing.user_name)}'"
-                     style="width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1.5px solid #e2e8f0;">
-                <div class="listing-card-user-info">
-                    <div class="listing-card-user-name">${listing.user_name || 'Unknown'}</div>
-                    <div class="listing-card-user-job">${listing.user_job || ''}</div>
+        <div class="lc-horizontal">
+            ${imagesHtml(listing)}
+            <div class="lc-right">
+                <div class="listing-card-top">
+                    ${catTag(listing.category)}
+                    ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : ''}
+                    <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
+                    <button class="pin-btn ${getPinnedIds().includes(String(listing.id)) ? 'pinned' : ''}" onclick="event.stopPropagation(); togglePin('${listing.id}', this)" title="${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}"><i class="fas fa-thumbtack"></i></button>
                 </div>
-                ${listing.is_anonymous ? '' : mateButtonHtml(listing.user_name, 'btn-mate btn-mate-sm')}
+                ${buildStatusBadge(listing)}
+                ${pres.hasPresentation ? `<div class="lc-auto-detect-label"><span>REALMATE AUTO-DETECTED</span> <i class="fas fa-sparkles"></i></div>` : ''}
+                ${projectName ? `<div class="lc-project-name">${projectName}</div>` : ''}
+                ${unitLine ? `<div class="lc-unit-line">${unitLine}</div>` : ''}
+                ${(detailRows || pres.priceRow) ? `<table class="lc-details-tbl">${detailRows}${pres.priceRow}</table>` : ''}
             </div>
-            ${buildStatusButtons(listing)}
         </div>
+        ${autoDetectedBanner}
+        ${captionHtml}
+        ${buildFMVBadge(fmvResult)}
+        <div class="listing-card-user">
+            <img src="${listing.user_img || avatarFallback(listing.user_name)}"
+                 onerror="this.src='${avatarFallback(listing.user_name)}'">
+            <div class="listing-card-user-info">
+                <div class="listing-card-user-name">${listing.user_name || 'Unknown'}${listing.is_anonymous ? '' : ' <i class="fas fa-circle-check" style="color:#32cd32;font-size:12px;"></i>'}</div>
+                <div class="listing-card-user-job">${listing.user_job || ''}</div>
+            </div>
+            ${listing.is_anonymous ? '' : mateButtonHtml(listing.user_name, 'btn-mate btn-mate-sm')}
+        </div>
+        ${buildStatusButtons(listing)}
     `;
 
     // Wire up image lightbox clicks
