@@ -578,8 +578,8 @@ function buildTicker(listings) {
 // ── State ─────────────────────────────────────────
 let allListings = [];
 let myListings = [];
-let activeCategory = 'FEED';
-let activeSegTab = 'FEED';
+let activeCategory = 'ALL';
+let activeSegTab = 'MARKET';
 let marketCat = 'ALL';
 let myListingsSubCat = 'ALL';
 

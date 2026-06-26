@@ -36,10 +36,10 @@
     <div class="filter-bar">
       <!-- 1. Tabs -->
       <div class="seg-tabs" id="segTabs">
-        <button class="seg-tab active" data-seg="FEED" onclick="selectSegTab(this)">
+        <button class="seg-tab" data-seg="FEED" onclick="selectSegTab(this)">
           <i class="fas fa-rss"></i><span>Pulse</span>
         </button>
-        <button class="seg-tab" data-seg="MARKET" onclick="selectSegTab(this)">
+        <button class="seg-tab active" data-seg="MARKET" onclick="selectSegTab(this)">
           <i class="fas fa-store"></i><span>Live Market</span>
         </button>
         <button class="seg-tab" data-seg="PORTFOLIO" onclick="selectSegTab(this)">
@@ -50,7 +50,7 @@
         </button>
       </div>
       <!-- 2. Category Filters (right below tabs) -->
-      <div class="filter-chips" id="marketCatFilters" style="display:none;">
+      <div class="filter-chips" id="marketCatFilters">
         <button class="chip active" data-cat="ALL" onclick="selectMarketCat(this)">All</button>
         <button class="chip" data-cat="PINNED" onclick="selectMarketCat(this)"><i class="fas fa-thumbtack"></i> Pinned</button>
         <button class="chip" data-cat="FOR SALE" onclick="selectMarketCat(this)">For Sale</button>
@@ -127,7 +127,7 @@
   <div id="ledgerView">
 
     <!-- ═══ FEED TAB ═══ -->
-    <div id="feedTabPane" class="feed-dashboard">
+    <div id="feedTabPane" class="feed-dashboard" style="display:none;"
 
       <!-- Graph section -->
       <div class="feed-section">
@@ -177,7 +177,7 @@
     </div>
 
     <!-- ═══ LISTINGS TAB ═══ -->
-    <div id="listingsTabPane" style="display:none;">
+    <div id="listingsTabPane">
       <div class="listings-grid" id="listingsGrid">
         <div class="empty-state" id="listingsLoader">
           <i class="fas fa-spinner fa-spin"></i>

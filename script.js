@@ -151,7 +151,7 @@ async function login(){
     loginBtn.disabled = true;
     loginBtnText.innerHTML = '<span class="spinner"></span> Redirecting…';
     document.getElementById("loginSuccess").style.display = "flex";
-    setTimeout(() => location.href = "home.html", 1400);
+    setTimeout(() => location.href = "livemarket.html", 1400);
 
   } catch(err) {
     showLoginError("Something went wrong. Please try again.");
@@ -232,7 +232,7 @@ function guestLogin(){
     localStorage.setItem("isGuest", "true");
     localStorage.removeItem("user"); 
     alert("Proceeding as guest spectator...");
-    location.href="home.html"; 
+    location.href="livemarket.html"; 
 }
 
 // Cache result of username check so submit doesn't need to re-query
