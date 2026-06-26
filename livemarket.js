@@ -1687,7 +1687,7 @@ function syncTopPadding() {
     const h = wrap.offsetHeight;
     const ticker = document.getElementById('tickerWrap');
     const tickerHidden = ticker && ticker.style.display === 'none';
-    const buffer = tickerHidden ? 8 : 34;
+    const buffer = tickerHidden ? 8 : 10;
     document.documentElement.style.setProperty('--top-fixed-height', (h + buffer) + 'px');
 }
 syncTopPadding();
