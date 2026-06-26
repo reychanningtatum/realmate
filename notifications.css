@@ -303,7 +303,7 @@
 @media (max-width: 768px) {
     .mob-nav-item span { display: block; font-size: 9px; white-space: nowrap; }
     .mob-nav-item i { font-size: 18px; }
-    .mob-nav-item { padding: 6px 1px; }
+    .mob-nav-item { padding: 8px 1px 6px; height: 46px; }
     .mobile-bottom-nav { height: 56px; }
 }
 
