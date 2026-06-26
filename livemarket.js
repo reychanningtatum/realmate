@@ -869,11 +869,13 @@ function applyFilters() {
         });
     } catch(e) { console.warn('FMV error:', e); }
 
-    // Matches first (sorted by score), then others
-    const matched   = pool.filter(l => matchMap.has(l.id))
-        .sort((a, b) => (matchMap.get(b.id)?.matchScore || 0) - (matchMap.get(a.id)?.matchScore || 0));
-    const unmatched = pool.filter(l => !matchMap.has(l.id));
-    [...matched, ...unmatched].forEach(l => grid.appendChild(
+    // MATCHES tab: sort by score; all other tabs: newest first
+    if (activeCategory === 'MATCHES') {
+        pool.sort((a, b) => (matchMap.get(b.id)?.matchScore || 0) - (matchMap.get(a.id)?.matchScore || 0));
+    } else {
+        pool.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    }
+    pool.forEach(l => grid.appendChild(
         buildListingCard(l, matchMap.get(l.id) || null, fmvMap.get(l.id) || null, myMatchCountMap.get(l.id) || 0)
     ));
 }
