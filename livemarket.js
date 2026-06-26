@@ -182,31 +182,13 @@ function buildEnhancedPresentation(listing) {
     const location = extractLocations(t).join(', ') || null;
     const project = extractProject(t) || null;
     const price = extractPrice(t);
-    const details = [];
-    const unitType = _xType(t); if (unitType) details.push(['Unit Type', unitType]);
-    const bed = _xBed(t); if (bed) details.push(['Bedrooms', bed]);
-    const sqm = _xSqm(t); if (sqm) details.push(['Unit Size', sqm]);
-    const lot = _xLot(t); if (lot) details.push(['Lot Area', lot]);
-    const bath = _xBath(t); if (bath) details.push(['Bathrooms', bath]);
-    const park = _xPark(t); if (park) details.push(['Parking', park]);
-    const floor = _xFloor(t); if (floor) details.push(['Floor', floor]);
-    const tower = _xTower(t); if (tower) details.push(['Tower', tower]);
-    const furn = _xFurn(t); if (furn) details.push(['Furnishing', furn]);
-    const dev = _xDev(t); if (dev) details.push(['Developer', dev]);
-    const turnover = _xTurnover(t); if (turnover) details.push(['Status', turnover]);
 
-    const hasAny = location || project || price || details.length;
-    if (!hasAny) return '';
+    if (!location && !project && !price) return '';
 
     let html = '<div class="lc-enhanced">';
     if (location) html += `<div class="lc-e-location">${location}</div>`;
     if (project) html += `<div class="lc-e-project">${project}</div>`;
     if (price) html += `<div class="lc-e-price">₱${price.toLocaleString()}</div>`;
-    if (details.length) {
-        html += '<div class="lc-e-details">';
-        details.forEach(([k, v]) => { html += `<div class="lc-e-row"><span class="lc-e-key">${k}</span><span class="lc-e-val">${v}</span></div>`; });
-        html += '</div>';
-    }
     html += '</div>';
     return html;
 }
