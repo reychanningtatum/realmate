@@ -612,28 +612,15 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 .cat-wrent   { color: #b45309; border-color: #b45309; }
 .cat-wlease  { color: #be185d; border-color: #be185d; }
 
-/* AI-extracted presentation */
-.lc-ai-label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 5px; margin-top: 2px; }
-.lc-ai-label i { font-size: 11px; color: #94a3b8; }
-.lc-location { font-size: 18px; font-weight: 800; color: #32cd32; letter-spacing: -0.3px; line-height: 1.2; font-family: 'Inter', sans-serif; }
-.lc-project { font-size: 16px; font-weight: 800; color: var(--text-main); letter-spacing: -0.2px; line-height: 1.2; font-family: 'Inter', sans-serif; text-transform: uppercase; }
-.lc-unit-line { font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 2px; }
-
-.lc-info-tbl { width: 100%; border-collapse: collapse; margin: 4px 0 0; }
-.lc-tbl-k { font-size: 12px; font-weight: 500; color: #94a3b8; padding: 3px 0; width: 80px; vertical-align: top; }
-.lc-tbl-v { font-size: 13px; font-weight: 600; color: var(--text-main); padding: 3px 0; }
-.lc-price { font-size: 16px; font-weight: 800; color: #32cd32; }
-.lc-price-standalone { font-size: 18px; font-weight: 800; color: #32cd32; margin: 4px 0; }
+/* Uniform info table */
+.lc-info-tbl { width: 100%; border-collapse: collapse; margin: 0; }
+.lc-tbl-k { font-size: 12px; font-weight: 500; color: #94a3b8; padding: 4px 0; width: 80px; vertical-align: top; }
+.lc-tbl-v { font-size: 13px; font-weight: 600; color: var(--text-main); padding: 4px 0; }
+.lc-price { font-size: 15px; font-weight: 800; color: #32cd32; }
 .lc-psm { font-size: 11px; font-weight: 500; color: #94a3b8; margin-left: 6px; }
 
-/* Auto-detected banner */
-.lc-auto-banner { display: flex; align-items: center; gap: 12px; padding: 10px 20px; background: #f0fdf4; border-top: 1px solid #e2e8f0; }
-.lc-auto-banner-left { display: flex; align-items: center; gap: 10px; flex: 1; }
-.lc-auto-banner-title { font-size: 12px; font-weight: 700; color: var(--text-main); }
-.lc-auto-banner-sub { font-size: 11px; color: var(--text-sub); line-height: 1.4; }
-
-/* Description */
-.lc-description { padding: 10px 20px 4px; }
+/* Description (only non-extracted text) */
+.lc-description { padding: 8px 20px 4px; border-top: 1px solid #f1f5f9; }
 .lc-desc-label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
 
 .listing-text { font-size: 13px; line-height: 1.65; color: #475569; word-break: break-word; }

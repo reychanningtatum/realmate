@@ -142,9 +142,16 @@ function buildAIPresentation(listing) {
 
     const pricePerSqm = (price && sqm) ? '₱' + Math.round(price / parseFloat(sqm)).toLocaleString() + '/sqm' : null;
 
-    const rows = [];
-    if (unitType) rows.push(['Unit Type', unitType]);
-    if (sqm) rows.push(['Unit Size', sqm]);
+    // Always show all rows with '—' for missing
+    const rows = [
+        ['Location', location || '—'],
+        ['Project', project || '—'],
+        ['Unit Type', unitType || '—'],
+        ['Bedrooms', bedrooms || '—'],
+        ['Unit Size', sqm || '—'],
+        ['Price', price ? formatPriceNum(price) + (pricePerSqm ? `<span class="lc-psm">${pricePerSqm}</span>` : '') : '—'],
+    ];
+    // Only add optional rows if they have values
     if (lotArea) rows.push(['Lot Area', lotArea]);
     if (bathrooms) rows.push(['Bathrooms', bathrooms]);
     if (parking) rows.push(['Parking', parking]);
@@ -153,8 +160,60 @@ function buildAIPresentation(listing) {
     if (furnishing) rows.push(['Furnishing', furnishing]);
     if (developer) rows.push(['Developer', developer]);
 
-    const hasData = location || project || price || rows.length;
-    return { location, project, price, pricePerSqm, bedrooms, rows, hasData };
+    return { location, project, price, pricePerSqm, bedrooms, rows };
+}
+
+function stripExtractedText(listing) {
+    let text = (listing.content || '').trim();
+    const orig = text;
+    const lower = text.toLowerCase();
+
+    // Remove extracted values from text
+    const project = extractProject(text);
+    if (project) text = text.replace(new RegExp(project.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '');
+
+    const locations = extractLocations(text);
+    // Remove location keywords
+    Object.keys(LOCATION_KEYWORDS || {}).forEach(k => {
+        if (lower.includes(k)) text = text.replace(new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '');
+    });
+
+    // Remove price patterns
+    text = text.replace(/₱?\s*\d{1,3}(,\d{3})*(\.\d+)?\s*(million|m)\b/gi, '');
+    text = text.replace(/₱\s*\d[\d,]*/g, '');
+    text = text.replace(/\b\d{7,9}\b/g, '');
+    text = text.replace(/\b\d+\.?\d*\s*m\b/gi, '');
+
+    // Remove unit patterns
+    text = text.replace(/\b(studio|1\s*br|2\s*br|3\s*br|4\s*br|\d+\s*bedroom|one\s*bedroom|two\s*bedroom|three\s*bedroom)\b/gi, '');
+
+    // Remove sqm patterns
+    text = text.replace(/\d[\d,.]*\s*(?:sqm|sq\.?\s*m|square\s*met\w*)/gi, '');
+    text = text.replace(/lot\s*area[:\s]*\d[\d,.]*/gi, '');
+    text = text.replace(/floor\s*area[:\s]*\d[\d,.]*/gi, '');
+
+    // Remove common extracted terms
+    const removeTerms = [
+        /\b(with\s*parking|no\s*parking|\d+\s*parking)\b/gi,
+        /\btower\s*\w+\b/gi,
+        /\b(fully\s*furnished|semi[\s-]*furnished|unfurnished|bare|furnished)\b/gi,
+        /\b(alveo\s*land|ayala\s*land|smdc|dmci|megaworld|rockwell|federal\s*land|filinvest|avida|amaia)\b/gi,
+        /\b(residential\s*lot|commercial\s*lot|condo(?:minium)?|townhouse|house\s*(?:and|&)\s*lot|office)\b/gi,
+        /\b(rfo|ready\s*for\s*occupancy|pre[\s-]*selling|turnover\s*ready)\b/gi,
+        /\b\d+(?:th|st|nd|rd)\s*floor\b/gi,
+        /\b\d+\s*(?:bath|bathroom|t&b|toilet)\w*\b/gi,
+        /\b(for\s*sale|for\s*rent|for\s*lease|willing\s*to\s*buy|willing\s*to\s*rent|willing\s*to\s*lease)\b/gi,
+        /\bphp\b/gi,
+        /\bbgc\b/gi,
+    ];
+    removeTerms.forEach(pat => { text = text.replace(pat, ''); });
+
+    // Clean up leftover punctuation and whitespace
+    text = text.replace(/\n\s*\n/g, '\n').replace(/[,\-–—·•:;]\s*$/gm, '').replace(/^\s*[,\-–—·•:;]\s*/gm, '').replace(/\n{3,}/g, '\n\n').trim();
+
+    // If nothing meaningful remains, return empty
+    if (text.replace(/[\s\n\r,.\-–—·•:;]/g, '').length < 3) return '';
+    return text;
 }
 
 let _lbImgs = [], _lbIdx = 0;
@@ -267,50 +326,19 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
     const ai = buildAIPresentation(listing);
     const hasImage = (listing.image_urls?.length || listing.image_url);
 
-    // AI-extracted structured info
-    let aiHtml = '';
-    if (ai.hasData) {
-        aiHtml += `<div class="lc-ai-label"><i class="fas fa-sparkles"></i> REALMATE AUTO-DETECTED</div>`;
-        if (ai.location) aiHtml += `<div class="lc-location">${ai.location}</div>`;
-        if (ai.project) aiHtml += `<div class="lc-project">${ai.project}</div>`;
-        if (ai.bedrooms) aiHtml += `<div class="lc-unit-line">${ai.bedrooms}${ai.rows.find(r=>r[0]==='Unit Type') ? ' ' + ai.rows.find(r=>r[0]==='Unit Type')[1] : ''}</div>`;
-        if (ai.rows.length) {
-            aiHtml += `<table class="lc-info-tbl">`;
-            ai.rows.forEach(([k, v]) => {
-                if (k === 'Unit Type' && ai.bedrooms) return;
-                aiHtml += `<tr><td class="lc-tbl-k">${k}</td><td class="lc-tbl-v">${v}</td></tr>`;
-            });
-            if (ai.price) {
-                aiHtml += `<tr><td class="lc-tbl-k">Price</td><td class="lc-tbl-v"><span class="lc-price">${formatPriceNum(ai.price)}</span>${ai.pricePerSqm ? `<span class="lc-psm">${ai.pricePerSqm}</span>` : ''}</td></tr>`;
-            }
-            if (ai.location) {
-                aiHtml += `<tr><td class="lc-tbl-k">Location</td><td class="lc-tbl-v"><i class="fas fa-map-marker-alt" style="color:#94a3b8;font-size:10px;margin-right:3px;"></i>${ai.location}</td></tr>`;
-            }
-            aiHtml += `</table>`;
-        } else if (ai.price) {
-            aiHtml += `<div class="lc-price-standalone">${formatPriceNum(ai.price)}${ai.pricePerSqm ? `<span class="lc-psm">${ai.pricePerSqm}</span>` : ''}</div>`;
-        }
-    }
+    // Uniform table — always shows all rows
+    const tableHtml = `<table class="lc-info-tbl">${ai.rows.map(([k, v]) => {
+        const isPrice = k === 'Price' && v !== '—';
+        const val = isPrice ? `<span class="lc-price">${v}</span>` : v;
+        return `<tr><td class="lc-tbl-k">${k}</td><td class="lc-tbl-v">${val}</td></tr>`;
+    }).join('')}</table>`;
 
-    // Auto-detected banner
-    const autoBanner = ai.hasData ? `
-        <div class="lc-auto-banner">
-            <div class="lc-auto-banner-left">
-                <i class="fas fa-bolt" style="color:#32cd32;font-size:14px;"></i>
-                <div>
-                    <div class="lc-auto-banner-title">Auto-detected &amp; posted by Realmate</div>
-                    <div class="lc-auto-banner-sub">Realmate automatically extracted the project, unit type, size, price, and location.</div>
-                </div>
-            </div>
-            <i class="fas fa-circle-check" style="color:#32cd32;font-size:16px;flex-shrink:0;"></i>
-        </div>` : '';
-
-    // Description (original caption)
-    const captionText = (listing.content || '').trim();
-    const descHtml = captionText ? `
+    // Strip extracted data from caption — only show remaining text
+    const remainingCaption = stripExtractedText(listing);
+    const descHtml = remainingCaption ? `
         <div class="lc-description">
             <div class="lc-desc-label">Description</div>
-            <p class="listing-text">${safeText(captionText)}</p>
+            <p class="listing-text">${safeText(remainingCaption)}</p>
         </div>` : '';
 
     card.innerHTML = `
@@ -325,12 +353,10 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
                     <button class="pin-btn ${getPinnedIds().includes(String(listing.id)) ? 'pinned' : ''}" onclick="event.stopPropagation(); togglePin('${listing.id}', this)" title="${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}"><i class="fas fa-thumbtack"></i></button>
                 </div>
                 ${buildStatusBadge(listing)}
-                ${aiHtml}
-                ${!ai.hasData ? `<p class="listing-text">${safeText(captionText)}</p>` : ''}
+                ${tableHtml}
             </div>
         </div>
-        ${autoBanner}
-        ${ai.hasData ? descHtml : ''}
+        ${descHtml}
         ${buildFMVBadge(fmvResult)}
         <div class="lc-bottom">
             <div class="listing-card-user">
