@@ -362,7 +362,7 @@ h1,h2,h3 { font-family: 'Playfair Display', serif; }
   border: none;
 }
 .chip-sub {
-  font-size: 11px; padding: 5px 13px;
+  font-size: 12px; padding: 7px 16px;
   background: white; border-color: #d1fae5; color: #16a34a;
 }
 .chip-sub:hover { border-color: var(--primary); color: var(--primary); }
