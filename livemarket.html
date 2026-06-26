@@ -42,10 +42,25 @@
       </div>
     </div>
     <div class="filter-bar">
+    <!-- Segmented icon tabs (top) -->
+    <div class="seg-tabs" id="segTabs">
+      <button class="seg-tab active" data-seg="FEED" onclick="selectSegTab(this)">
+        <i class="fas fa-rss"></i><span>Pulse</span>
+      </button>
+      <button class="seg-tab" data-seg="MARKET" onclick="selectSegTab(this)">
+        <i class="fas fa-store"></i><span>Live Market</span>
+      </button>
+      <button class="seg-tab" data-seg="PORTFOLIO" onclick="selectSegTab(this)">
+        <i class="fas fa-briefcase"></i><span>My Portfolio</span>
+      </button>
+      <button class="seg-tab" data-seg="AI_ENGINE" onclick="selectSegTab(this)">
+        <i class="fas fa-circle-nodes"></i><span>AI Match Engine</span>
+      </button>
+    </div>
     <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
       <div class="search-wrap" style="flex:1; min-width:160px;">
         <i class="fas fa-search"></i>
-        <input type="text" id="searchInput" placeholder="Search listings, agents…" oninput="onSearchInput()">
+        <input type="text" id="searchInput" placeholder="Search listings, agents, locations…" oninput="onSearchInput()">
       </div>
       <div class="location-wrap">
         <i class="fas fa-map-marker-alt"></i>
@@ -72,21 +87,6 @@
       </div>
       <button class="btn-post-listing" onclick="openPostModal()">
         <i class="fas fa-plus"></i> Post Listing
-      </button>
-    </div>
-    <!-- Segmented icon tabs -->
-    <div class="seg-tabs" id="segTabs">
-      <button class="seg-tab active" data-seg="FEED" onclick="selectSegTab(this)">
-        <i class="fas fa-rss"></i><span>Pulse</span>
-      </button>
-      <button class="seg-tab" data-seg="MARKET" onclick="selectSegTab(this)">
-        <i class="fas fa-store"></i><span>Live Market</span>
-      </button>
-      <button class="seg-tab" data-seg="PORTFOLIO" onclick="selectSegTab(this)">
-        <i class="fas fa-briefcase"></i><span>My Portfolio</span>
-      </button>
-      <button class="seg-tab" data-seg="AI_ENGINE" onclick="selectSegTab(this)">
-        <i class="fas fa-circle-nodes"></i><span>AI Match Engine</span>
       </button>
     </div>
     <!-- Category filters (visible only under Market) -->
