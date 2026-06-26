@@ -1688,11 +1688,23 @@ renderMarketReportPdf();
 function syncTopPadding() {
     const wrap = document.querySelector('.top-fixed-wrap');
     if (!wrap) return;
-    const h = wrap.offsetHeight;
+
+    // Temporarily show all children to get true height
     const ticker = document.getElementById('tickerWrap');
-    const tickerHidden = ticker && ticker.style.display === 'none';
-    const buffer = tickerHidden ? 10 : 50;
-    document.documentElement.style.setProperty('--top-fixed-height', (h + buffer) + 'px');
+    const tickerWasHidden = ticker && ticker.style.display === 'none';
+
+    // Measure without ticker first to get base header height
+    if (ticker) ticker.style.display = 'none';
+    void wrap.offsetHeight;
+    const baseHeight = wrap.offsetHeight;
+
+    // Restore ticker
+    const showTicker = !tickerWasHidden;
+    if (ticker) ticker.style.display = showTicker ? '' : 'none';
+
+    // Add ticker height (42px including border) + small buffer
+    const totalHeight = showTicker ? baseHeight + 42 + 10 : baseHeight + 8;
+    document.documentElement.style.setProperty('--top-fixed-height', totalHeight + 'px');
 }
 syncTopPadding();
 window.addEventListener('resize', syncTopPadding);
