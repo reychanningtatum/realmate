@@ -247,13 +247,34 @@ function enhanceListingText(listing) {
     else if (unitType) unitParts.push(unitType);
     if (sqm) unitParts.push(sqm);
 
-    // Build compact text — no blank lines, display:block handles line breaks
+    // Extract extra details and remove from body
+    const bath = _xBath(raw); if (bath) body = body.replace(/\b\d+\s*(?:bath|bathroom|t&b|toilet)\w*/gi, '');
+    const park = _xPark(raw); if (park) body = body.replace(/\b(with\s*parking|no\s*parking|\d+\s*parking)\b/gi, '');
+    const furn = _xFurn(raw); if (furn) body = body.replace(/\b(fully\s*furnished|semi[\s-]*furnished|unfurnished|bare|furnished)\b/gi, '');
+    const tower = _xTower(raw); if (tower) body = body.replace(/\btower\s*\w+\b/gi, '');
+    const floor = _xFloor(raw); if (floor) body = body.replace(/\b\d+(?:th|st|nd|rd)\s*floor\b/gi, '');
+    const turnover = _xTurnover(raw); if (turnover) body = body.replace(/\b(rfo|ready\s*for\s*occupancy|pre[\s-]*selling|turnover\s*ready)\b/gi, '');
+
+    // Final body cleanup
+    body = body.replace(/\n\s*\n/g, '\n').replace(/^\s*[,\-–—·•:;\n]+/gm, '').replace(/[,\-–—·•:;]\s*$/gm, '').replace(/\n{2,}/g, '\n').trim();
+
+    // Extra detail lines
+    const extras = [];
+    if (bath) extras.push(bath + ' Bathroom' + (bath > 1 ? 's' : ''));
+    if (park) extras.push(park === 'Yes' ? 'With Parking' : park === 'No' ? 'No Parking' : park + ' Parking');
+    if (furn) extras.push(furn);
+    if (tower) extras.push(tower);
+    if (floor) extras.push(floor);
+    if (turnover) extras.push(turnover);
+
+    // Build compact text — no blank lines
     let result = '';
     if (locations.length) result += `<span class="lc-hl-location">${locations.join(', ')}</span>`;
     if (developer) result += `<span class="lc-hl-developer">${developer}</span>`;
     if (project) result += `<span class="lc-hl-project">${project}</span>`;
     if (unitParts.length) result += `<span class="lc-hl-unit">${unitParts.join(' — ')}</span>`;
     if (price) result += `<span class="lc-hl-price">₱${price.toLocaleString()}${priceContext ? ' ' + priceContext : ''}</span>`;
+    if (extras.length) result += `<span class="lc-hl-extras">${extras.join('<br>')}</span>`;
     if (body) result += safeText(body);
 
     return result || safeText(raw);

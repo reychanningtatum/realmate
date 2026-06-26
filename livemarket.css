@@ -629,8 +629,11 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 .lc-hl-unit { font-weight: 600; color: var(--text-main); font-size: 13px; line-height: 1.35; }
 .lc-hl-price { color: #32cd32; font-weight: 800; font-size: 14px; }
 
+.lc-hl-extras { display: block; font-size: 12px; font-weight: 500; color: var(--text-sub); line-height: 1.4; }
+
 html[data-theme="dark"] .lc-hl-unit { color: #f1f5f9; }
 html[data-theme="dark"] .lc-hl-project { color: #f1f5f9; }
+html[data-theme="dark"] .lc-hl-extras { color: #94a3b8; }
 
 .listing-card-user {
   display: flex; align-items: center; gap: 10px;
