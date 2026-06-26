@@ -220,7 +220,7 @@ function enhanceListingText(listing) {
     }
 
     // Clean up leftover artifacts
-    body = body.replace(/\n\s*\n/g, '\n').replace(/^\s*[,\-–—·•:;\n]+/gm, '').replace(/[,\-–—·•:;]\s*$/gm, '').replace(/\n{3,}/g, '\n\n').trim();
+    body = body.replace(/\n\s*\n/g, '\n').replace(/^\s*[,\-–—·•:;\n]+/gm, '').replace(/[,\-–—·•:;]\s*$/gm, '').replace(/\n{2,}/g, '\n').trim();
 
     // Extract developer and remove from body
     const developer = _xDev(raw);
@@ -244,16 +244,16 @@ function enhanceListingText(listing) {
     else if (unitType) unitParts.push(unitType);
     if (sqm) unitParts.push(sqm);
 
-    // Build reconstructed text: Location, Developer, Project, Unit, Price
+    // Build reconstructed text: Location, Developer, Project, Unit, Price, then rest immediately
     let result = '';
     if (locations.length) result += `<span class="lc-hl-location">${locations.join(', ')}</span><br>`;
     if (developer) result += `<span class="lc-hl-developer">${developer}</span><br>`;
     if (project) result += `<span class="lc-hl-project">${project}</span><br>`;
     if (unitParts.length) result += `<span class="lc-hl-unit">${unitParts.join(' — ')}</span><br>`;
-    if (price) result += `<span class="lc-hl-price">₱${price.toLocaleString()}${priceContext ? ' ' + priceContext : ''}</span><br>`;
+    if (price) result += `<span class="lc-hl-price">₱${price.toLocaleString()}${priceContext ? ' ' + priceContext : ''}</span>`;
 
-    // Highlight remaining body text
     if (body) {
+        if (result) result += '<br>';
         result += safeText(body);
     }
 
