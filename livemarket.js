@@ -840,9 +840,9 @@ function applyFilters() {
         const pins = getPinnedIds();
         pool = allListings.filter(l => pins.includes(String(l.id)));
     } else if (activeCategory === 'ALL') {
-        pool = allListings.filter(othersOnly);
+        pool = [...allListings];
     } else {
-        pool = allListings.filter(l => othersOnly(l) && l.category === activeCategory);
+        pool = allListings.filter(l => l.category === activeCategory);
     }
 
     if (q)   pool = pool.filter(l => (l.content || '').toLowerCase().includes(q) || (l.user_name || '').toLowerCase().includes(q));
