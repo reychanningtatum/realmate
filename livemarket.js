@@ -164,6 +164,53 @@ function buildStatusButtons(listing) {
     </div>`;
 }
 
+// ── AI text extraction helpers ──────────────────────
+function _xSqm(t) { const m = t.match(/(\d[\d,.]*)\s*(?:sqm|sq\.?\s*m)/i); return m ? m[1].replace(/,/g, '') + ' sqm' : null; }
+function _xLot(t) { const m = t.match(/lot\s*area[:\s]*(\d[\d,.]*)/i); return m ? m[1].replace(/,/g, '') + ' sqm' : null; }
+function _xBed(t) { const u = extractUnit(t); if (u === 'Studio') return 'Studio'; if (u) return u.replace('BR', ' Bedroom'); return null; }
+function _xBath(t) { const m = t.match(/(\d+)\s*(?:bath|bathroom|t&b|toilet)/i); return m ? m[1] : null; }
+function _xPark(t) { if (/\bwith\s*parking\b/i.test(t)) return 'Yes'; if (/\bno\s*parking\b/i.test(t)) return 'No'; if (/\b(\d+)\s*parking/i.test(t)) return t.match(/(\d+)\s*parking/i)[1]; return null; }
+function _xTower(t) { const m = t.match(/tower\s*(\w+)/i); return m ? 'Tower ' + m[1] : null; }
+function _xFurn(t) { const l = t.toLowerCase(); if (/\bfully\s*furnished\b/.test(l)) return 'Fully Furnished'; if (/\bsemi[\s-]*furnished\b/.test(l)) return 'Semi-Furnished'; if (/\bunfurnished\b|\bbare\b/.test(l)) return 'Bare'; if (/\bfurnished\b/.test(l)) return 'Furnished'; return null; }
+function _xDev(t) { const l = t.toLowerCase(); const d = [['alveo land','Alveo Land'],['ayala land','Ayala Land'],['smdc','SMDC'],['dmci','DMCI'],['megaworld','Megaworld'],['rockwell','Rockwell'],['federal land','Federal Land'],['filinvest','Filinvest'],['avida','Avida'],['amaia','Amaia']]; for (const [k,n] of d) { if (l.includes(k)) return n; } return null; }
+function _xFloor(t) { const m = t.match(/(\d+)(?:th|st|nd|rd)\s*floor/i); return m ? m[0] : null; }
+function _xType(t) { const l = t.toLowerCase(); if (/\bresidential\s*lot\b/.test(l)) return 'Residential Lot'; if (/\bcommercial\s*lot\b/.test(l)) return 'Commercial Lot'; if (/\bcondo(?:minium)?\b/.test(l)) return 'Condominium'; if (/\btownhouse\b/.test(l)) return 'Townhouse'; if (/\bhouse\s*(?:and|&)\s*lot\b/.test(l)) return 'House & Lot'; if (/\boffice\b/.test(l)) return 'Office'; return null; }
+function _xTurnover(t) { if (/\brfo\b|\bready\s*for\s*occupancy\b/i.test(t)) return 'Ready for Occupancy'; if (/\bpre[\s-]*selling\b/i.test(t)) return 'Pre-Selling'; if (/\bturnover\b/i.test(t)) return 'Turnover Ready'; return null; }
+
+function buildEnhancedPresentation(listing) {
+    const t = listing.content || '';
+    const location = extractLocations(t).join(', ') || null;
+    const project = extractProject(t) || null;
+    const price = extractPrice(t);
+    const details = [];
+    const unitType = _xType(t); if (unitType) details.push(['Unit Type', unitType]);
+    const bed = _xBed(t); if (bed) details.push(['Bedrooms', bed]);
+    const sqm = _xSqm(t); if (sqm) details.push(['Unit Size', sqm]);
+    const lot = _xLot(t); if (lot) details.push(['Lot Area', lot]);
+    const bath = _xBath(t); if (bath) details.push(['Bathrooms', bath]);
+    const park = _xPark(t); if (park) details.push(['Parking', park]);
+    const floor = _xFloor(t); if (floor) details.push(['Floor', floor]);
+    const tower = _xTower(t); if (tower) details.push(['Tower', tower]);
+    const furn = _xFurn(t); if (furn) details.push(['Furnishing', furn]);
+    const dev = _xDev(t); if (dev) details.push(['Developer', dev]);
+    const turnover = _xTurnover(t); if (turnover) details.push(['Status', turnover]);
+
+    const hasAny = location || project || price || details.length;
+    if (!hasAny) return '';
+
+    let html = '<div class="lc-enhanced">';
+    if (location) html += `<div class="lc-e-location">${location}</div>`;
+    if (project) html += `<div class="lc-e-project">${project}</div>`;
+    if (price) html += `<div class="lc-e-price">₱${price.toLocaleString()}</div>`;
+    if (details.length) {
+        html += '<div class="lc-e-details">';
+        details.forEach(([k, v]) => { html += `<div class="lc-e-row"><span class="lc-e-key">${k}</span><span class="lc-e-val">${v}</span></div>`; });
+        html += '</div>';
+    }
+    html += '</div>';
+    return html;
+}
+
 // ── Listing card ──────────────────────────────────
 // matchLabel: { myCategory, myContent } when this card matches one of the user's own listings
 function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchCount = 0) {
@@ -196,7 +243,11 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
                 <button class="pin-btn ${getPinnedIds().includes(String(listing.id)) ? 'pinned' : ''}" onclick="event.stopPropagation(); togglePin('${listing.id}', this)" title="${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}"><i class="fas fa-thumbtack"></i></button>
             </div>
             ${buildStatusBadge(listing)}
-            <p class="listing-text">${safeText(listing.content)}</p>
+            ${buildEnhancedPresentation(listing)}
+            <div class="lc-e-desc-section">
+                <div class="lc-e-desc-label">Description</div>
+                <p class="listing-text">${safeText(listing.content)}</p>
+            </div>
             ${buildFMVBadge(fmvResult)}
             <div class="listing-card-user">
                 <img src="${listing.user_img || avatarFallback(listing.user_name)}"
