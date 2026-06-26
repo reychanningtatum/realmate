@@ -612,6 +612,7 @@ function selectSegTab(btn) {
         else if (activeSegTab === 'MARKET') activeCategory = marketCat;
         applyFilters();
     }
+    syncTopPadding();
     requestAnimationFrame(() => {
         syncTopPadding();
         window.scrollTo(0, 0);
@@ -621,7 +622,8 @@ function selectSegTab(btn) {
         syncTopPadding();
         window.scrollTo(0, 0);
         document.querySelector('.main-content')?.scrollTo(0, 0);
-    }, 200);
+    }, 100);
+    setTimeout(syncTopPadding, 300);
 }
 
 function onSearchInput() {
