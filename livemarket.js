@@ -480,6 +480,9 @@ function selectSegTab(btn) {
     catFilters.style.display = activeSegTab === 'MARKET' ? 'flex' : 'none';
     portfolioFilters.style.display = activeSegTab === 'PORTFOLIO' ? 'flex' : 'none';
 
+    const ticker = document.getElementById('tickerWrap');
+    if (ticker) ticker.style.display = (activeSegTab === 'FEED' || activeSegTab === 'MARKET') ? '' : 'none';
+
     if (activeSegTab === 'FEED') {
         feedPane.style.display = '';
         listPane.style.display = 'none';
