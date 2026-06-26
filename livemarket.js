@@ -57,25 +57,131 @@ function imagesHtml(listing) {
     if (!imgs.length) return '';
     const key = listing.id || ('k' + Math.random().toString(36).slice(2));
     _lbStore[key] = imgs;
-    if (imgs.length === 1) return `<div class="listing-card-images" data-lbkey="${key}"><img class="single-img" src="${imgs[0]}" loading="lazy" data-lbidx="0" style="cursor:pointer;"></div>`;
-    if (imgs.length === 2) return `
-        <div class="listing-card-images" data-lbkey="${key}">
-            <div class="listing-img-grid cols-2">
-                ${imgs.map((u, i) => `<div class="img-wrap"><img src="${u}" loading="lazy" data-lbidx="${i}" style="cursor:pointer;"></div>`).join('')}
-            </div>
-        </div>`;
-    const extra = imgs.length > 3 ? imgs.length - 3 : 0;
-    return `
-        <div class="listing-card-images" data-lbkey="${key}">
-            <div class="listing-img-grid cols-3">
-                <div class="img-wrap cols-3-main"><img src="${imgs[0]}" loading="lazy" data-lbidx="0" style="cursor:pointer;"></div>
-                <div class="img-wrap"><img src="${imgs[1]}" loading="lazy" data-lbidx="1" style="cursor:pointer;"></div>
-                <div class="img-wrap" style="position:relative;">
-                    <img src="${imgs[2]}" loading="lazy" data-lbidx="2" style="cursor:pointer;">
-                    ${extra > 0 ? `<div class="img-more-overlay" data-lbidx="2" style="cursor:pointer;">+${extra}</div>` : ''}
-                </div>
-            </div>
-        </div>`;
+    const counter = imgs.length > 1 ? `<span class="listing-img-counter"><i class="fas fa-images"></i> 1 / ${imgs.length}</span>` : '';
+    return `<div class="listing-card-images" data-lbkey="${key}"><img class="single-img" src="${imgs[0]}" loading="lazy" data-lbidx="0" style="cursor:pointer;">${counter}</div>`;
+}
+
+function extractSqm(text) {
+    const m = text.match(/(\d[\d,.]*)\s*(?:sqm|sq\.?\s*m|square\s*met)/i);
+    return m ? m[1].replace(/,/g, '') + ' sqm' : null;
+}
+
+function extractFloorArea(text) {
+    const m = text.match(/floor\s*area[:\s]*(\d[\d,.]*)\s*(?:sqm|sq\.?\s*m)?/i);
+    return m ? m[1].replace(/,/g, '') + ' sqm' : null;
+}
+
+function extractLotArea(text) {
+    const m = text.match(/lot\s*area[:\s]*(\d[\d,.]*)\s*(?:sqm|sq\.?\s*m)?/i);
+    return m ? m[1].replace(/,/g, '') + ' sqm' : null;
+}
+
+function extractBedrooms(text) {
+    const u = extractUnit(text);
+    if (u === 'Studio') return 'Studio';
+    if (u) return u.replace('BR', ' Bedroom');
+    return null;
+}
+
+function extractBathrooms(text) {
+    const m = text.match(/(\d+)\s*(?:bath|bathroom|t&b|toilet)/i);
+    return m ? m[1] : null;
+}
+
+function extractParking(text) {
+    if (/\bwith\s*parking\b/i.test(text)) return 'Yes';
+    if (/\bno\s*parking\b/i.test(text)) return 'No';
+    if (/\bparking\b/i.test(text)) return 'Yes';
+    return null;
+}
+
+function extractTower(text) {
+    const m = text.match(/tower\s*(\w+)/i);
+    return m ? 'Tower ' + m[1] : null;
+}
+
+function extractFurnishing(text) {
+    const lower = text.toLowerCase();
+    if (/\bfully\s*furnished\b/.test(lower)) return 'Fully Furnished';
+    if (/\bsemi[\s-]*furnished\b/.test(lower)) return 'Semi-Furnished';
+    if (/\bunfurnished\b|\bbare\b/.test(lower)) return 'Bare/Unfurnished';
+    if (/\bfurnished\b/.test(lower)) return 'Furnished';
+    return null;
+}
+
+function extractDeveloper(text) {
+    const lower = text.toLowerCase();
+    const devs = [
+        ['alveo land', 'Alveo Land'], ['ayala land', 'Ayala Land'],
+        ['smdc', 'SMDC'], ['dmci', 'DMCI Homes'], ['megaworld', 'Megaworld'],
+        ['rockwell', 'Rockwell'], ['federal land', 'Federal Land'],
+        ['filinvest', 'Filinvest'], ['robinsons land', 'Robinsons Land'],
+        ['century properties', 'Century Properties'], ['avida', 'Avida'],
+        ['amaia', 'Amaia Land']
+    ];
+    for (const [key, name] of devs) {
+        if (lower.includes(key)) return name;
+    }
+    return null;
+}
+
+function extractRFO(text) {
+    if (/\brfo\b|\bready\s*for\s*occupancy\b/i.test(text)) return 'Ready for Occupancy';
+    if (/\bpre[\s-]*selling\b/i.test(text)) return 'Pre-Selling';
+    if (/\bturnover\b/i.test(text)) return 'Turnover Ready';
+    return null;
+}
+
+function formatPriceDisplay(price) {
+    if (!price) return null;
+    if (price >= 1000000) return '₱' + (price / 1000000).toFixed(price % 1000000 === 0 ? 0 : 1) + 'M';
+    if (price >= 1000) return '₱' + (price / 1000).toFixed(0) + 'K';
+    return '₱' + price.toLocaleString();
+}
+
+function buildPropertyPresentation(listing) {
+    const text = listing.content || '';
+    const project = extractProject(text);
+    const price = extractPrice(text);
+    const unit = extractBedrooms(text);
+    const locations = extractLocations(text);
+    const sqm = extractFloorArea(text) || extractSqm(text);
+    const lotArea = extractLotArea(text);
+    const bathrooms = extractBathrooms(text);
+    const parking = extractParking(text);
+    const tower = extractTower(text);
+    const developer = extractDeveloper(text);
+    const furnishing = extractFurnishing(text);
+    const rfo = extractRFO(text);
+    const location = locations.length ? locations.join(', ') : null;
+
+    const details = [];
+    if (unit) details.push(['Type', unit]);
+    if (sqm) details.push(['Floor Area', sqm]);
+    if (lotArea) details.push(['Lot Area', lotArea]);
+    if (bathrooms) details.push(['Bathrooms', bathrooms]);
+    if (tower) details.push(['Tower', tower]);
+    if (parking) details.push(['Parking', parking]);
+    if (furnishing) details.push(['Furnishing', furnishing]);
+    if (developer) details.push(['Developer', developer]);
+    if (rfo) details.push(['Status', rfo]);
+
+    const projectHtml = project
+        ? `<div class="lc-project-name">${project}</div>`
+        : '';
+    const priceHtml = price
+        ? `<div class="lc-price">${formatPriceDisplay(price)}</div>`
+        : '';
+    const locationHtml = location
+        ? `<div class="lc-location"><i class="fas fa-map-marker-alt"></i> ${location}</div>`
+        : '';
+    const detailsHtml = details.length
+        ? `<div class="lc-details-grid">${details.map(([k, v]) => `<div class="lc-detail"><span class="lc-detail-label">${k}</span><span class="lc-detail-value">${v}</span></div>`).join('')}</div>`
+        : '';
+
+    const hasPresentation = project || price || location || details.length;
+
+    return { projectHtml, priceHtml, locationHtml, detailsHtml, hasPresentation };
 }
 
 let _lbImgs = [], _lbIdx = 0;
@@ -185,6 +291,13 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
             <i class="fas fa-chevron-right match-banner-arrow" style="color:#475569;"></i>
         </div>` : '';
 
+    const pres = buildPropertyPresentation(listing);
+    const captionText = (listing.content || '').trim();
+    const captionHtml = pres.hasPresentation && captionText
+        ? `<div class="lc-caption"><p class="listing-text">${safeText(captionText)}</p></div>`
+        : (!pres.hasPresentation ? `<p class="listing-text">${safeText(captionText)}</p>` : '');
+    const autoLabel = pres.hasPresentation ? `<div class="lc-auto-label"><i class="fas fa-sparkles"></i> Auto-formatted by Realmate</div>` : '';
+
     card.innerHTML = `
         ${matchBanner}
         ${imagesHtml(listing)}
@@ -196,11 +309,17 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
                 <button class="pin-btn ${getPinnedIds().includes(String(listing.id)) ? 'pinned' : ''}" onclick="event.stopPropagation(); togglePin('${listing.id}', this)" title="${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}"><i class="fas fa-thumbtack"></i></button>
             </div>
             ${buildStatusBadge(listing)}
-            <p class="listing-text">${safeText(listing.content)}</p>
+            ${pres.projectHtml}
+            ${pres.priceHtml}
+            ${pres.locationHtml}
+            ${pres.detailsHtml}
+            ${autoLabel}
+            ${captionHtml}
             ${buildFMVBadge(fmvResult)}
             <div class="listing-card-user">
                 <img src="${listing.user_img || avatarFallback(listing.user_name)}"
-                     onerror="this.src='${avatarFallback(listing.user_name)}'">
+                     onerror="this.src='${avatarFallback(listing.user_name)}'"
+                     style="width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1.5px solid #e2e8f0;">
                 <div class="listing-card-user-info">
                     <div class="listing-card-user-name">${listing.user_name || 'Unknown'}</div>
                     <div class="listing-card-user-job">${listing.user_job || ''}</div>

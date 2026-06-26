@@ -558,74 +558,129 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 /* ── Single listing card ── */
 .listing-card {
   background: white;
-  border-radius: 16px;
-  border: 1px solid rgba(226,232,240,0.8);
+  border-radius: 18px;
+  border: 1px solid rgba(226,232,240,0.6);
   overflow: hidden;
   display: flex; flex-direction: column;
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: default;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.02);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.03);
 }
 .listing-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
 
 .listing-card-images { position: relative; }
 .listing-card-images img.single-img {
-  width: 100%; height: 200px; object-fit: cover; display: block;
+  width: 100%; height: 220px; object-fit: cover; display: block;
 }
-.listing-img-grid {
-  display: grid; height: 200px;
+.listing-img-counter {
+  position: absolute; bottom: 10px; right: 10px;
+  background: rgba(0,0,0,0.6); color: #fff;
+  font-size: 11px; font-weight: 600;
+  padding: 4px 10px; border-radius: 20px;
+  display: flex; align-items: center; gap: 5px;
+  backdrop-filter: blur(4px);
 }
-.listing-img-grid.cols-2 { grid-template-columns: 1fr 1fr; }
-.listing-img-grid.cols-3 { grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 1fr; }
-.listing-img-grid img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.listing-img-grid .img-wrap { position: relative; overflow: hidden; }
-.listing-img-grid .cols-3-main { grid-row: 1 / span 2; }
-.img-more-overlay {
-  position: absolute; inset: 0;
-  background: rgba(0,0,0,0.52);
-  display: flex; align-items: center; justify-content: center;
-  color: white; font-size: 20px; font-weight: 800;
-}
+.listing-img-counter i { font-size: 10px; }
 
-.listing-card-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px; }
+.listing-card-body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 6px; }
 
-.listing-card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.listing-card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
 
 .cat-tag {
   display: inline-flex; align-items: center;
-  font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
-  text-transform: uppercase; padding: 6px 14px;
-  border-radius: 999px;
-  border: 1px solid #e5e7eb;
-  background: #fff; color: #111827;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 5px 12px;
+  border-radius: 6px;
+  border: none;
   font-family: 'Inter', sans-serif;
 }
-.cat-sale    {}
-.cat-rent    {}
-.cat-lease   {}
-.cat-wbuy    {}
-.cat-wrent   {}
-.cat-wlease  {}
+.cat-sale    { background: #f0fdf4; color: #16a34a; }
+.cat-rent    { background: #eff6ff; color: #2563eb; }
+.cat-lease   { background: #faf5ff; color: #7c3aed; }
+.cat-wbuy    { background: #fff7ed; color: #ea580c; }
+.cat-wrent   { background: #fef3c7; color: #b45309; }
+.cat-wlease  { background: #fce7f3; color: #be185d; }
+
+/* Property presentation */
+.lc-project-name {
+  font-size: 20px; font-weight: 800; color: var(--text-main);
+  letter-spacing: -0.5px; line-height: 1.2;
+  font-family: 'Inter', sans-serif;
+}
+.lc-price {
+  font-size: 22px; font-weight: 800; color: #32cd32;
+  letter-spacing: -0.5px; line-height: 1;
+  margin: 2px 0;
+}
+.lc-location {
+  font-size: 13px; font-weight: 500; color: var(--text-sub);
+  display: flex; align-items: center; gap: 5px;
+  margin-bottom: 4px;
+}
+.lc-location i { font-size: 11px; color: #94a3b8; }
+
+.lc-details-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0; margin: 6px 0;
+  border: 1px solid var(--border); border-radius: 12px;
+  overflow: hidden;
+}
+.lc-detail {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+.lc-detail:nth-child(2n) { border-right: none; }
+.lc-detail:nth-last-child(-n+2) { border-bottom: none; }
+.lc-detail:last-child:nth-child(odd) { grid-column: 1 / -1; border-right: none; }
+.lc-detail-label { font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+.lc-detail-value { font-size: 13px; font-weight: 700; color: var(--text-main); }
+
+.lc-auto-label {
+  font-size: 10px; color: #94a3b8; font-weight: 500;
+  display: flex; align-items: center; gap: 4px;
+  margin: 2px 0;
+}
+.lc-auto-label i { font-size: 10px; color: #d4a017; }
+
+.lc-caption {
+  margin-top: 4px; padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
 
 .listing-text {
-  font-size: 13px; line-height: 1.6; color: #475569;
+  font-size: 13px; line-height: 1.65; color: #475569;
   word-break: break-word;
 }
 
 .listing-card-user {
   display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px; margin-top: 4px;
-  background: #f8fafc; border-radius: 10px;
+  padding: 12px 14px; margin-top: 6px;
+  background: #f8fafc; border-radius: 12px;
 }
 .listing-card-user img {
-  width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
+  width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
   flex-shrink: 0; border: 1.5px solid #e2e8f0;
 }
 .listing-card-user-info { min-width: 0; flex: 1; }
 .listing-card-user-name { font-size: 13px; font-weight: 700; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.listing-card-user-job  { font-size: 10px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.listing-card-user-job  { font-size: 11px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .listing-card-date { font-size: 10px; color: #94a3b8; margin-left: auto; white-space: nowrap; flex-shrink: 0; }
+
+/* Dark theme for new card elements */
+html[data-theme="dark"] .lc-project-name { color: #f1f5f9; }
+html[data-theme="dark"] .lc-details-grid { border-color: #334155; }
+html[data-theme="dark"] .lc-detail { border-color: #334155; }
+html[data-theme="dark"] .lc-detail-value { color: #f1f5f9; }
+html[data-theme="dark"] .lc-caption { border-color: #334155; }
+html[data-theme="dark"] .cat-sale { background: rgba(22,163,74,0.12); }
+html[data-theme="dark"] .cat-rent { background: rgba(37,99,235,0.12); }
+html[data-theme="dark"] .cat-lease { background: rgba(124,58,237,0.12); }
+html[data-theme="dark"] .cat-wbuy { background: rgba(234,88,12,0.12); }
+html[data-theme="dark"] .cat-wrent { background: rgba(180,83,9,0.12); }
+html[data-theme="dark"] .cat-wlease { background: rgba(190,24,93,0.12); }
 
 /* ── FMV Badge ── */
 .fmv-badge {
