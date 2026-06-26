@@ -230,8 +230,8 @@ h1,h2,h3 { font-family: 'Playfair Display', serif; }
 .filter-bar {
   display: flex; flex-direction: column; gap: 8px;
   background: var(--bg);
-  padding: 8px 48px 6px;
-  border-bottom: 1px solid var(--border);
+  padding: 8px 48px 0;
+  border-bottom: none;
 }
 .market-pulse-title {
   font-family: 'Inter', sans-serif;
