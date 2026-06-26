@@ -226,10 +226,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
             </div>
             ${buildStatusBadge(listing)}
             ${buildEnhancedPresentation(listing)}
-            <div class="lc-e-desc-section">
-                <div class="lc-e-desc-label">Description</div>
-                <p class="listing-text">${safeText(listing.content)}</p>
-            </div>
+            <p class="listing-text">${safeText(listing.content)}</p>
             ${buildFMVBadge(fmvResult)}
             <div class="listing-card-user">
                 <img src="${listing.user_img || avatarFallback(listing.user_name)}"
