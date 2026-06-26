@@ -912,5 +912,5 @@ html[data-theme="dark"] .profile-img-container { border-color: #334155; }
 .mob-nav-item.mob-nav-center.active { background: #fff !important; border-color: #e2e8f0; box-shadow: 0 3px 10px rgba(0,0,0,0.15), 0 1px 4px rgba(0,0,0,0.08); }
 .mob-nav-item.mob-nav-center.active i { color: #32cd32; }
 .mob-nav-item.mob-nav-center.active span { color: #32cd32; }
-.mob-nav-item.mob-nav-center:hover { color: #32cd32 !important; }
-
+.mob-nav-item.mob-nav-center:hover i { color: #32cd32; }
+.mob-nav-item.mob-nav-center:hover span { color: #32cd32; }
