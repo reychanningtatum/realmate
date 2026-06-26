@@ -679,48 +679,33 @@ html[data-theme="light"] .nav-item.active { background: rgba(50,205,50,0.10); co
 .mob-nav-item:hover { color: #32cd32; }
 
 /* Raised center Home button */
+/* Center nav item — same layout as others, no raised circle */
 .mob-nav-item.mob-nav-center {
-  position: relative;
-  top: -8px;
-  width: 50px;
-  min-width: 50px;
-  max-width: 50px;
-  height: 58px;
-  padding: 0;
-  border-radius: 0;
-  background: transparent !important;
-  color: #94a3b8 !important;
-  box-shadow: none !important;
-  justify-content: flex-start;
+  position: static;
+  top: auto;
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  height: auto;
+  padding: 6px 1px;
+  border-radius: 10px;
+  background: transparent;
+  color: #94a3b8;
+  box-shadow: none;
+  justify-content: center;
   align-items: center;
-  flex: none;
+  flex: 1;
   border: none;
-  gap: 0;
+  gap: 2px;
   overflow: visible;
 }
-.mob-nav-item.mob-nav-center i {
-  font-size: 18px;
-  color: #94a3b8;
-  width: 42px;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: #fff;
-  border: 3px solid #e2e8f0;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.15), 0 1px 4px rgba(0,0,0,0.08);
-  flex-shrink: 0;
-}
-.mob-nav-item.mob-nav-center span {
-  font-size: 8px; color: #94a3b8; font-weight: 700;
-  white-space: nowrap; line-height: 1;
-  margin-top: 2px;
-}
-.mob-nav-item.mob-nav-center.active,
-.mob-nav-item.mob-nav-center:hover { background: transparent !important; box-shadow: none !important; }
-.mob-nav-item.mob-nav-center.active i { color: #fff; background: #32cd32; border-color: #32cd32; box-shadow: 0 4px 14px rgba(50,205,50,0.4), 0 2px 6px rgba(0,0,0,0.10); }
+.mob-nav-item.mob-nav-center i { font-size: 18px; color: #94a3b8; width: auto; height: auto; display: inline; border-radius: 0; background: none; border: none; box-shadow: none; }
+.mob-nav-item.mob-nav-center span { font-size: 9px; color: #94a3b8; font-weight: 600; white-space: nowrap; display: block; position: static; transform: none; margin: 0; }
+.mob-nav-item.mob-nav-center.active { color: #32cd32; background: transparent; }
+.mob-nav-item.mob-nav-center.active i { color: #32cd32; background: none; border: none; box-shadow: none; }
 .mob-nav-item.mob-nav-center.active span { color: #32cd32; }
+.mob-nav-item.mob-nav-center:hover { color: #32cd32; background: transparent; }
+.mob-nav-item.mob-nav-center:hover i { color: #32cd32; background: none; }
 .mob-nav-avatar-wrap { position: relative; cursor: pointer; }
 .mob-nav-avatar {
   width: 28px; height: 28px; border-radius: 50%;
