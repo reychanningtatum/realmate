@@ -233,7 +233,7 @@ h1,h2,h3 { font-family: 'Playfair Display', serif; }
 .filter-bar {
   display: flex; flex-direction: column; gap: 8px;
   background: var(--bg);
-  padding: 8px 48px 8px;
+  padding: 8px 48px 4px;
   border-bottom: none;
   margin-bottom: 0;
 }
@@ -560,7 +560,7 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   grid-template-columns: 1fr;
   gap: 16px;
   align-items: start;
-  margin-top: 14px;
+  margin-top: 6px;
   /* contain card stacking contexts so they never bleed above sticky bars */
   isolation: isolate;
 }
