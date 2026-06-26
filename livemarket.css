@@ -620,16 +620,14 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 }
 
 /* Inline text highlights */
-.lc-hl-location, .lc-hl-developer, .lc-hl-project, .lc-hl-unit, .lc-hl-price {
-  display: block; line-height: 1.3;
-}
-.lc-hl-location { color: #32cd32; font-weight: 800; font-size: 17px; }
-.lc-hl-developer { font-weight: 700; color: var(--text-sub); font-size: 14px; }
-.lc-hl-project { font-weight: 800; color: var(--text-main); font-size: 15px; }
-.lc-hl-unit { font-weight: 600; color: var(--text-main); font-size: 13px; }
-.lc-hl-price { color: #32cd32; font-weight: 800; font-size: 15px; margin-bottom: 4px; }
+.lc-hl-location { color: var(--text-main); font-weight: 800; font-size: 18px; }
+.lc-hl-developer { font-weight: 700; color: var(--text-sub); font-size: 16px; }
+.lc-hl-project { font-weight: 800; color: var(--text-main); font-size: 16px; }
+.lc-hl-unit { font-weight: 700; color: var(--text-main); font-size: 15px; }
+.lc-hl-price { color: #32cd32; font-weight: 800; font-size: 13px; }
 
 html[data-theme="dark"] .lc-hl-unit { color: #f1f5f9; }
+
 html[data-theme="dark"] .lc-hl-project { color: #f1f5f9; }
 
 .listing-card-user {

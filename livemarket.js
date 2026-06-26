@@ -239,38 +239,23 @@ function enhanceListingText(listing) {
     }
     if (sqm) body = body.replace(/\d[\d,.]*\s*(?:sqm|sq\.?\s*m|square\s*met\w*)/gi, '');
 
-    // Extract extra details and remove from body
-    const bath = _xBath(raw); if (bath) body = body.replace(/\b\d+\s*(?:bath|bathroom|t&b|toilet)\w*/gi, '');
-    const park = _xPark(raw); if (park) body = body.replace(/\b(with\s*parking|no\s*parking|\d+\s*parking)\b/gi, '');
-    const furn = _xFurn(raw); if (furn) body = body.replace(/\b(fully\s*furnished|semi[\s-]*furnished|unfurnished|bare|furnished)\b/gi, '');
-    const tower = _xTower(raw); if (tower) body = body.replace(/\btower\s*\w+\b/gi, '');
-    const floor = _xFloor(raw); if (floor) body = body.replace(/\b\d+(?:th|st|nd|rd)\s*floor\b/gi, '');
-    const turnover = _xTurnover(raw); if (turnover) body = body.replace(/\b(rfo|ready\s*for\s*occupancy|pre[\s-]*selling|turnover\s*ready)\b/gi, '');
+    const unitParts = [];
+    if (bedrooms) unitParts.push(bedrooms);
+    else if (unitType) unitParts.push(unitType);
+    if (sqm) unitParts.push(sqm);
 
-    // Final body cleanup
-    body = body.replace(/\n\s*\n/g, '\n').replace(/^\s*[,\-–—·•:;\n]+/gm, '').replace(/[,\-–—·•:;]\s*$/gm, '').replace(/\n{2,}/g, '\n').trim();
-
-    // Build compact MLS-style presentation
+    // Build reconstructed text: Location, Developer, Project, Unit, Price, then rest immediately
     let result = '';
-    if (locations.length) result += `<span class="lc-hl-location">${locations.join(', ')}</span>`;
-    if (developer) result += `<span class="lc-hl-developer">${developer}</span>`;
-    if (project) result += `<span class="lc-hl-project">${project}</span>`;
+    if (locations.length) result += `<span class="lc-hl-location">${locations.join(', ')}</span><br>`;
+    if (developer) result += `<span class="lc-hl-developer">${developer}</span><br>`;
+    if (project) result += `<span class="lc-hl-project">${project}</span><br>`;
+    if (unitParts.length) result += `<span class="lc-hl-unit">${unitParts.join(' — ')}</span><br>`;
     if (price) result += `<span class="lc-hl-price">₱${price.toLocaleString()}${priceContext ? ' ' + priceContext : ''}</span>`;
 
-    // Unit details as compact lines
-    const unitLines = [];
-    if (bedrooms) unitLines.push(bedrooms);
-    if (unitType && !bedrooms) unitLines.push(unitType);
-    if (sqm) unitLines.push(sqm);
-    if (bath) unitLines.push(bath + ' Bathroom' + (bath > 1 ? 's' : ''));
-    if (park) unitLines.push(park === 'Yes' ? 'With Parking' : park === 'No' ? 'No Parking' : park + ' Parking');
-    if (furn) unitLines.push(furn);
-    if (tower) unitLines.push(tower);
-    if (floor) unitLines.push(floor);
-    if (turnover) unitLines.push(turnover);
-    if (unitLines.length) result += `<span class="lc-hl-unit">${unitLines.join('<br>')}</span>`;
-
-    if (body) result += safeText(body);
+    if (body) {
+        if (result) result += '<br>';
+        result += safeText(body);
+    }
 
     return result || safeText(raw);
 }
