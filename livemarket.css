@@ -1006,7 +1006,6 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
     padding: 6px 14px 2px;
   }
   .btn-post-listing { padding: 9px 12px; font-size: 12px; }
-  .listings-grid { margin-top: 4px; }
   .page-header { display: none; }
 
   /* Main content: not a scroll container, flows with body */
@@ -1015,7 +1014,7 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
     overflow: visible;
     height: auto;
     /* push content down so it starts below fixed ticker + filter bar */
-    padding: 16px 16px 80px;
+    padding: 6px 16px 80px;
     padding-top: var(--top-fixed-height, 170px);
   }
 
@@ -1043,7 +1042,7 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
   .feed-dashboard { padding: 0; }
   .feed-graph-strip { border-radius: 10px; }
   .feed-pdf-strip { gap: 8px; }
-  .listings-grid { grid-template-columns: 1fr; gap: 14px; }
+  .listings-grid { grid-template-columns: 1fr; gap: 14px; margin-top: 6px; }
 
   .listing-card-images img.single-img { height: 180px; }
   .listing-img-grid { height: 180px; }
