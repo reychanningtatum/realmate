@@ -672,7 +672,9 @@ html[data-theme="light"] .nav-item.active { background: rgba(50,205,50,0.10); co
   display: flex; flex-direction: column; align-items: center; gap: 2px;
   color: #94a3b8; text-decoration: none; font-size: 9px; font-weight: 600;
   flex: 1; padding: 6px 1px; border-radius: 10px; min-width: 0;
+  cursor: pointer; transition: color 0.15s, transform 0.15s;
 }
+.mob-nav-item:active { transform: scale(0.92); }
 .mob-nav-item i { font-size: 18px; }
 .mob-nav-item span { display: block; font-size: 9px; white-space: nowrap; }
 .mob-nav-item.active { color: #32cd32; }

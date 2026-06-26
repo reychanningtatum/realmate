@@ -924,10 +924,12 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
 .mob-nav-item {
   display: flex; flex-direction: column; align-items: center; gap: 2px;
   color: #94a3b8; text-decoration: none;
-  font-size: 10px; font-weight: 600;
+  font-size: 9px; font-weight: 600;
   flex: 1; min-width: 0; flex-shrink: 0;
-  padding: 8px 2px;
+  padding: 6px 1px;
+  cursor: pointer; transition: color 0.15s, transform 0.15s;
 }
+.mob-nav-item:active { transform: scale(0.92); }
 .mob-nav-item i { font-size: 20px; }
 .mob-nav-item span { display: block; font-size: 10px; }
 .mob-nav-item.active { color: var(--primary); }

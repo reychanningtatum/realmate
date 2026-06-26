@@ -768,7 +768,10 @@ input:checked + .slider:before {
     flex-shrink: 0;
     padding: 6px 1px;
     border-radius: 10px;
+    cursor: pointer;
+    transition: color 0.15s, transform 0.15s;
 }
+.mob-nav-item:active { transform: scale(0.92); }
 
 .mob-nav-item i { font-size: 20px; }
 .mob-nav-item.active { color: #32cd32; }
