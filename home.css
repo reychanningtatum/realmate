@@ -709,12 +709,12 @@ html[data-theme="light"] .nav-item.active { background: rgba(50,205,50,0.10); co
 .mob-nav-item.mob-nav-center.active span { color: #32cd32; }
 .mob-nav-item.mob-nav-center:hover i { color: #32cd32; }
 .mob-nav-item.mob-nav-center:hover span { color: #32cd32; }
-.mob-nav-avatar-wrap { position: relative; cursor: pointer; }
+.mob-nav-avatar-wrap { position: relative; cursor: pointer; justify-content: flex-end; }
 .mob-nav-avatar {
-  width: 28px; height: 28px; border-radius: 50%;
+  width: 22px; height: 22px; border-radius: 50%;
   background: #32cd32; color: #fff;
   display: flex; align-items: center; justify-content: center;
-  overflow: hidden; flex-shrink: 0; font-size: 12px; font-weight: 700;
+  overflow: hidden; flex-shrink: 0; font-size: 10px; font-weight: 700;
 }
 .mob-nav-menu {
   display: none; position: absolute; bottom: 64px; right: -10px;
