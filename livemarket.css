@@ -363,7 +363,7 @@ h1,h2,h3 { font-family: 'Playfair Display', serif; }
 }
 .chip-sub {
   font-size: 12px; padding: 7px 16px;
-  background: white; border-color: #d1fae5; color: #16a34a;
+  background: white; border-color: var(--border); color: var(--text-sub);
 }
 .chip-sub:hover { border-color: var(--primary); color: var(--primary); }
 .chip-sub.active { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 2px 6px rgba(50,205,50,0.2); }
