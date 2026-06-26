@@ -634,35 +634,71 @@ function selectSubCat(btn) {
 // ── Smart AI Matching Engine ─────────────────────
 
 const LOCATION_KEYWORDS = {
-    'bgc': 'BGC', 'bonifacio': 'BGC', 'fort': 'BGC', 'taguig': 'Taguig',
-    'makati': 'Makati', 'salcedo': 'Makati', 'legazpi': 'Makati', 'rockwell': 'Makati',
-    'pasig': 'Pasig', 'ortigas': 'Pasig', 'eastwood': 'Pasig',
-    'mandaluyong': 'Mandaluyong', 'quezon city': 'Quezon City', 'qc': 'Quezon City',
-    'alabang': 'Alabang', 'muntinlupa': 'Muntinlupa', 'pasay': 'Pasay',
-    'paranaque': 'Parañaque', 'parañaque': 'Parañaque',
-    'las pinas': 'Las Piñas', 'las piñas': 'Las Piñas',
-    'laguna': 'Laguna', 'cavite': 'Cavite', 'cebu': 'Cebu',
-    'rizal': 'Rizal', 'bulacan': 'Bulacan', 'pampanga': 'Pampanga',
+    // Metro Manila
+    'bgc': 'BGC', 'bonifacio global city': 'BGC', 'bonifacio': 'BGC', 'fort bonifacio': 'BGC',
+    'taguig city': 'Taguig City', 'taguig': 'Taguig',
+    'makati city': 'Makati City', 'makati': 'Makati', 'salcedo': 'Makati', 'legazpi village': 'Makati', 'rockwell': 'Makati',
+    'pasig city': 'Pasig City', 'pasig': 'Pasig', 'ortigas': 'Ortigas', 'eastwood': 'Eastwood',
+    'mandaluyong city': 'Mandaluyong City', 'mandaluyong': 'Mandaluyong',
+    'quezon city': 'Quezon City', 'qc': 'Quezon City',
+    'manila city': 'Manila City', 'manila': 'Manila',
+    'alabang': 'Alabang', 'muntinlupa city': 'Muntinlupa City', 'muntinlupa': 'Muntinlupa',
+    'pasay city': 'Pasay City', 'pasay': 'Pasay',
+    'paranaque city': 'Parañaque City', 'paranaque': 'Parañaque', 'parañaque city': 'Parañaque City', 'parañaque': 'Parañaque',
+    'las pinas city': 'Las Piñas City', 'las pinas': 'Las Piñas', 'las piñas city': 'Las Piñas City', 'las piñas': 'Las Piñas',
+    'san juan city': 'San Juan City', 'san juan': 'San Juan',
+    'marikina city': 'Marikina City', 'marikina': 'Marikina',
+    'valenzuela city': 'Valenzuela City', 'valenzuela': 'Valenzuela',
+    'caloocan city': 'Caloocan City', 'caloocan': 'Caloocan',
     'mckinley': 'BGC', 'mckinley hill': 'BGC', 'uptown': 'BGC',
+    // Laguna
+    'laguna': 'Laguna', 'nuvali': 'Nuvali, Laguna', 'calamba': 'Calamba, Laguna',
+    'sta rosa': 'Sta. Rosa, Laguna', 'santa rosa': 'Sta. Rosa, Laguna',
+    'binan': 'Biñan, Laguna', 'biñan': 'Biñan, Laguna',
+    'san pedro': 'San Pedro, Laguna',
+    'los banos': 'Los Baños, Laguna', 'los baños': 'Los Baños, Laguna',
+    // Cavite
+    'cavite': 'Cavite', 'carmona': 'Carmona, Cavite',
+    'bacoor': 'Bacoor, Cavite', 'imus': 'Imus, Cavite',
+    'dasmarinas': 'Dasmariñas, Cavite', 'dasmariñas': 'Dasmariñas, Cavite',
+    'general trias': 'General Trias, Cavite', 'tagaytay': 'Tagaytay, Cavite',
+    'silang': 'Silang, Cavite',
+    // Rizal
+    'rizal': 'Rizal', 'antipolo': 'Antipolo, Rizal', 'cainta': 'Cainta, Rizal', 'taytay': 'Taytay, Rizal',
+    // Bulacan & Pampanga
+    'bulacan': 'Bulacan', 'meycauayan': 'Meycauayan, Bulacan', 'marilao': 'Marilao, Bulacan',
+    'pampanga': 'Pampanga', 'clark': 'Clark, Pampanga', 'angeles city': 'Angeles City, Pampanga',
+    // Batangas
+    'batangas': 'Batangas', 'lipa': 'Lipa, Batangas',
+    // Cebu
+    'cebu city': 'Cebu City', 'cebu': 'Cebu', 'mandaue': 'Mandaue, Cebu', 'lapu-lapu': 'Lapu-Lapu, Cebu',
 };
 
 // Location proximity zones — locations in same zone are "nearby"
 const LOCATION_ZONES = {
-    'Metro Manila Core': ['BGC', 'Makati', 'Taguig', 'Pasay', 'Mandaluyong'],
-    'Metro Manila East': ['Pasig', 'Quezon City'],
-    'Metro Manila South': ['Alabang', 'Muntinlupa', 'Parañaque', 'Las Piñas'],
-    'Calabarzon': ['Laguna', 'Cavite', 'Rizal'],
-    'Central Luzon': ['Bulacan', 'Pampanga'],
-    'Visayas': ['Cebu'],
+    'Metro Manila Core': ['BGC', 'Makati', 'Makati City', 'Taguig', 'Taguig City', 'Pasay', 'Pasay City', 'Mandaluyong', 'Mandaluyong City', 'Manila', 'Manila City', 'San Juan', 'San Juan City'],
+    'Metro Manila East': ['Pasig', 'Pasig City', 'Quezon City', 'Marikina', 'Marikina City', 'Ortigas', 'Eastwood'],
+    'Metro Manila North': ['Valenzuela', 'Valenzuela City', 'Caloocan', 'Caloocan City', 'Meycauayan, Bulacan', 'Marilao, Bulacan'],
+    'Metro Manila South': ['Alabang', 'Muntinlupa', 'Muntinlupa City', 'Parañaque', 'Parañaque City', 'Las Piñas', 'Las Piñas City'],
+    'Laguna': ['Laguna', 'Nuvali, Laguna', 'Calamba, Laguna', 'Sta. Rosa, Laguna', 'Biñan, Laguna', 'San Pedro, Laguna', 'Los Baños, Laguna'],
+    'Cavite': ['Cavite', 'Carmona, Cavite', 'Bacoor, Cavite', 'Imus, Cavite', 'Dasmariñas, Cavite', 'General Trias, Cavite', 'Tagaytay, Cavite', 'Silang, Cavite'],
+    'Rizal': ['Rizal', 'Antipolo, Rizal', 'Cainta, Rizal', 'Taytay, Rizal'],
+    'Central Luzon': ['Bulacan', 'Pampanga', 'Clark, Pampanga', 'Angeles City, Pampanga'],
+    'Batangas': ['Batangas', 'Lipa, Batangas'],
+    'Visayas': ['Cebu', 'Cebu City', 'Mandaue, Cebu', 'Lapu-Lapu, Cebu'],
 };
 
 // Adjacent zones that count as "nearby"
 const ADJACENT_ZONES = {
-    'Metro Manila Core': ['Metro Manila East', 'Metro Manila South'],
-    'Metro Manila East': ['Metro Manila Core', 'Calabarzon'],
-    'Metro Manila South': ['Metro Manila Core', 'Calabarzon'],
-    'Calabarzon': ['Metro Manila East', 'Metro Manila South'],
-    'Central Luzon': ['Metro Manila Core', 'Metro Manila East'],
+    'Metro Manila Core': ['Metro Manila East', 'Metro Manila South', 'Metro Manila North'],
+    'Metro Manila East': ['Metro Manila Core', 'Rizal', 'Laguna'],
+    'Metro Manila North': ['Metro Manila Core', 'Central Luzon'],
+    'Metro Manila South': ['Metro Manila Core', 'Cavite', 'Laguna'],
+    'Laguna': ['Metro Manila South', 'Metro Manila East', 'Cavite', 'Batangas'],
+    'Cavite': ['Metro Manila South', 'Laguna', 'Batangas'],
+    'Rizal': ['Metro Manila East', 'Laguna'],
+    'Central Luzon': ['Metro Manila Core', 'Metro Manila North'],
+    'Batangas': ['Laguna', 'Cavite'],
     'Visayas': [],
 };
 
@@ -706,8 +742,17 @@ const FEATURE_KEYWORDS = [
 function extractLocations(text) {
     const lower = text.toLowerCase();
     const found = new Set();
-    Object.entries(LOCATION_KEYWORDS).forEach(([key, val]) => {
-        if (lower.includes(key)) found.add(val);
+    const keys = Object.keys(LOCATION_KEYWORDS).sort((a, b) => b.length - a.length);
+    keys.forEach(key => {
+        if (lower.includes(key)) {
+            const val = LOCATION_KEYWORDS[key];
+            let dominated = false;
+            found.forEach(existing => { if (existing.includes(val) && existing !== val) dominated = true; });
+            if (!dominated) {
+                found.forEach(existing => { if (val.includes(existing) && val !== existing) found.delete(existing); });
+                found.add(val);
+            }
+        }
     });
     return [...found];
 }
