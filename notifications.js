@@ -117,7 +117,7 @@ function renderNotificationsInterface() {
             typeIcon = "fa-user-plus";
             contextClass = "badge-mate";
         } else if (notif.type === 'mate_accepted') {
-            typeIcon = "fa-handshake";
+            typeIcon = "fa-user-group";
             contextClass = "badge-mate";
         } else if (notif.type.includes("like")) {
             typeIcon = "fa-heart";
@@ -139,7 +139,7 @@ function renderNotificationsInterface() {
                 <button class="mate-decline-btn" onclick="handleNotifDeclineMate(this, '${notif.sender_user_name.replace(/'/g, "\\'")}', '${notif.id}')">
                     <i class="fas fa-times"></i> Decline
                 </button>
-            </div>` : (notif.type === 'mate_request' && alreadyHandled ? `<p class="mate-confirmed-msg"><i class="fas fa-handshake"></i> You are now Realmates!</p>` : '');
+            </div>` : (notif.type === 'mate_request' && alreadyHandled ? `<p class="mate-confirmed-msg"><i class="fas fa-user-group"></i> You are now Realmates!</p>` : '');
 
         row.innerHTML = `
             <div class="hub-avatar-block">
@@ -324,7 +324,7 @@ async function handleNotifAcceptMate(btn, senderName, notifId) {
     const cached = localNotificationsCache.find(n => n.id === notifId);
     if (cached) cached.is_read = true;
     const actions = btn.closest('.mate-request-actions');
-    if (actions) actions.outerHTML = `<p class="mate-confirmed-msg"><i class="fas fa-handshake"></i> You are now Realmates!</p>`;
+    if (actions) actions.outerHTML = `<p class="mate-confirmed-msg"><i class="fas fa-user-group"></i> You are now Realmates!</p>`;
 }
 
 async function handleNotifDeclineMate(btn, senderName, notifId) {

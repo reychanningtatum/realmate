@@ -104,7 +104,7 @@
   <div class="nav-item" onclick="location.href='forum.html'"><i class="fas fa-people-group"></i> <span>Forum</span></div>
   <div class="nav-item" onclick="location.href='chat.html'"><i class="fas fa-comment-dots"></i> <span>Chat</span></div>
   <div class="nav-item" onclick="location.href='notifications.html'"><i class="fas fa-bell"></i> <span>Notifications</span></div>
-  <div class="nav-item active"><i class="fas fa-handshake"></i> <span>Realmates</span></div>
+  <div class="nav-item active"><i class="fas fa-user-group"></i> <span>Realmates</span></div>
   <div class="nav-item" onclick="location.href='settings.html'"><i class="fas fa-cog"></i> <span>Settings</span></div>
   <div style="margin-top:auto">
     <div class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Sign Out</span></div>
@@ -116,7 +116,7 @@
 
     <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
       <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#32cd32,#16a34a);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <i class="fas fa-handshake" style="color:#fff;font-size:18px;"></i>
+        <i class="fas fa-user-group" style="color:#fff;font-size:18px;"></i>
       </div>
       <div>
         <div class="rm-page-title">My Realmates</div>
@@ -145,7 +145,7 @@
       <!-- Accepted Mates -->
       <div class="rm-section">
         <div class="rm-section-label" style="color:#16a34a;">
-          <i class="fas fa-handshake"></i> Realmates
+          <i class="fas fa-user-group"></i> Realmates
         </div>
         <div id="rmAcceptedList"></div>
       </div>
@@ -203,7 +203,7 @@ async function loadRealmates() {
   document.getElementById('rmStats').innerHTML = `
     <div class="rm-stat">
       <div class="rm-stat-num">${accepted.length}</div>
-      <div class="rm-stat-label"><i class="fas fa-handshake" style="color:#32cd32;margin-right:4px;"></i>Realmates</div>
+      <div class="rm-stat-label"><i class="fas fa-user-group" style="color:#32cd32;margin-right:4px;"></i>Realmates</div>
     </div>
     <div class="rm-stat">
       <div class="rm-stat-num">${pendingReceived.length}</div>
@@ -243,7 +243,7 @@ async function loadRealmates() {
   if (accepted.length === 0) {
     acceptedList.innerHTML = `
       <div class="rm-empty">
-        <i class="fas fa-handshake"></i>
+        <i class="fas fa-user-group"></i>
         <strong>No Realmates yet</strong>
         Browse the Live Market and connect with fellow agents.
       </div>`;
@@ -255,7 +255,7 @@ async function loadRealmates() {
           <div class="rm-card-name">${m.name}</div>
           <div class="rm-card-job">Realmate</div>
         </div>
-        <span class="rm-card-badge rm-badge-mates"><i class="fas fa-handshake" style="margin-right:4px;"></i>Connected</span>
+        <span class="rm-card-badge rm-badge-mates"><i class="fas fa-user-group" style="margin-right:4px;"></i>Connected</span>
       </div>
     `).join('');
   }

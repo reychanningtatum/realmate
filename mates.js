@@ -255,7 +255,7 @@ function mateButtonHtml(userName, btnClass = 'btn-mate') {
     const status = getMateStatus(userName);
     if (status === 'accepted') {
         return `<button class="${btnClass} mate-status-mates" disabled>
-                    <i class="fas fa-handshake"></i> Realmates
+                    <i class="fas fa-user-group"></i> Realmates
                 </button>`;
     }
     if (status === 'pending_sent') {
@@ -312,7 +312,7 @@ async function handleAcceptMate(btn, userName) {
     if (result.success) {
         const container = btn.closest('div[style]') || btn.parentElement;
         container.outerHTML = `<button class="btn-mate-profile mate-status-mates" disabled>
-                                    <i class="fas fa-handshake"></i> You are now Realmates!
+                                    <i class="fas fa-user-group"></i> You are now Realmates!
                                </button>`;
     } else {
         btn.disabled = false;

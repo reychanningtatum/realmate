@@ -238,7 +238,7 @@ async function loadProfile() {
                 const mateRow = mateRows?.[0];
                 const viewedName = user.name;
                 if (mateRow?.status === 'accepted') {
-                    mateBtnEl.innerHTML = `<button class="btn-mate-profile mate-status-mates" disabled><i class="fas fa-handshake"></i> Realmates</button>`;
+                    mateBtnEl.innerHTML = `<button class="btn-mate-profile mate-status-mates" disabled><i class="fas fa-user-group"></i> Realmates</button>`;
                 } else if (mateRow?.status === 'pending' && mateRow.requester_id === myId) {
                     mateBtnEl.innerHTML = `<button class="btn-mate-profile mate-status-pending" disabled><i class="fas fa-clock"></i> Request Sent</button>`;
                 } else if (mateRow?.status === 'pending' && mateRow.requester_id === _viewUserId) {
