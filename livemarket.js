@@ -612,16 +612,20 @@ function selectSegTab(btn) {
         else if (activeSegTab === 'MARKET') activeCategory = marketCat;
         applyFilters();
     }
-    syncTopPadding();
+    // Force reflow so ticker show/hide is measured correctly
+    document.querySelector('.top-fixed-wrap')?.offsetHeight;
+
     const scrollToTop = () => {
         syncTopPadding();
         const mc = document.querySelector('.main-content');
         if (mc) mc.scrollTop = 0;
         window.scrollTo(0, 0);
     };
+    syncTopPadding();
     requestAnimationFrame(scrollToTop);
-    setTimeout(scrollToTop, 100);
-    setTimeout(syncTopPadding, 300);
+    setTimeout(scrollToTop, 150);
+    setTimeout(syncTopPadding, 400);
+    setTimeout(syncTopPadding, 800);
 }
 
 function onSearchInput() {
