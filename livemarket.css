@@ -561,6 +561,9 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   gap: 16px;
   align-items: start;
   margin-top: 6px;
+}
+.listings-grid.no-ticker {
+  margin-top: 4px;
   /* contain card stacking contexts so they never bleed above sticky bars */
   isolation: isolate;
 }

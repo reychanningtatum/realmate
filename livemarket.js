@@ -597,7 +597,9 @@ function selectSegTab(btn) {
     portfolioFilters.style.display = activeSegTab === 'PORTFOLIO' ? 'flex' : 'none';
 
     const ticker = document.getElementById('tickerWrap');
-    if (ticker) ticker.style.display = (activeSegTab === 'FEED' || activeSegTab === 'MARKET') ? '' : 'none';
+    const showTicker = (activeSegTab === 'FEED' || activeSegTab === 'MARKET');
+    if (ticker) ticker.style.display = showTicker ? '' : 'none';
+    document.querySelector('.listings-grid')?.classList.toggle('no-ticker', !showTicker);
 
     if (activeSegTab === 'FEED') {
         feedPane.style.display = '';
