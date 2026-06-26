@@ -1685,7 +1685,10 @@ function syncTopPadding() {
     const wrap = document.querySelector('.top-fixed-wrap');
     if (!wrap) return;
     const h = wrap.offsetHeight;
-    document.documentElement.style.setProperty('--top-fixed-height', (h + 34) + 'px');
+    const ticker = document.getElementById('tickerWrap');
+    const tickerHidden = ticker && ticker.style.display === 'none';
+    const buffer = tickerHidden ? 8 : 34;
+    document.documentElement.style.setProperty('--top-fixed-height', (h + buffer) + 'px');
 }
 syncTopPadding();
 window.addEventListener('resize', syncTopPadding);
