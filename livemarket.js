@@ -341,20 +341,25 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
             <p class="listing-text">${safeText(remainingCaption)}</p>
         </div>` : '';
 
+    const captionText = (listing.content || '').trim();
+
     card.innerHTML = `
         ${matchBanner}
+        <div class="listing-card-top" style="padding:14px 20px 0;">
+            ${catTag(listing.category)}
+            ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : ''}
+            <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
+            <button class="pin-btn ${getPinnedIds().includes(String(listing.id)) ? 'pinned' : ''}" onclick="event.stopPropagation(); togglePin('${listing.id}', this)" title="${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}"><i class="fas fa-thumbtack"></i></button>
+        </div>
+        ${buildStatusBadge(listing)}
         <div class="lc-two-col${hasImage ? '' : ' lc-no-img'}">
             ${featuredImageHtml(listing)}
             <div class="lc-right">
-                <div class="listing-card-top">
-                    ${catTag(listing.category)}
-                    ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : ''}
-                    <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
-                    <button class="pin-btn ${getPinnedIds().includes(String(listing.id)) ? 'pinned' : ''}" onclick="event.stopPropagation(); togglePin('${listing.id}', this)" title="${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}"><i class="fas fa-thumbtack"></i></button>
-                </div>
-                ${buildStatusBadge(listing)}
-                ${tableHtml}
+                <p class="listing-text">${safeText(captionText)}</p>
             </div>
+        </div>
+        <div class="lc-info-section">
+            ${tableHtml}
         </div>
         ${descHtml}
         ${buildFMVBadge(fmvResult)}
