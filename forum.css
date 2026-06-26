@@ -1096,8 +1096,8 @@ html[data-theme="dark"] .anon-icon { background: #0f172a !important; color: #94a
 .mob-nav-item.mob-nav-center {
   position: relative;
   top: -12px;
-  width: 48px;
-  min-width: 48px;
+  width: auto;
+  min-width: 52px;
   padding: 0;
   border-radius: 0;
   background: transparent;
