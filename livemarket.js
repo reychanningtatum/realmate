@@ -333,15 +333,8 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
         return `<tr><td class="lc-tbl-k">${k}</td><td class="lc-tbl-v">${val}</td></tr>`;
     }).join('')}</table>`;
 
-    // Strip extracted data from caption — only show remaining text
+    // Strip extracted data from caption — only show non-redundant text
     const remainingCaption = stripExtractedText(listing);
-    const descHtml = remainingCaption ? `
-        <div class="lc-description">
-            <div class="lc-desc-label">Description</div>
-            <p class="listing-text">${safeText(remainingCaption)}</p>
-        </div>` : '';
-
-    const captionText = (listing.content || '').trim();
 
     card.innerHTML = `
         ${matchBanner}
@@ -355,13 +348,12 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
         <div class="lc-two-col${hasImage ? '' : ' lc-no-img'}">
             ${featuredImageHtml(listing)}
             <div class="lc-right">
-                <p class="listing-text">${safeText(captionText)}</p>
+                ${remainingCaption ? `<p class="listing-text">${safeText(remainingCaption)}</p>` : '<p class="listing-text" style="color:#94a3b8;font-style:italic;">No additional details</p>'}
             </div>
         </div>
         <div class="lc-info-section">
             ${tableHtml}
         </div>
-        ${descHtml}
         ${buildFMVBadge(fmvResult)}
         <div class="lc-bottom">
             <div class="listing-card-user">
