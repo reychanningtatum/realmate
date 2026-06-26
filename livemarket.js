@@ -333,8 +333,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
         return `<tr><td class="lc-tbl-k">${k}</td><td class="lc-tbl-v">${val}</td></tr>`;
     }).join('')}</table>`;
 
-    // Strip extracted data from caption — only show non-redundant text
-    const remainingCaption = stripExtractedText(listing);
+    const captionText = (listing.content || '').trim();
 
     card.innerHTML = `
         ${matchBanner}
@@ -348,7 +347,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
         <div class="lc-two-col${hasImage ? '' : ' lc-no-img'}">
             ${featuredImageHtml(listing)}
             <div class="lc-right">
-                ${remainingCaption ? `<p class="listing-text">${safeText(remainingCaption)}</p>` : '<p class="listing-text" style="color:#94a3b8;font-style:italic;">No additional details</p>'}
+                <p class="listing-text">${safeText(captionText)}</p>
             </div>
         </div>
         <div class="lc-info-section">
