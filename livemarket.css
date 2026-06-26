@@ -620,7 +620,7 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 }
 
 /* Inline text highlights */
-.lc-hl-location { color: #32cd32; font-weight: 700; }
+.lc-hl-location { color: var(--text-main); font-weight: 800; font-size: 18px; }
 .lc-hl-project { font-weight: 800; color: var(--text-main); }
 .lc-hl-price { color: #32cd32; font-weight: 800; }
 
