@@ -192,11 +192,14 @@ function enhanceListingText(listing) {
         body = body.replace(new RegExp(project.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '');
     }
 
-    // Remove location keywords from body
+    // Remove location keywords + "area" suffix from body
     if (locations.length) {
-        Object.keys(LOCATION_KEYWORDS || {}).forEach(k => {
+        const keys = Object.keys(LOCATION_KEYWORDS || {}).sort((a, b) => b.length - a.length);
+        keys.forEach(k => {
+            body = body.replace(new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*area', 'gi'), '');
             body = body.replace(new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '');
         });
+        body = body.replace(/\barea\b/gi, '');
     }
 
     // Remove price + attached words (e.g. "18M budget", "19M negotiable")
