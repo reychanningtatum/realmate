@@ -31,8 +31,59 @@
 <!-- Main -->
 <div class="main-content">
 
-  <!-- ═══ FIXED TOP: TICKER + FILTER BAR ═══ -->
+  <!-- ═══ FIXED TOP: TABS → SEARCH → TICKER → FILTERS ═══ -->
   <div class="top-fixed-wrap">
+    <!-- 1. Tabs -->
+    <div class="filter-bar" style="padding-bottom:0;">
+      <div class="seg-tabs" id="segTabs">
+        <button class="seg-tab active" data-seg="FEED" onclick="selectSegTab(this)">
+          <i class="fas fa-rss"></i><span>Pulse</span>
+        </button>
+        <button class="seg-tab" data-seg="MARKET" onclick="selectSegTab(this)">
+          <i class="fas fa-store"></i><span>Live Market</span>
+        </button>
+        <button class="seg-tab" data-seg="PORTFOLIO" onclick="selectSegTab(this)">
+          <i class="fas fa-briefcase"></i><span>My Portfolio</span>
+        </button>
+        <button class="seg-tab" data-seg="AI_ENGINE" onclick="selectSegTab(this)">
+          <i class="fas fa-circle-nodes"></i><span>AI Match Engine</span>
+        </button>
+      </div>
+      <!-- 2. Search -->
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <div class="search-wrap" style="flex:1; min-width:160px;">
+          <i class="fas fa-search"></i>
+          <input type="text" id="searchInput" placeholder="Search listings, agents, locations…" oninput="onSearchInput()">
+        </div>
+        <div class="location-wrap">
+          <i class="fas fa-map-marker-alt"></i>
+          <select id="locationInput" onchange="applyLocationFilter()">
+            <option value="">All Locations</option>
+            <option value="BGC">BGC</option>
+            <option value="Makati">Makati</option>
+            <option value="Pasig">Pasig</option>
+            <option value="Quezon City">Quezon City</option>
+            <option value="Mandaluyong">Mandaluyong</option>
+            <option value="Pasay">Pasay</option>
+            <option value="Taguig">Taguig</option>
+            <option value="Muntinlupa">Muntinlupa</option>
+            <option value="Las Piñas">Las Piñas</option>
+            <option value="Parañaque">Parañaque</option>
+            <option value="Alabang">Alabang</option>
+            <option value="Laguna">Laguna</option>
+            <option value="Cavite">Cavite</option>
+            <option value="Rizal">Rizal</option>
+            <option value="Bulacan">Bulacan</option>
+            <option value="Pampanga">Pampanga</option>
+            <option value="Cebu">Cebu</option>
+          </select>
+        </div>
+        <button class="btn-post-listing" onclick="openPostModal()">
+          <i class="fas fa-plus"></i> Post Listing
+        </button>
+      </div>
+    </div>
+    <!-- 3. Market Ticker -->
     <div class="ticker-wrap" id="tickerWrap">
       <div class="ticker-label" onclick="location.href='market-overview.html'" style="cursor:pointer;"><i class="fas fa-chart-line"></i> MARKET</div>
       <div class="ticker-track">
@@ -41,54 +92,8 @@
         </div>
       </div>
     </div>
-    <div class="filter-bar">
-    <!-- Segmented icon tabs (top) -->
-    <div class="seg-tabs" id="segTabs">
-      <button class="seg-tab active" data-seg="FEED" onclick="selectSegTab(this)">
-        <i class="fas fa-rss"></i><span>Pulse</span>
-      </button>
-      <button class="seg-tab" data-seg="MARKET" onclick="selectSegTab(this)">
-        <i class="fas fa-store"></i><span>Live Market</span>
-      </button>
-      <button class="seg-tab" data-seg="PORTFOLIO" onclick="selectSegTab(this)">
-        <i class="fas fa-briefcase"></i><span>My Portfolio</span>
-      </button>
-      <button class="seg-tab" data-seg="AI_ENGINE" onclick="selectSegTab(this)">
-        <i class="fas fa-circle-nodes"></i><span>AI Match Engine</span>
-      </button>
-    </div>
-    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-      <div class="search-wrap" style="flex:1; min-width:160px;">
-        <i class="fas fa-search"></i>
-        <input type="text" id="searchInput" placeholder="Search listings, agents, locations…" oninput="onSearchInput()">
-      </div>
-      <div class="location-wrap">
-        <i class="fas fa-map-marker-alt"></i>
-        <select id="locationInput" onchange="applyLocationFilter()">
-          <option value="">All Locations</option>
-          <option value="BGC">BGC</option>
-          <option value="Makati">Makati</option>
-          <option value="Pasig">Pasig</option>
-          <option value="Quezon City">Quezon City</option>
-          <option value="Mandaluyong">Mandaluyong</option>
-          <option value="Pasay">Pasay</option>
-          <option value="Taguig">Taguig</option>
-          <option value="Muntinlupa">Muntinlupa</option>
-          <option value="Las Piñas">Las Piñas</option>
-          <option value="Parañaque">Parañaque</option>
-          <option value="Alabang">Alabang</option>
-          <option value="Laguna">Laguna</option>
-          <option value="Cavite">Cavite</option>
-          <option value="Rizal">Rizal</option>
-          <option value="Bulacan">Bulacan</option>
-          <option value="Pampanga">Pampanga</option>
-          <option value="Cebu">Cebu</option>
-        </select>
-      </div>
-      <button class="btn-post-listing" onclick="openPostModal()">
-        <i class="fas fa-plus"></i> Post Listing
-      </button>
-    </div>
+    <!-- 4. Category Filters -->
+    <div class="filter-bar" style="padding-top:4px;">
     <!-- Category filters (visible only under Market) -->
     <div class="filter-chips" id="marketCatFilters" style="display:none;">
       <button class="chip active" data-cat="ALL" onclick="selectMarketCat(this)">All</button>
