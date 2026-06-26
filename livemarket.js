@@ -57,135 +57,25 @@ function imagesHtml(listing) {
     if (!imgs.length) return '';
     const key = listing.id || ('k' + Math.random().toString(36).slice(2));
     _lbStore[key] = imgs;
-    const counter = imgs.length > 1 ? `<span class="listing-img-counter"><i class="fas fa-images"></i> 1 / ${imgs.length}</span>` : '';
-    return `<div class="listing-card-images" data-lbkey="${key}"><img class="single-img" src="${imgs[0]}" loading="lazy" data-lbidx="0" style="cursor:pointer;">${counter}</div>`;
-}
-
-function extractSqm(text) {
-    const m = text.match(/(\d[\d,.]*)\s*(?:sqm|sq\.?\s*m|square\s*met)/i);
-    return m ? m[1].replace(/,/g, '') + ' sqm' : null;
-}
-
-function extractFloorArea(text) {
-    const m = text.match(/floor\s*area[:\s]*(\d[\d,.]*)\s*(?:sqm|sq\.?\s*m)?/i);
-    return m ? m[1].replace(/,/g, '') + ' sqm' : null;
-}
-
-function extractLotArea(text) {
-    const m = text.match(/lot\s*area[:\s]*(\d[\d,.]*)\s*(?:sqm|sq\.?\s*m)?/i);
-    return m ? m[1].replace(/,/g, '') + ' sqm' : null;
-}
-
-function extractBedrooms(text) {
-    const u = extractUnit(text);
-    if (u === 'Studio') return 'Studio';
-    if (u) return u.replace('BR', ' Bedroom');
-    return null;
-}
-
-function extractBathrooms(text) {
-    const m = text.match(/(\d+)\s*(?:bath|bathroom|t&b|toilet)/i);
-    return m ? m[1] : null;
-}
-
-function extractParking(text) {
-    if (/\bwith\s*parking\b/i.test(text)) return 'Yes';
-    if (/\bno\s*parking\b/i.test(text)) return 'No';
-    if (/\bparking\b/i.test(text)) return 'Yes';
-    return null;
-}
-
-function extractTower(text) {
-    const m = text.match(/tower\s*(\w+)/i);
-    return m ? 'Tower ' + m[1] : null;
-}
-
-function extractFurnishing(text) {
-    const lower = text.toLowerCase();
-    if (/\bfully\s*furnished\b/.test(lower)) return 'Fully Furnished';
-    if (/\bsemi[\s-]*furnished\b/.test(lower)) return 'Semi-Furnished';
-    if (/\bunfurnished\b|\bbare\b/.test(lower)) return 'Bare/Unfurnished';
-    if (/\bfurnished\b/.test(lower)) return 'Furnished';
-    return null;
-}
-
-function extractDeveloper(text) {
-    const lower = text.toLowerCase();
-    const devs = [
-        ['alveo land', 'Alveo Land'], ['ayala land', 'Ayala Land'],
-        ['smdc', 'SMDC'], ['dmci', 'DMCI Homes'], ['megaworld', 'Megaworld'],
-        ['rockwell', 'Rockwell'], ['federal land', 'Federal Land'],
-        ['filinvest', 'Filinvest'], ['robinsons land', 'Robinsons Land'],
-        ['century properties', 'Century Properties'], ['avida', 'Avida'],
-        ['amaia', 'Amaia Land']
-    ];
-    for (const [key, name] of devs) {
-        if (lower.includes(key)) return name;
-    }
-    return null;
-}
-
-function extractRFO(text) {
-    if (/\brfo\b|\bready\s*for\s*occupancy\b/i.test(text)) return 'Ready for Occupancy';
-    if (/\bpre[\s-]*selling\b/i.test(text)) return 'Pre-Selling';
-    if (/\bturnover\b/i.test(text)) return 'Turnover Ready';
-    return null;
-}
-
-function formatPriceDisplay(price) {
-    if (!price) return null;
-    if (price >= 1000000) return '₱' + (price / 1000000).toFixed(price % 1000000 === 0 ? 0 : 1) + 'M';
-    if (price >= 1000) return '₱' + (price / 1000).toFixed(0) + 'K';
-    return '₱' + price.toLocaleString();
-}
-
-function buildPropertyPresentation(listing) {
-    const text = listing.content || '';
-    const project = extractProject(text);
-    const price = extractPrice(text);
-    const unit = extractBedrooms(text);
-    const locations = extractLocations(text);
-    const sqm = extractFloorArea(text) || extractSqm(text);
-    const lotArea = extractLotArea(text);
-    const bathrooms = extractBathrooms(text);
-    const parking = extractParking(text);
-    const tower = extractTower(text);
-    const developer = extractDeveloper(text);
-    const furnishing = extractFurnishing(text);
-    const rfo = extractRFO(text);
-    const location = locations.length ? locations.join(', ') : null;
-
-    const details = [];
-    if (unit) details.push(['Type', unit]);
-    if (sqm) details.push(['Floor Area', sqm]);
-    if (lotArea) details.push(['Lot Area', lotArea]);
-    if (bathrooms) details.push(['Bathrooms', bathrooms]);
-    if (tower) details.push(['Tower', tower]);
-    if (parking) details.push(['Parking', parking]);
-    if (furnishing) details.push(['Furnishing', furnishing]);
-    if (developer) details.push(['Developer', developer]);
-    if (rfo) details.push(['Status', rfo]);
-
-    const pricePerSqm = (price && sqm) ? Math.round(price / parseFloat(sqm)).toLocaleString() : null;
-
-    const rows = [];
-    if (unit) rows.push(['Unit Type', unit]);
-    if (sqm) rows.push(['Unit Size', sqm]);
-    if (lotArea) rows.push(['Lot Area', lotArea]);
-    const priceRow = price
-        ? `<tr><td class="lc-tbl-key">Price</td><td class="lc-tbl-val"><span class="lc-price-val">₱${price.toLocaleString()}</span>${pricePerSqm ? `<span class="lc-price-psm">₱${pricePerSqm}/sqm</span>` : ''}</td></tr>`
-        : '';
-    if (location) rows.push(['Location', `<i class="fas fa-map-marker-alt" style="color:#94a3b8;font-size:10px;margin-right:3px;"></i> ${location}`]);
-    if (bathrooms) rows.push(['Bathrooms', bathrooms]);
-    if (tower) rows.push(['Tower', tower]);
-    if (parking) rows.push(['Parking', parking]);
-    if (furnishing) rows.push(['Furnishing', furnishing]);
-    if (developer) rows.push(['Developer', developer]);
-    if (rfo) rows.push(['Status', rfo]);
-
-    const hasPresentation = project || price || location || rows.length;
-
-    return { project, price, location, rows, priceRow, hasPresentation, unit };
+    if (imgs.length === 1) return `<div class="listing-card-images" data-lbkey="${key}"><img class="single-img" src="${imgs[0]}" loading="lazy" data-lbidx="0" style="cursor:pointer;"></div>`;
+    if (imgs.length === 2) return `
+        <div class="listing-card-images" data-lbkey="${key}">
+            <div class="listing-img-grid cols-2">
+                ${imgs.map((u, i) => `<div class="img-wrap"><img src="${u}" loading="lazy" data-lbidx="${i}" style="cursor:pointer;"></div>`).join('')}
+            </div>
+        </div>`;
+    const extra = imgs.length > 3 ? imgs.length - 3 : 0;
+    return `
+        <div class="listing-card-images" data-lbkey="${key}">
+            <div class="listing-img-grid cols-3">
+                <div class="img-wrap cols-3-main"><img src="${imgs[0]}" loading="lazy" data-lbidx="0" style="cursor:pointer;"></div>
+                <div class="img-wrap"><img src="${imgs[1]}" loading="lazy" data-lbidx="1" style="cursor:pointer;"></div>
+                <div class="img-wrap" style="position:relative;">
+                    <img src="${imgs[2]}" loading="lazy" data-lbidx="2" style="cursor:pointer;">
+                    ${extra > 0 ? `<div class="img-more-overlay" data-lbidx="2" style="cursor:pointer;">+${extra}</div>` : ''}
+                </div>
+            </div>
+        </div>`;
 }
 
 let _lbImgs = [], _lbIdx = 0;
@@ -295,61 +185,30 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
             <i class="fas fa-chevron-right match-banner-arrow" style="color:#475569;"></i>
         </div>` : '';
 
-    const pres = buildPropertyPresentation(listing);
-    const captionText = (listing.content || '').trim();
-
-    const projectName = pres.project || '';
-    const unitLine = pres.unit || '';
-
-    const detailRows = pres.rows.map(([k, v]) => `<tr><td class="lc-tbl-key">${k}</td><td class="lc-tbl-val">${v}</td></tr>`).join('');
-
-    const autoDetectedBanner = pres.hasPresentation ? `
-        <div class="lc-auto-banner">
-            <div class="lc-auto-banner-inner">
-                <i class="fas fa-bolt"></i>
-                <div>
-                    <div class="lc-auto-banner-title">Auto-detected &amp; posted by Realmate</div>
-                    <div class="lc-auto-banner-sub">Realmate automatically extracted the project, unit type, size, price, and location.</div>
-                </div>
-            </div>
-            <i class="fas fa-circle-check" style="color:#32cd32;font-size:18px;flex-shrink:0;"></i>
-        </div>` : '';
-
-    const captionHtml = captionText && pres.hasPresentation
-        ? `<div class="lc-caption"><p class="listing-text">${safeText(captionText)}</p></div>`
-        : (!pres.hasPresentation ? `<p class="listing-text" style="padding:0 20px 12px;">${safeText(captionText)}</p>` : '');
-
     card.innerHTML = `
         ${matchBanner}
-        <div class="lc-horizontal">
-            ${imagesHtml(listing)}
-            <div class="lc-right">
-                <div class="listing-card-top">
-                    ${catTag(listing.category)}
-                    ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : ''}
-                    <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
-                    <button class="pin-btn ${getPinnedIds().includes(String(listing.id)) ? 'pinned' : ''}" onclick="event.stopPropagation(); togglePin('${listing.id}', this)" title="${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}"><i class="fas fa-thumbtack"></i></button>
+        ${imagesHtml(listing)}
+        <div class="listing-card-body">
+            <div class="listing-card-top">
+                ${catTag(listing.category)}
+                ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : ''}
+                <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
+                <button class="pin-btn ${getPinnedIds().includes(String(listing.id)) ? 'pinned' : ''}" onclick="event.stopPropagation(); togglePin('${listing.id}', this)" title="${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}"><i class="fas fa-thumbtack"></i></button>
+            </div>
+            ${buildStatusBadge(listing)}
+            <p class="listing-text">${safeText(listing.content)}</p>
+            ${buildFMVBadge(fmvResult)}
+            <div class="listing-card-user">
+                <img src="${listing.user_img || avatarFallback(listing.user_name)}"
+                     onerror="this.src='${avatarFallback(listing.user_name)}'">
+                <div class="listing-card-user-info">
+                    <div class="listing-card-user-name">${listing.user_name || 'Unknown'}</div>
+                    <div class="listing-card-user-job">${listing.user_job || ''}</div>
                 </div>
-                ${buildStatusBadge(listing)}
-                ${pres.hasPresentation ? `<div class="lc-auto-detect-label"><span>REALMATE AUTO-DETECTED</span> <i class="fas fa-sparkles"></i></div>` : ''}
-                ${projectName ? `<div class="lc-project-name">${projectName}</div>` : ''}
-                ${unitLine ? `<div class="lc-unit-line">${unitLine}</div>` : ''}
-                ${(detailRows || pres.priceRow) ? `<table class="lc-details-tbl">${detailRows}${pres.priceRow}</table>` : ''}
+                ${listing.is_anonymous ? '' : mateButtonHtml(listing.user_name, 'btn-mate btn-mate-sm')}
             </div>
+            ${buildStatusButtons(listing)}
         </div>
-        ${autoDetectedBanner}
-        ${captionHtml}
-        ${buildFMVBadge(fmvResult)}
-        <div class="listing-card-user">
-            <img src="${listing.user_img || avatarFallback(listing.user_name)}"
-                 onerror="this.src='${avatarFallback(listing.user_name)}'">
-            <div class="listing-card-user-info">
-                <div class="listing-card-user-name">${listing.user_name || 'Unknown'}${listing.is_anonymous ? '' : ' <i class="fas fa-circle-check" style="color:#32cd32;font-size:12px;"></i>'}</div>
-                <div class="listing-card-user-job">${listing.user_job || ''}</div>
-            </div>
-            ${listing.is_anonymous ? '' : mateButtonHtml(listing.user_name, 'btn-mate btn-mate-sm')}
-        </div>
-        ${buildStatusButtons(listing)}
     `;
 
     // Wire up image lightbox clicks
