@@ -679,33 +679,51 @@ html[data-theme="light"] .nav-item.active { background: rgba(50,205,50,0.10); co
 .mob-nav-item:hover { color: #32cd32; }
 
 /* Raised center Home button */
-/* Center nav item — same layout as others, no raised circle */
+/* Center nav item — raised circle when inactive, flat when active */
 .mob-nav-item.mob-nav-center {
-  position: static;
-  top: auto;
-  width: auto;
-  min-width: 0;
-  max-width: none;
-  height: auto;
-  padding: 6px 1px;
-  border-radius: 10px;
-  background: transparent;
-  color: #94a3b8;
-  box-shadow: none;
-  justify-content: center;
+  position: relative;
+  top: -8px;
+  width: 50px;
+  min-width: 50px;
+  max-width: 50px;
+  height: 58px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent !important;
+  color: #94a3b8 !important;
+  box-shadow: none !important;
+  justify-content: flex-start;
   align-items: center;
-  flex: 1;
+  flex: none;
   border: none;
-  gap: 2px;
+  gap: 0;
   overflow: visible;
 }
-.mob-nav-item.mob-nav-center i { font-size: 18px; color: #94a3b8; width: auto; height: auto; display: inline; border-radius: 0; background: none; border: none; box-shadow: none; }
-.mob-nav-item.mob-nav-center span { font-size: 9px; color: #94a3b8; font-weight: 600; white-space: nowrap; display: block; position: static; transform: none; margin: 0; }
-.mob-nav-item.mob-nav-center.active { color: #32cd32; background: transparent; }
-.mob-nav-item.mob-nav-center.active i { color: #32cd32; background: none; border: none; box-shadow: none; }
-.mob-nav-item.mob-nav-center.active span { color: #32cd32; }
-.mob-nav-item.mob-nav-center:hover { color: #32cd32; background: transparent; }
-.mob-nav-item.mob-nav-center:hover i { color: #32cd32; background: none; }
+.mob-nav-item.mob-nav-center i {
+  font-size: 18px; color: #94a3b8;
+  width: 42px; height: 42px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid #e2e8f0;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15), 0 1px 4px rgba(0,0,0,0.08);
+  flex-shrink: 0;
+}
+.mob-nav-item.mob-nav-center span { font-size: 9px; color: #94a3b8; font-weight: 600; white-space: nowrap; margin-top: 2px; }
+
+/* Active: remove circle, match other nav items */
+.mob-nav-item.mob-nav-center.active {
+  position: static; top: auto;
+  width: auto; min-width: 0; max-width: none;
+  height: auto; padding: 6px 1px;
+  flex: 1; gap: 2px;
+}
+.mob-nav-item.mob-nav-center.active i {
+  width: auto; height: auto;
+  border-radius: 0; background: none; border: none; box-shadow: none;
+  color: #32cd32;
+}
+.mob-nav-item.mob-nav-center.active span { color: #32cd32; margin-top: 0; }
 .mob-nav-avatar-wrap { position: relative; cursor: pointer; }
 .mob-nav-avatar {
   width: 28px; height: 28px; border-radius: 50%;
