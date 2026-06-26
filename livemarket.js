@@ -199,11 +199,24 @@ function enhanceListingText(listing) {
         });
     }
 
-    // Remove price from body
+    // Remove price + attached words (e.g. "18M budget", "19M negotiable")
+    let priceContext = '';
     if (price) {
-        body = body.replace(/₱?\s*\d{1,3}(,\d{3})+(\.\d+)?/g, '');
-        body = body.replace(/(\d+\.?\d*)\s*[Mm](?:illion)?/gi, '');
-        body = body.replace(/\b\d{7,9}\b/g, '');
+        const pricePatterns = [
+            /₱?\s*\d{1,3}(,\d{3})+(\.\d+)?\s*\w*/g,
+            /(\d+\.?\d*)\s*[Mm](?:illion)?\s*\w*/gi,
+            /\b\d{7,9}\s*\w*/g,
+        ];
+        for (const pat of pricePatterns) {
+            const match = body.match(pat);
+            if (match) {
+                match.forEach(m => {
+                    const extra = m.replace(/₱?\s*\d[\d,.]*\s*[Mm]?(?:illion)?/i, '').trim();
+                    if (extra && !priceContext) priceContext = extra;
+                    body = body.replace(m, '');
+                });
+            }
+        }
     }
 
     // Clean up leftover artifacts
@@ -213,7 +226,7 @@ function enhanceListingText(listing) {
     let result = '';
     if (locations.length) result += `<span class="lc-hl-location">${locations.join(', ')}</span><br>`;
     if (project) result += `<span class="lc-hl-project">${project}</span><br>`;
-    if (price) result += `<span class="lc-hl-price">₱${price.toLocaleString()}</span><br>`;
+    if (price) result += `<span class="lc-hl-price">₱${price.toLocaleString()}${priceContext ? ' ' + priceContext : ''}</span><br>`;
 
     // Highlight remaining body text
     if (body) {
