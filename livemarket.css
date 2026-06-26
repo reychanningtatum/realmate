@@ -490,7 +490,7 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 
 /* ── Pin button ── */
 .pin-btn {
-  width: 22px; height: 22px; border-radius: 50%;
+  width: 18px; height: 18px; border-radius: 50%;
   border: none; background: transparent; color: #cbd5e1;
   cursor: pointer; font-size: 12px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
@@ -666,7 +666,7 @@ html[data-theme="dark"] .lc-hl-extras { color: #94a3b8; }
 .fmv-badge i { font-size: 10px; }
 .fmv-diff { font-size: 11px; font-weight: 800; }
 .fmv-verdict {
-  margin-left: auto; font-size: 10px; font-weight: 700;
+  margin-left: auto; font-size: 9px; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;
 }
 
@@ -848,7 +848,7 @@ html[data-theme="dark"] .lc-hl-extras { color: #94a3b8; }
   background: rgba(50,205,50,0.15); color: #32cd32;
   border: 1px solid rgba(50,205,50,0.3);
   border-radius: 50px; padding: 4px 12px;
-  font-size: 10px; font-weight: 700;
+  font-size: 9px; font-weight: 700;
   animation: matchBadgePulse 1.5s ease-in-out infinite;
 }
 @keyframes matchBadgePulse {
@@ -912,7 +912,7 @@ html[data-theme="dark"] .lc-hl-extras { color: #94a3b8; }
   display: inline-flex; align-items: center; gap: 6px;
   padding: 8px 14px; border-radius: 50px;
   border: 1.5px solid var(--primary); background: white; color: var(--primary);
-  font-size: 10px; font-weight: 700; cursor: pointer;
+  font-size: 9px; font-weight: 700; cursor: pointer;
   transition: all 0.15s; font-family: inherit; white-space: nowrap;
   width: 100%; justify-content: center; margin-top: 10px;
 }
@@ -1433,11 +1433,11 @@ html[data-theme="dark"] .match-banner { background: linear-gradient(135deg, #0f1
 /* ── Nav avatar menu ── */
 .mob-nav-avatar-wrap { position: relative; cursor: pointer; justify-content: flex-end; }
 .mob-nav-avatar {
-    width: 22px; height: 22px; border-radius: 50%;
+    width: 18px; height: 18px; border-radius: 50%;
     background: #32cd32; color: #fff;
     display: flex; align-items: center; justify-content: center;
     overflow: hidden; flex-shrink: 0;
-    font-size: 10px; font-weight: 700;
+    font-size: 9px; font-weight: 700;
 }
 .mob-nav-menu {
     display: none; position: absolute; bottom: 64px; right: -10px;
