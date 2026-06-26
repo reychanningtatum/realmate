@@ -565,113 +565,74 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 /* ── Single listing card ── */
 .listing-card {
   background: white;
-  border-radius: 18px;
-  border: 1px solid rgba(226,232,240,0.6);
+  border-radius: 16px;
+  border: 1px solid rgba(226,232,240,0.8);
   overflow: hidden;
   display: flex; flex-direction: column;
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: default;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.03);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.02);
 }
 .listing-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
 
-/* Two-column layout */
-.lc-two-col { display: flex; gap: 0; }
-.lc-two-col .listing-card-images { width: 42%; min-width: 42%; flex-shrink: 0; position: relative; overflow: hidden; border-radius: 14px; margin: 14px; }
-.lc-two-col .listing-card-images img.single-img { width: 100%; height: 100%; min-height: 200px; object-fit: cover; display: block; border-radius: 14px; }
-.lc-two-col.lc-no-img .lc-right { padding-left: 20px; }
-.lc-right { flex: 1; padding: 10px 16px; display: flex; flex-direction: column; min-width: 0; }
-.lc-right .listing-text { font-size: 13px; line-height: 1.65; color: #475569; }
-.lc-info-section { padding: 10px 20px; border-top: 1px solid #f1f5f9; }
-
-.lc-img-counter {
-  position: absolute; bottom: 10px; right: 10px;
-  background: rgba(0,0,0,0.55); color: #fff;
-  font-size: 11px; font-weight: 600;
-  padding: 4px 10px; border-radius: 20px;
-  display: flex; align-items: center; gap: 5px;
-  backdrop-filter: blur(4px);
-}
-.lc-img-counter i { font-size: 10px; }
-
 .listing-card-images { position: relative; }
-.listing-card-images img.single-img { width: 100%; height: 200px; object-fit: cover; display: block; }
+.listing-card-images img.single-img {
+  width: 100%; height: 200px; object-fit: cover; display: block;
+}
+.listing-img-grid {
+  display: grid; height: 200px;
+}
+.listing-img-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.listing-img-grid.cols-3 { grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 1fr; }
+.listing-img-grid img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.listing-img-grid .img-wrap { position: relative; overflow: hidden; }
+.listing-img-grid .cols-3-main { grid-row: 1 / span 2; }
+.img-more-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.52);
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 20px; font-weight: 800;
+}
 
 .listing-card-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px; }
-.listing-card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 2px; }
+
+.listing-card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
 .cat-tag {
   display: inline-flex; align-items: center;
-  font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
-  text-transform: uppercase; padding: 4px 12px;
-  border-radius: 4px; border: 1.5px solid;
-  font-family: 'Inter', sans-serif; background: transparent;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
+  text-transform: uppercase; padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #fff; color: #111827;
+  font-family: 'Inter', sans-serif;
 }
-.cat-sale    { color: #16a34a; border-color: #16a34a; }
-.cat-rent    { color: #2563eb; border-color: #2563eb; }
-.cat-lease   { color: #7c3aed; border-color: #7c3aed; }
-.cat-wbuy    { color: #ea580c; border-color: #ea580c; }
-.cat-wrent   { color: #b45309; border-color: #b45309; }
-.cat-wlease  { color: #be185d; border-color: #be185d; }
+.cat-sale    {}
+.cat-rent    {}
+.cat-lease   {}
+.cat-wbuy    {}
+.cat-wrent   {}
+.cat-wlease  {}
 
-/* Uniform info table */
-.lc-info-tbl { width: 100%; border-collapse: collapse; margin: 0; }
-.lc-tbl-k { font-size: 12px; font-weight: 500; color: #94a3b8; padding: 4px 0; width: 80px; vertical-align: top; }
-.lc-tbl-v { font-size: 13px; font-weight: 600; color: var(--text-main); padding: 4px 0; }
-.lc-price { font-size: 15px; font-weight: 800; color: #32cd32; }
-.lc-psm { font-size: 11px; font-weight: 500; color: #94a3b8; margin-left: 6px; }
+.listing-text {
+  font-size: 13px; line-height: 1.6; color: #475569;
+  word-break: break-word;
+}
 
-/* Description (only non-extracted text) */
-.lc-description { padding: 8px 20px 4px; border-top: 1px solid #f1f5f9; }
-.lc-desc-label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-
-.listing-text { font-size: 13px; line-height: 1.65; color: #475569; word-break: break-word; }
-
-/* Bottom section */
-.lc-bottom { padding: 0 20px 16px; }
 .listing-card-user {
   display: flex; align-items: center; gap: 10px;
-  padding: 10px 0; margin-top: 0;
-  background: none; border-radius: 0;
-  border-top: 1px solid #f1f5f9;
+  padding: 10px 12px; margin-top: 4px;
+  background: #f8fafc; border-radius: 10px;
 }
-.listing-card-user img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 1.5px solid #e2e8f0; }
+.listing-card-user img {
+  width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
+  flex-shrink: 0; border: 1.5px solid #e2e8f0;
+}
 .listing-card-user-info { min-width: 0; flex: 1; }
 .listing-card-user-name { font-size: 13px; font-weight: 700; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.listing-card-user-job  { font-size: 11px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.listing-card-user-job  { font-size: 10px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .listing-card-date { font-size: 10px; color: #94a3b8; margin-left: auto; white-space: nowrap; flex-shrink: 0; }
-
-/* Mobile: stack vertically */
-@media (max-width: 600px) {
-  .lc-two-col { flex-direction: row; }
-  .lc-two-col .listing-card-images { width: 38%; min-width: 38%; margin: 10px 0 10px 10px; }
-  .lc-two-col .listing-card-images img.single-img { min-height: 140px; height: 100%; }
-  .lc-right { padding: 10px 12px; font-size: 12px; }
-  .lc-right .listing-text { font-size: 12px; line-height: 1.5; }
-  .lc-info-section { padding: 8px 14px; }
-  .lc-tbl-k { font-size: 11px; width: 70px; }
-  .lc-tbl-v { font-size: 12px; }
-  .lc-price { font-size: 14px; }
-  .lc-bottom { padding: 0 14px 10px; }
-  .lc-description { padding: 6px 14px 4px; }
-  .listing-card-top { padding: 10px 14px 0 !important; }
-}
-
-/* Dark theme */
-html[data-theme="dark"] .lc-project { color: #f1f5f9; }
-html[data-theme="dark"] .lc-unit-line { color: #e2e8f0; }
-html[data-theme="dark"] .lc-tbl-v { color: #f1f5f9; }
-html[data-theme="dark"] .lc-auto-banner { background: rgba(50,205,50,0.06); border-color: #334155; }
-html[data-theme="dark"] .lc-auto-banner-title { color: #f1f5f9; }
-html[data-theme="dark"] .lc-description { border-color: #334155; }
-html[data-theme="dark"] .listing-card-user { border-color: #334155; }
-html[data-theme="dark"] .cat-sale { color: #4ade80; border-color: #4ade80; }
-html[data-theme="dark"] .cat-rent { color: #60a5fa; border-color: #60a5fa; }
-html[data-theme="dark"] .cat-lease { color: #a78bfa; border-color: #a78bfa; }
-html[data-theme="dark"] .cat-wbuy { color: #fb923c; border-color: #fb923c; }
-html[data-theme="dark"] .cat-wrent { color: #fbbf24; border-color: #fbbf24; }
-html[data-theme="dark"] .cat-wlease { color: #f472b6; border-color: #f472b6; }
 
 /* ── FMV Badge ── */
 .fmv-badge {
@@ -1062,6 +1023,8 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
   .feed-pdf-strip { gap: 8px; }
   .listings-grid { grid-template-columns: 1fr; gap: 14px; }
 
+  .listing-card-images img.single-img { height: 180px; }
+  .listing-img-grid { height: 180px; }
 
   /* Match view — mobile optimized */
   .match-page-header {
