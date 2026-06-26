@@ -560,6 +560,7 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
   grid-template-columns: 1fr;
   gap: 16px;
   align-items: start;
+  margin-top: 14px;
   /* contain card stacking contexts so they never bleed above sticky bars */
   isolation: isolate;
 }
