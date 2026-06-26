@@ -614,66 +614,17 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 .cat-wrent   {}
 .cat-wlease  {}
 
-/* ── Enhanced AI Presentation ── */
-.lc-enhanced {
-  display: flex; flex-direction: column; gap: 2px;
-  padding: 12px 14px; margin: 0 -2px;
-  background: #f8fafc; border-radius: 12px;
-  border: 1px solid #f1f5f9;
-}
-.lc-e-location {
-  font-size: 18px; font-weight: 800; color: #32cd32;
-  letter-spacing: -0.3px; line-height: 1.2;
-  font-family: 'Inter', sans-serif;
-}
-.lc-e-project {
-  font-size: 15px; font-weight: 800; color: var(--text-main);
-  letter-spacing: -0.2px; line-height: 1.25;
-  font-family: 'Inter', sans-serif;
-}
-.lc-e-price {
-  font-size: 17px; font-weight: 800; color: #32cd32;
-  margin: 4px 0 2px;
-  font-family: 'Inter', sans-serif;
-}
-.lc-e-details {
-  display: flex; flex-direction: column; gap: 0;
-  margin-top: 6px; padding-top: 8px;
-  border-top: 1px solid #e2e8f0;
-}
-.lc-e-row {
-  display: flex; align-items: baseline; gap: 8px;
-  padding: 3px 0;
-}
-.lc-e-key {
-  font-size: 11px; font-weight: 600; color: #94a3b8;
-  width: 80px; flex-shrink: 0;
-  text-transform: uppercase; letter-spacing: 0.3px;
-}
-.lc-e-val {
-  font-size: 13px; font-weight: 600; color: var(--text-main);
-}
-
-/* Description section */
-.lc-e-desc-section {
-  padding-top: 4px;
-}
-.lc-e-desc-label {
-  font-size: 10px; font-weight: 700; color: #94a3b8;
-  text-transform: uppercase; letter-spacing: 0.5px;
-  margin-bottom: 4px;
-}
-
 .listing-text {
   font-size: 13px; line-height: 1.6; color: #475569;
   word-break: break-word;
 }
 
-/* Dark theme — enhanced presentation */
-html[data-theme="dark"] .lc-enhanced { background: #0f172a; border-color: #1e293b; }
-html[data-theme="dark"] .lc-e-project { color: #f1f5f9; }
-html[data-theme="dark"] .lc-e-details { border-color: #334155; }
-html[data-theme="dark"] .lc-e-val { color: #f1f5f9; }
+/* Inline text highlights */
+.lc-hl-location { color: #32cd32; font-weight: 700; }
+.lc-hl-project { font-weight: 800; color: var(--text-main); }
+.lc-hl-price { color: #32cd32; font-weight: 800; }
+
+html[data-theme="dark"] .lc-hl-project { color: #f1f5f9; }
 
 .listing-card-user {
   display: flex; align-items: center; gap: 10px;

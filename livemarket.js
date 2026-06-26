@@ -177,20 +177,33 @@ function _xFloor(t) { const m = t.match(/(\d+)(?:th|st|nd|rd)\s*floor/i); return
 function _xType(t) { const l = t.toLowerCase(); if (/\bresidential\s*lot\b/.test(l)) return 'Residential Lot'; if (/\bcommercial\s*lot\b/.test(l)) return 'Commercial Lot'; if (/\bcondo(?:minium)?\b/.test(l)) return 'Condominium'; if (/\btownhouse\b/.test(l)) return 'Townhouse'; if (/\bhouse\s*(?:and|&)\s*lot\b/.test(l)) return 'House & Lot'; if (/\boffice\b/.test(l)) return 'Office'; return null; }
 function _xTurnover(t) { if (/\brfo\b|\bready\s*for\s*occupancy\b/i.test(t)) return 'Ready for Occupancy'; if (/\bpre[\s-]*selling\b/i.test(t)) return 'Pre-Selling'; if (/\bturnover\b/i.test(t)) return 'Turnover Ready'; return null; }
 
-function buildEnhancedPresentation(listing) {
-    const t = listing.content || '';
-    const location = extractLocations(t).join(', ') || null;
-    const project = extractProject(t) || null;
-    const price = extractPrice(t);
+function enhanceListingText(listing) {
+    let text = safeText(listing.content || '');
+    const raw = listing.content || '';
 
-    if (!location && !project && !price) return '';
+    const project = extractProject(raw);
+    if (project) {
+        const escaped = project.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        text = text.replace(new RegExp(`(${escaped})`, 'gi'), '<span class="lc-hl-project">$1</span>');
+    }
 
-    let html = '<div class="lc-enhanced">';
-    if (location) html += `<div class="lc-e-location">${location}</div>`;
-    if (project) html += `<div class="lc-e-project">${project}</div>`;
-    if (price) html += `<div class="lc-e-price">₱${price.toLocaleString()}</div>`;
-    html += '</div>';
-    return html;
+    const price = extractPrice(raw);
+    if (price) {
+        const formatted = '₱' + price.toLocaleString();
+        text = text.replace(/₱?\s*\d{1,3}(,\d{3})+/g, `<span class="lc-hl-price">${formatted}</span>`);
+        text = text.replace(/(?<!\w)(\d+\.?\d*)\s*[Mm](?:illion)?(?!\w)/g, `<span class="lc-hl-price">${formatted}</span>`);
+        text = text.replace(/(?<!\w)(\d{7,9})(?!\w)/g, `<span class="lc-hl-price">${formatted}</span>`);
+    }
+
+    const locations = extractLocations(raw);
+    if (locations.length) {
+        locations.forEach(loc => {
+            const escaped = loc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            text = text.replace(new RegExp(`(?<![<\\w])${escaped}(?![\\w>])`, 'gi'), `<span class="lc-hl-location">$&</span>`);
+        });
+    }
+
+    return text;
 }
 
 // ── Listing card ──────────────────────────────────
@@ -225,8 +238,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
                 <button class="pin-btn ${getPinnedIds().includes(String(listing.id)) ? 'pinned' : ''}" onclick="event.stopPropagation(); togglePin('${listing.id}', this)" title="${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}"><i class="fas fa-thumbtack"></i></button>
             </div>
             ${buildStatusBadge(listing)}
-            ${buildEnhancedPresentation(listing)}
-            <p class="listing-text">${safeText(listing.content)}</p>
+            <p class="listing-text">${enhanceListingText(listing)}</p>
             ${buildFMVBadge(fmvResult)}
             <div class="listing-card-user">
                 <img src="${listing.user_img || avatarFallback(listing.user_name)}"
