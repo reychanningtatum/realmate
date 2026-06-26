@@ -65,6 +65,7 @@ h1,h2,h3 { font-family: 'Playfair Display', serif; }
   margin-left: -48px;
   margin-right: -48px;
   overflow: visible;
+  background: var(--bg);
 }
 .ticker-wrap {
   display: flex;
@@ -230,8 +231,12 @@ h1,h2,h3 { font-family: 'Playfair Display', serif; }
 .filter-bar {
   display: flex; flex-direction: column; gap: 8px;
   background: var(--bg);
-  padding: 8px 48px 0;
+  padding: 8px 48px 8px;
   border-bottom: none;
+  margin-bottom: 0;
+}
+.filter-bar + .ticker-wrap {
+  margin-top: 0;
 }
 .market-pulse-title {
   font-family: 'Inter', sans-serif;
