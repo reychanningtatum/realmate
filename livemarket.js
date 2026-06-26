@@ -676,6 +676,7 @@ const LOCATION_KEYWORDS = {
     'sta rosa': 'Sta. Rosa, Laguna', 'santa rosa': 'Sta. Rosa, Laguna',
     'binan': 'Biñan, Laguna', 'biñan': 'Biñan, Laguna',
     'san pedro': 'San Pedro, Laguna',
+    'rosario': 'Rosario, Laguna',
     'los banos': 'Los Baños, Laguna', 'los baños': 'Los Baños, Laguna',
     // Cavite
     'cavite': 'Cavite', 'carmona': 'Carmona, Cavite',
