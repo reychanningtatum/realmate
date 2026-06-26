@@ -632,6 +632,7 @@ html[data-theme="dark"] .btn-follow-ing { background: rgba(59,130,246,0.1); }
 
 .mob-nav-item i { font-size: 18px; }
 .mob-nav-item.active { color: #32cd32; }
+.mob-nav-item:hover { color: #32cd32; }
 
 @media (max-width: 768px) {
     /* ── Core layout ── */

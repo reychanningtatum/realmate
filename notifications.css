@@ -267,6 +267,7 @@
 
 .mob-nav-item i { font-size: 18px; }
 .mob-nav-item.active { color: #32cd32; }
+.mob-nav-item:hover { color: #32cd32; }
 
 @media (max-width: 768px) {
     .mobile-bottom-nav { display: flex; }
