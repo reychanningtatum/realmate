@@ -621,9 +621,12 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 
 /* Inline text highlights */
 .lc-hl-location { color: var(--text-main); font-weight: 800; font-size: 18px; }
-.lc-hl-developer { font-weight: 700; color: var(--text-sub); font-size: 13px; }
-.lc-hl-project { font-weight: 800; color: var(--text-main); font-size: 15px; }
-.lc-hl-price { color: #32cd32; font-weight: 800; font-size: 15px; }
+.lc-hl-developer { font-weight: 700; color: var(--text-sub); font-size: 16px; }
+.lc-hl-project { font-weight: 800; color: var(--text-main); font-size: 16px; }
+.lc-hl-unit { font-weight: 700; color: var(--text-main); font-size: 15px; }
+.lc-hl-price { color: #32cd32; font-weight: 800; font-size: 13px; }
+
+html[data-theme="dark"] .lc-hl-unit { color: #f1f5f9; }
 
 html[data-theme="dark"] .lc-hl-project { color: #f1f5f9; }
 

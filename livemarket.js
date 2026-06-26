@@ -229,11 +229,27 @@ function enhanceListingText(listing) {
         devPatterns.forEach(([k]) => { body = body.replace(new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), ''); });
     }
 
-    // Build reconstructed text: Location, Developer, Project, Price
+    // Extract unit type and size, remove from body
+    const unitType = _xType(raw);
+    const bedrooms = _xBed(raw);
+    const sqm = _xSqm(raw);
+    if (unitType) body = body.replace(/\b(residential\s*lot|commercial\s*lot|condo(?:minium)?|townhouse|house\s*(?:and|&)\s*lot|office\s*space|office)\b/gi, '');
+    if (bedrooms) {
+        body = body.replace(/\b(studio|1\s*br|2\s*br|3\s*br|4\s*br|\d+\s*bedroom\w*|one\s*bedroom|two\s*bedroom|three\s*bedroom|four\s*bedroom)\b/gi, '');
+    }
+    if (sqm) body = body.replace(/\d[\d,.]*\s*(?:sqm|sq\.?\s*m|square\s*met\w*)/gi, '');
+
+    const unitParts = [];
+    if (bedrooms) unitParts.push(bedrooms);
+    else if (unitType) unitParts.push(unitType);
+    if (sqm) unitParts.push(sqm);
+
+    // Build reconstructed text: Location, Developer, Project, Unit, Price
     let result = '';
     if (locations.length) result += `<span class="lc-hl-location">${locations.join(', ')}</span><br>`;
     if (developer) result += `<span class="lc-hl-developer">${developer}</span><br>`;
     if (project) result += `<span class="lc-hl-project">${project}</span><br>`;
+    if (unitParts.length) result += `<span class="lc-hl-unit">${unitParts.join(' — ')}</span><br>`;
     if (price) result += `<span class="lc-hl-price">₱${price.toLocaleString()}${priceContext ? ' ' + priceContext : ''}</span><br>`;
 
     // Highlight remaining body text
