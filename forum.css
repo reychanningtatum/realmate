@@ -1093,48 +1093,29 @@ html[data-theme="dark"] .anon-icon { background: #0f172a !important; color: #94a
 .mob-nav-menu a i { min-width: 18px; text-align: center; flex-shrink: 0; }
 
 /* Raised center Home button */
-/* Center nav item — raised circle when inactive, flat when active */
+/* Center nav item — raised circle, always same layout */
 .mob-nav-item.mob-nav-center {
   position: relative;
-  top: -8px;
-  width: 50px;
-  min-width: 50px;
-  max-width: 50px;
-  height: 58px;
+  top: -10px;
+  width: 52px;
+  min-width: 52px;
+  max-width: 52px;
+  height: 52px;
   padding: 0;
-  border-radius: 0;
-  background: transparent !important;
+  border-radius: 50%;
+  background: #fff !important;
   color: #94a3b8 !important;
-  box-shadow: none !important;
-  justify-content: flex-start;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15), 0 1px 4px rgba(0,0,0,0.08);
+  justify-content: center;
   align-items: center;
   flex: none;
-  border: none;
-  gap: 0;
-  overflow: visible;
-}
-.mob-nav-item.mob-nav-center i {
-  font-size: 18px; color: #94a3b8;
-  width: 42px; height: 42px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 50%;
-  background: #fff;
   border: 3px solid #e2e8f0;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.15), 0 1px 4px rgba(0,0,0,0.08);
-  flex-shrink: 0;
+  gap: 1px;
+  overflow: hidden;
 }
-.mob-nav-item.mob-nav-center span { font-size: 9px; color: #94a3b8; font-weight: 600; white-space: nowrap; margin-top: 2px; }
-
-/* Active: remove circle, match other nav items */
-.mob-nav-item.mob-nav-center.active {
-  position: static; top: auto;
-  width: auto; min-width: 0; max-width: none;
-  height: auto; padding: 6px 1px;
-  flex: 1; gap: 2px;
-}
-.mob-nav-item.mob-nav-center.active i {
-  width: auto; height: auto;
-  border-radius: 0; background: none; border: none; box-shadow: none;
-  color: #32cd32;
-}
-.mob-nav-item.mob-nav-center.active span { color: #32cd32; margin-top: 0; }
+.mob-nav-item.mob-nav-center i { font-size: 18px; color: #94a3b8; }
+.mob-nav-item.mob-nav-center span { font-size: 8px; color: #94a3b8; font-weight: 700; white-space: nowrap; line-height: 1; }
+.mob-nav-item.mob-nav-center.active { background: #32cd32 !important; border-color: #32cd32; box-shadow: 0 4px 14px rgba(50,205,50,0.4), 0 2px 6px rgba(0,0,0,0.10); }
+.mob-nav-item.mob-nav-center.active i { color: #fff; }
+.mob-nav-item.mob-nav-center.active span { color: #fff; }
+.mob-nav-item.mob-nav-center:hover { color: #32cd32 !important; }
