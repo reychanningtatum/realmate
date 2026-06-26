@@ -178,32 +178,49 @@ function _xType(t) { const l = t.toLowerCase(); if (/\bresidential\s*lot\b/.test
 function _xTurnover(t) { if (/\brfo\b|\bready\s*for\s*occupancy\b/i.test(t)) return 'Ready for Occupancy'; if (/\bpre[\s-]*selling\b/i.test(t)) return 'Pre-Selling'; if (/\bturnover\b/i.test(t)) return 'Turnover Ready'; return null; }
 
 function enhanceListingText(listing) {
-    let text = safeText(listing.content || '');
-    const raw = listing.content || '';
-
-    const project = extractProject(raw);
-    if (project) {
-        const escaped = project.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        text = text.replace(new RegExp(`(${escaped})`, 'gi'), '<span class="lc-hl-project">$1</span>');
-    }
-
-    const price = extractPrice(raw);
-    if (price) {
-        const formatted = '₱' + price.toLocaleString();
-        text = text.replace(/₱?\s*\d{1,3}(,\d{3})+/g, `<span class="lc-hl-price">${formatted}</span>`);
-        text = text.replace(/(?<!\w)(\d+\.?\d*)\s*[Mm](?:illion)?(?!\w)/g, `<span class="lc-hl-price">${formatted}</span>`);
-        text = text.replace(/(?<!\w)(\d{7,9})(?!\w)/g, `<span class="lc-hl-price">${formatted}</span>`);
-    }
+    let text = listing.content || '';
+    const raw = text;
 
     const locations = extractLocations(raw);
+    const project = extractProject(raw);
+    const price = extractPrice(raw);
+
+    // Remove location, project, and price from the body text
+    let body = text;
+
+    if (project) {
+        body = body.replace(new RegExp(project.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '');
+    }
+
+    // Remove location keywords from body
     if (locations.length) {
-        locations.forEach(loc => {
-            const escaped = loc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            text = text.replace(new RegExp(`(?<![<\\w])${escaped}(?![\\w>])`, 'gi'), `<span class="lc-hl-location">$&</span>`);
+        Object.keys(LOCATION_KEYWORDS || {}).forEach(k => {
+            body = body.replace(new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '');
         });
     }
 
-    return text;
+    // Remove price from body
+    if (price) {
+        body = body.replace(/₱?\s*\d{1,3}(,\d{3})+(\.\d+)?/g, '');
+        body = body.replace(/(\d+\.?\d*)\s*[Mm](?:illion)?/gi, '');
+        body = body.replace(/\b\d{7,9}\b/g, '');
+    }
+
+    // Clean up leftover artifacts
+    body = body.replace(/\n\s*\n/g, '\n').replace(/^\s*[,\-–—·•:;\n]+/gm, '').replace(/[,\-–—·•:;]\s*$/gm, '').replace(/\n{3,}/g, '\n\n').trim();
+
+    // Build reconstructed text: Location first, Project second, Price, then rest
+    let result = '';
+    if (locations.length) result += `<span class="lc-hl-location">${locations.join(', ')}</span><br>`;
+    if (project) result += `<span class="lc-hl-project">${project}</span><br>`;
+    if (price) result += `<span class="lc-hl-price">₱${price.toLocaleString()}</span><br>`;
+
+    // Highlight remaining body text
+    if (body) {
+        result += safeText(body);
+    }
+
+    return result || safeText(raw);
 }
 
 // ── Listing card ──────────────────────────────────
