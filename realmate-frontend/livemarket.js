@@ -285,27 +285,26 @@ async function confirmOffer() {
         const myId = authData?.user?.id;
         if (!myId) throw new Error('Not authenticated');
 
-        // Record offer (unique per user per listing — ignore duplicate)
-        await _sb.from('listing_offers').upsert(
-            { listing_id: listingId, user_id: myId },
-            { onConflict: 'listing_id,user_id', ignoreDuplicates: true }
-        );
-
-        // Update counter in DOM
-        const countEl = document.getElementById(`offer-count-${listingId}`);
-        if (countEl) {
-            const numEl = countEl.querySelector('.offer-count-num');
-            const cur = parseInt(numEl?.textContent || '0');
-            // Only increment display if this is a new offer (fetch fresh count)
-            const { count } = await _sb.from('listing_offers')
-                .select('*', { count: 'exact', head: true })
-                .eq('listing_id', listingId);
-            if (numEl) numEl.textContent = count || (cur + 1);
-            countEl.style.display = 'inline-flex';
-            if (n > 0) countEl.style.display = 'inline-flex';
-            countEl.classList.add('offer-count-bump');
-            setTimeout(() => countEl.classList.remove('offer-count-bump'), 400);
-        }
+        // Record offer (unique per user per listing — 1 row per user enforced by PRIMARY KEY)
+        try {
+            await _sb.from('listing_offers').upsert(
+                { listing_id: listingId, user_id: myId },
+                { onConflict: 'listing_id,user_id', ignoreDuplicates: true }
+            );
+            // Update counter badge in DOM
+            const countEl = document.getElementById(`offer-count-${listingId}`);
+            if (countEl) {
+                const numEl = countEl.querySelector('.offer-count-num');
+                const { count } = await _sb.from('listing_offers')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('listing_id', listingId);
+                const n = count || (parseInt(numEl?.textContent || '0') + 1);
+                if (numEl) numEl.textContent = n;
+                if (n > 0) countEl.style.display = 'inline-flex';
+                countEl.classList.add('offer-count-bump');
+                setTimeout(() => countEl.classList.remove('offer-count-bump'), 400);
+            }
+        } catch(offerErr) { console.warn('listing_offers table error (run migration?):', offerErr); }
 
         btn.innerHTML = '<i class="fas fa-check"></i> Offer Sent!';
         btn.style.background = '#16a34a';
