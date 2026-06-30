@@ -1857,12 +1857,13 @@ html[data-theme="dark"] #spLockedCancelBtn:hover { background: #162032; }
 }
 .listing-offer-btn {
     display: inline-flex; align-items: center; gap: 6px;
-    padding: 7px 16px; border-radius: 50px;
+    padding: 8px 18px; border-radius: 10px;
     background: #0f172a; color: #fff;
     border: none; font-size: 12px; font-weight: 700;
     cursor: pointer; font-family: inherit;
     transition: background 0.15s, transform 0.1s;
-    white-space: nowrap;
+    white-space: nowrap; width: 100%;
+    justify-content: center;
 }
 .listing-offer-btn i { color: #32cd32; font-size: 12px; }
 .listing-offer-btn:hover { background: #1e293b; }
