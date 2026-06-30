@@ -548,7 +548,8 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
     const matchGrade = matchPct >= 70 ? 'Excellent' : matchPct >= 45 ? 'Strong' : matchPct >= 25 ? 'Good' : 'Possible';
     const matchColor = matchPct >= 70 ? '#16a34a' : matchPct >= 45 ? '#2563eb' : matchPct >= 25 ? '#f59e0b' : '#94a3b8';
     const matchReasons = matchLabel?.matchReasons || [];
-    const matchBanner = matchLabel ? `
+    const isDismissedByMe = getDismissedMatches().has(String(listing.id));
+    const matchBanner = (matchLabel && !isDismissedByMe) ? `
         <div class="match-banner" onclick="event.stopPropagation(); openMatchForListing('${listing.id}')" style="cursor:pointer;">
             <div style="display:flex;align-items:center;gap:5px;flex:1;min-width:0;">
                 <i class="fas fa-circle-nodes" style="color:#32cd32;"></i>
@@ -1298,13 +1299,15 @@ function buildMatchMap() {
 
     const parsedMine = myListings.map(parseListing);
     const parsedAll = allListings.map(parseListing);
+    const dismissed = getDismissedMatches();
 
     parsedMine.forEach(mine => {
         let count = 0;
         parsedAll.forEach(other => {
             if (other.userId === mine.userId) return;
+            if (dismissed.has(String(other.id))) return; // user dismissed this match
             const { score, reasons } = computeMatchScore(mine, other);
-            if (score < 10) return; // no match at all
+            if (score < 10) return;
 
             const existing = map.get(other.id);
             if (!existing || existing.matchScore < score) {
@@ -1482,14 +1485,40 @@ function openMatchForListing(otherListingId) {
     showAllMatches(myMatch.id, otherListingId);
 }
 
+function getDismissedMatches() {
+    try { return new Set(JSON.parse(localStorage.getItem(`dismissed_matches_${myId}`) || '[]').map(String)); }
+    catch { return new Set(); }
+}
+
+function dismissMatch(listingId) {
+    const dismissed = getDismissedMatches();
+    dismissed.add(String(listingId));
+    localStorage.setItem(`dismissed_matches_${myId}`, JSON.stringify([...dismissed]));
+    // Remove the card from view
+    const card = document.querySelector(`.match-card[data-listing-id="${listingId}"]`);
+    if (card) {
+        card.style.transition = 'opacity 0.25s, transform 0.25s';
+        card.style.opacity = '0';
+        card.style.transform = 'translateX(40px)';
+        setTimeout(() => {
+            card.remove();
+            // Remove AI match badge on livemarket card if visible
+            const lmBadge = document.querySelector(`[data-listing-id="${listingId}"] .ai-match-badge`);
+            if (lmBadge) lmBadge.remove();
+        }, 260);
+    }
+}
+
 function showAllMatches(listingId, scrollToId) {
     const myListing = myListings.find(l => String(l.id) === String(listingId));
     if (!myListing) return;
     const partnerCat = PARTNER_MAP[myListing.category];
     if (!partnerCat) return;
     const parsedMine = parseListing(myListing);
+    const dismissed = getDismissedMatches();
     const matches = allListings.filter(other => {
         if (other.user_id === myListing.user_id) return false;
+        if (dismissed.has(String(other.id))) return false;
         const { score } = computeMatchScore(parsedMine, parseListing(other));
         return score > 0;
     }).sort((a, b) => {
@@ -1622,6 +1651,9 @@ function showMatchView(query, matches) {
                 ${mateButtonHtml(userName)}
                 <button onclick="event.stopPropagation(); location.href='listing-detail.html?id=${m.id}';" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:50px;border:1.5px solid var(--border);background:#fff;color:var(--text-main);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">
                     <i class="fas fa-eye"></i> View Listing
+                </button>
+                <button onclick="event.stopPropagation(); dismissMatch('${m.id}');" title="Not a match" style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;border:1.5px solid #fca5a5;background:#fff5f5;color:#ef4444;font-size:13px;cursor:pointer;font-family:inherit;flex-shrink:0;">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
         `;
