@@ -144,7 +144,7 @@ async function setListingStatus(listingId, status, btn) {
 }
 
 function buildStatusBadge(listing) {
-    if (listing.status === 'sold') return '<span class="listing-status-badge sold"><i class="fas fa-check-circle"></i> Sold</span>';
+    if (listing.status === 'sold') return '';
     if (listing.status === 'negotiation') return '<span class="listing-status-badge negotiation"><i class="fas fa-comments-dollar"></i> In Negotiation</span>';
     return '';
 }
