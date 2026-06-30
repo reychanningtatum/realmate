@@ -554,6 +554,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
                 ${catTag(listing.category)}
                 ${buildOfferBadge(listing)}
                 ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : ''}
+                ${matchLabel && myMatchCount === 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); openMatchForListing('${listing.id}')"><i class="fas fa-circle-nodes"></i> AI Match</button>` : ''}
                 <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
                 <div class="lc-menu-wrap" onclick="event.stopPropagation()">
                     <button class="lc-menu-btn" onclick="toggleCardMenu(this)"><i class="fas fa-ellipsis-vertical"></i></button>
@@ -1382,6 +1383,15 @@ function exitMatchView() {
     if (topWrap) topWrap.style.display = '';
     syncTopPadding();
     loadLedger();
+}
+
+function openMatchForListing(otherListingId) {
+    // Find which of the user's own listings matched this card, then show its matches
+    const other = allListings.find(l => String(l.id) === String(otherListingId));
+    if (!other) return;
+    const partnerCat = PARTNER_MAP[other.category];
+    const myMatch = (typeof myListings !== 'undefined' ? myListings : []).find(l => l.category === partnerCat);
+    if (myMatch) showAllMatches(myMatch.id);
 }
 
 function showAllMatches(listingId) {
