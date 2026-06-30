@@ -340,8 +340,11 @@ async function openConversation(convId) {
 
     if (activeConversationId !== convId) return;
 
+    const hasListingRef = !!container.querySelector('.chat-listing-ref');
     if (!msgs.length) {
-        container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--chat-sub);font-size:13px;">No messages yet. Say hello! 👋</div>';
+        if (!hasListingRef) {
+            container.insertAdjacentHTML('beforeend', '<div style="text-align:center;padding:40px;color:var(--chat-sub);font-size:13px;">No messages yet. Say hello! 👋</div>');
+        }
     } else {
         let lastDate = '';
         msgs.forEach(m => {
