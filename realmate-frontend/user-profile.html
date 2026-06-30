@@ -85,6 +85,8 @@
       font-size: 12px; color: #64748b; font-weight: 500;
     }
     .seller-meta-item i { color: #9ca3af; font-size: 11px; }
+    .seller-meta-count { color: #32cd32 !important; font-weight: 700; }
+    .seller-meta-count i { color: #32cd32 !important; }
     .seller-actions { display: flex; gap: 8px; flex-wrap: wrap; }
     .up-btn {
       display: inline-flex; align-items: center; gap: 6px;
@@ -305,6 +307,7 @@ async function loadSellerProfile() {
         <div class="seller-meta">
           ${loc    ? `<span class="seller-meta-item"><i class="fas fa-map-marker-alt"></i>${loc}</span>` : ''}
           ${joined ? `<span class="seller-meta-item"><i class="fas fa-calendar-alt"></i>Member since ${joined}</span>` : ''}
+          <span class="seller-meta-item seller-meta-count"><i class="fas fa-list-ul"></i>${count} active listing${count !== 1 ? 's' : ''}</span>
         </div>
         ${actionBtns ? `<div class="seller-actions">${actionBtns}</div>` : ''}
       </div>
