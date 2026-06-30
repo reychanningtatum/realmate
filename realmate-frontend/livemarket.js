@@ -423,6 +423,7 @@ function enhanceListingText(listing) {
 
     const locations = extractLocations(raw);
     const project = extractProject(raw);
+    const priceRange = extractPriceRange(raw);
     const price = extractPrice(raw);
 
     // Remove location, project, and price from the body text
@@ -478,7 +479,7 @@ function enhanceListingText(listing) {
     const sqm = _xSqm(raw);
     if (unitType) body = body.replace(/\b(residential\s*lot|commercial\s*lot|condo(?:minium)?|townhouse|house\s*(?:and|&)\s*lot|office\s*space|office)\b/gi, '');
     if (bedrooms) {
-        body = body.replace(/\b(studio|1\s*br|2\s*br|3\s*br|4\s*br|\d+\s*bedroom\w*|one\s*bedroom|two\s*bedroom|three\s*bedroom|four\s*bedroom)\b/gi, '');
+        body = body.replace(/\b(studio|1[\s-]*br|2[\s-]*br|3[\s-]*br|4[\s-]*br|\d+[\s-]*bedroom\w*|one\s*bedroom|two\s*bedroom|three\s*bedroom|four\s*bedroom)\b/gi, '');
     }
     if (sqm) body = body.replace(/\d[\d,.]*\s*(?:sqm|sq\.?\s*m|square\s*met\w*)/gi, '');
 
@@ -513,7 +514,8 @@ function enhanceListingText(listing) {
     if (developer) result += `<span class="lc-hl-developer">${developer}</span>`;
     if (project) result += `<span class="lc-hl-project">${project}</span>`;
     if (unitParts.length) result += `<span class="lc-hl-unit">${unitParts.join(' — ')}</span>`;
-    if (price) result += `<span class="lc-hl-price">₱${price.toLocaleString()}${priceContext ? ' ' + priceContext : ''}</span>`;
+    if (priceRange) result += `<span class="lc-hl-price">₱${priceRange.low}M – ₱${priceRange.high}M${priceContext ? ' ' + priceContext : ''}</span>`;
+    else if (price) result += `<span class="lc-hl-price">₱${price.toLocaleString()}${priceContext ? ' ' + priceContext : ''}</span>`;
     if (extras.length) result += `<span class="lc-hl-extras">${extras.join('<br>')}</span>`;
     if (body) result += safeText(body);
 
@@ -644,18 +646,28 @@ const NON_PROJECT_TOKENS = new Set([
     'CAMELLA','AVIDA','AMAIA','FEDERAL',
 ]);
 
+function extractPriceRange(text) {
+    const lower = text.toLowerCase();
+    const rangeM = lower.match(/(\d+\.?\d*)\s*m?\s*(?:-|to)\s*(\d+\.?\d*)\s*m(?:illion)?/);
+    if (rangeM) return { low: parseFloat(rangeM[1]), high: parseFloat(rangeM[2]) };
+    return null;
+}
+
 function extractPrice(text) {
+    const lower = text.toLowerCase();
+    // Detect price range e.g. "30-40M", "30 to 40M", "30M-40M"
+    const rangeM = lower.match(/(\d+\.?\d*)\s*m?\s*(?:-|to)\s*(\d+\.?\d*)\s*m(?:illion)?/);
+    if (rangeM) return parseFloat(rangeM[2]) * 1_000_000; // use upper bound for matching
     const lines = text.split(/\n/).map(l => l.trim()).filter(Boolean);
     // Try each line first (price alone on a line is unambiguous)
     for (const line of lines) {
-        const lower = line.toLowerCase();
-        let m = lower.match(/^(?:php|₱|p)?\s*(\d+\.?\d*)\s*m(?:illion)?(?:\b|$)/);
+        const lo = line.toLowerCase();
+        let m = lo.match(/^(?:php|₱|p)?\s*(\d+\.?\d*)\s*m(?:illion)?(?:\b|$)/);
         if (m) return parseFloat(m[1]) * 1_000_000;
         m = line.replace(/,/g, '').match(/^(\d{7,9})$/);
         if (m) return parseFloat(m[1]);
     }
     // Fallback: scan full text
-    const lower = text.toLowerCase();
     let m = lower.match(/(\d+\.?\d*)\s*m(?:illion)?(?:\b|$)/);
     if (m) return parseFloat(m[1]) * 1_000_000;
     m = text.replace(/,/g, '').match(/\b(\d{7,9})\b/);
@@ -669,18 +681,18 @@ function extractUnit(text) {
     for (const line of lines) {
         const lower = line.toLowerCase().trim();
         if (lower.match(/^studio$/)) return 'Studio';
-        if (lower.match(/^1\s*br$|^1\s*bedroom$|^one\s*bedroom$/)) return '1BR';
-        if (lower.match(/^2\s*br$|^2\s*bedroom$|^two\s*bedroom$/)) return '2BR';
-        if (lower.match(/^3\s*br$|^3\s*bedroom$|^three\s*bedroom$/)) return '3BR';
-        if (lower.match(/^4\s*br$|^4\s*bedroom$|^four\s*bedroom$/)) return '4BR';
+        if (lower.match(/^1[\s-]*br$|^1[\s-]*bedroom$|^one\s*bedroom$/)) return '1BR';
+        if (lower.match(/^2[\s-]*br$|^2[\s-]*bedroom$|^two\s*bedroom$/)) return '2BR';
+        if (lower.match(/^3[\s-]*br$|^3[\s-]*bedroom$|^three\s*bedroom$/)) return '3BR';
+        if (lower.match(/^4[\s-]*br$|^4[\s-]*bedroom$|^four\s*bedroom$/)) return '4BR';
     }
     // Fallback: inline detection
     const lower = text.toLowerCase();
     if (lower.match(/\bstudio\b/)) return 'Studio';
-    if (lower.match(/\b1\s*br\b|1\s*bedroom|one\s*bedroom/)) return '1BR';
-    if (lower.match(/\b2\s*br\b|2\s*bedroom|two\s*bedroom/)) return '2BR';
-    if (lower.match(/\b3\s*br\b|3\s*bedroom|three\s*bedroom/)) return '3BR';
-    if (lower.match(/\b4\s*br\b|4\s*bedroom|four\s*bedroom/)) return '4BR';
+    if (lower.match(/\b1[\s-]*br\b|1[\s-]*bedroom|one\s*bedroom/)) return '1BR';
+    if (lower.match(/\b2[\s-]*br\b|2[\s-]*bedroom|two\s*bedroom/)) return '2BR';
+    if (lower.match(/\b3[\s-]*br\b|3[\s-]*bedroom|three\s*bedroom/)) return '3BR';
+    if (lower.match(/\b4[\s-]*br\b|4[\s-]*bedroom|four\s*bedroom/)) return '4BR';
     return null;
 }
 
