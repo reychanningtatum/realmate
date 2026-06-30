@@ -143,6 +143,20 @@ async function setListingStatus(listingId, status, btn) {
     applyFilters();
 }
 
+function toggleCardMenu(btn) {
+    const dropdown = btn.nextElementSibling;
+    const isOpen = dropdown.classList.contains('open');
+    // Close all open menus first
+    document.querySelectorAll('.lc-menu-dropdown.open').forEach(d => d.classList.remove('open'));
+    if (!isOpen) dropdown.classList.add('open');
+}
+function closeCardMenu(el) {
+    el.closest('.lc-menu-dropdown')?.classList.remove('open');
+}
+document.addEventListener('click', () => {
+    document.querySelectorAll('.lc-menu-dropdown.open').forEach(d => d.classList.remove('open'));
+});
+
 async function deleteListing(listingId, btn) {
     if (!confirm('Delete this listing? This cannot be undone.')) return;
     btn.disabled = true;
@@ -170,9 +184,6 @@ function buildStatusButtons(listing) {
         </button>
         <button class="status-btn sold-btn ${isSold ? 'active' : ''}" onclick="setListingStatus('${listing.id}', ${isSold ? 'null' : "'sold'"}, this)">
             <i class="fas fa-check-circle"></i> ${isSold ? 'Remove' : 'Sold'}
-        </button>
-        <button class="status-btn delete-btn" onclick="deleteListing('${listing.id}', this)">
-            <i class="fas fa-trash"></i> Delete
         </button>
     </div>`;
 }
@@ -525,7 +536,19 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
                 ${buildOfferBadge(listing)}
                 ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : ''}
                 <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
-                <button class="pin-btn ${getPinnedIds().includes(String(listing.id)) ? 'pinned' : ''}" onclick="event.stopPropagation(); togglePin('${listing.id}', this)" title="${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}"><i class="fas fa-thumbtack"></i></button>
+            </div>
+            <div class="lc-menu-wrap" onclick="event.stopPropagation()">
+                <button class="lc-menu-btn" onclick="toggleCardMenu(this)"><i class="fas fa-ellipsis-vertical"></i></button>
+                <div class="lc-menu-dropdown">
+                    <button onclick="togglePin('${listing.id}', this); closeCardMenu(this)">
+                        <i class="fas fa-thumbtack ${getPinnedIds().includes(String(listing.id)) ? 'pinned-icon' : ''}"></i>
+                        ${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}
+                    </button>
+                    ${localUser && listing.user_name === localUser.name ? `
+                    <button class="lc-menu-delete" onclick="deleteListing('${listing.id}', this)">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>` : ''}
+                </div>
             </div>
             ${buildStatusBadge(listing)}
             <p class="listing-text">${enhanceListingText(listing)}</p>
