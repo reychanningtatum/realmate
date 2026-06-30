@@ -318,6 +318,11 @@ async function openConversation(convId) {
 
     unsubMessages();
 
+    // Clear typing indicator from previous conversation
+    clearTimeout(typingTimeout);
+    const typingEl = document.getElementById('chatTypingIndicator');
+    if (typingEl) { typingEl.classList.remove('active'); typingEl.innerHTML = ''; }
+
     activeConversationId = convId;
     activeOtherUser = conv.otherUser;
     sessionStorage.setItem('chat_active_conv', convId);
