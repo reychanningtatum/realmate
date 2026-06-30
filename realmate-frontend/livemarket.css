@@ -1868,25 +1868,32 @@ html[data-theme="dark"] #spLockedCancelBtn:hover { background: #162032; }
 .listing-offer-btn:hover { background: #1e293b; }
 .listing-offer-btn:active { transform: scale(0.97); }
 
-.listing-offer-count {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 5px 12px; border-radius: 50px;
-    background: #f0fdf4; border: 1px solid #bbf7d0;
-    color: #16a34a; font-size: 12px; font-weight: 700;
-    white-space: nowrap;
+/* Offer badge — top of card, beside category */
+.listing-offer-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px; border-radius: 50px;
+    background: linear-gradient(135deg, #052e16 0%, #14532d 100%);
+    border: 1px solid #16a34a;
+    color: #4ade80; font-size: 10px; font-weight: 800;
+    white-space: nowrap; letter-spacing: 0.02em;
+    box-shadow: 0 1px 4px rgba(22,163,74,0.18);
+    vertical-align: middle;
 }
-.listing-offer-count i { font-size: 11px; }
+.listing-offer-badge i { font-size: 9px; color: #4ade80; }
 @keyframes offerCountBump {
     0%   { transform: scale(1); }
-    40%  { transform: scale(1.18); }
+    40%  { transform: scale(1.2); }
     100% { transform: scale(1); }
 }
-.listing-offer-count.offer-count-bump { animation: offerCountBump 0.35s ease; }
+.listing-offer-badge.offer-count-bump { animation: offerCountBump 0.35s ease; }
+
+/* Offer button row at card bottom */
+.listing-offer-count { display: none; }
 
 html[data-theme="dark"] .listing-offer-row { border-top-color: #334155; }
 html[data-theme="dark"] .listing-offer-btn { background: #1e293b; }
 html[data-theme="dark"] .listing-offer-btn:hover { background: #243044; }
-html[data-theme="dark"] .listing-offer-count { background: rgba(22,163,74,0.1); border-color: rgba(22,163,74,0.25); }
+html[data-theme="dark"] .listing-offer-badge { background: linear-gradient(135deg, #052e16 0%, #14532d 100%); }
 
 /* ── Offer Confirmation Popup ────────────────────────────────────────────── */
 #offerPopupOverlay {

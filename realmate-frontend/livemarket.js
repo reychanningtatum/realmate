@@ -166,7 +166,6 @@ function buildStatusButtons(listing) {
 
 function buildOfferRow(listing) {
     const localUser = JSON.parse(localStorage.getItem('user'));
-    // Don't show offer button on own listings or anonymous listings
     if (!listing.user_id || listing.is_anonymous || (localUser && listing.user_name === localUser.name)) return '';
     const img   = (listing.image_urls || [])[0] || '';
     const safeN = (listing.user_name  || '').replace(/'/g, "\\'");
@@ -176,12 +175,17 @@ function buildOfferRow(listing) {
     const safeUid = listing.user_id;
     return `<div class="listing-offer-row" onclick="event.stopPropagation()">
         <button class="listing-offer-btn" onclick="showOfferPopup('${safeId}','${safeUid}','${safeN}','${safeI}','${safeCat}',this)">
-            <i class="fas fa-handshake"></i> Offer
+            <i class="fas fa-handshake"></i> Send Offer
         </button>
-        <span class="listing-offer-count" id="offer-count-${safeId}">
-            <i class="fas fa-handshake"></i> <span class="offer-count-num">0</span> Offers
-        </span>
     </div>`;
+}
+
+function buildOfferBadge(listing) {
+    const localUser = JSON.parse(localStorage.getItem('user'));
+    if (!listing.user_id || listing.is_anonymous) return '';
+    return `<span class="listing-offer-badge" id="offer-count-${listing.id}" style="display:none;" onclick="event.stopPropagation()">
+        <i class="fas fa-handshake"></i> <span class="offer-count-num">0</span>
+    </span>`;
 }
 
 async function loadOfferCounts(listingIds) {
@@ -198,7 +202,9 @@ async function loadOfferCounts(listingIds) {
         listingIds.forEach(id => {
             const el = document.getElementById(`offer-count-${id}`);
             if (!el) return;
-            el.querySelector('.offer-count-num').textContent = counts[id] || 0;
+            const n = counts[id] || 0;
+            el.querySelector('.offer-count-num').textContent = n;
+            el.style.display = n > 0 ? 'inline-flex' : 'none';
         });
     } catch(e) { console.warn('loadOfferCounts', e); }
 }
@@ -296,6 +302,7 @@ async function confirmOffer() {
                 .eq('listing_id', listingId);
             if (numEl) numEl.textContent = count || (cur + 1);
             countEl.style.display = 'inline-flex';
+            if (n > 0) countEl.style.display = 'inline-flex';
             countEl.classList.add('offer-count-bump');
             setTimeout(() => countEl.classList.remove('offer-count-bump'), 400);
         }
@@ -509,6 +516,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
         <div class="listing-card-body">
             <div class="listing-card-top">
                 ${catTag(listing.category)}
+                ${buildOfferBadge(listing)}
                 ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : ''}
                 <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
                 <button class="pin-btn ${getPinnedIds().includes(String(listing.id)) ? 'pinned' : ''}" onclick="event.stopPropagation(); togglePin('${listing.id}', this)" title="${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}"><i class="fas fa-thumbtack"></i></button>
