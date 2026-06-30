@@ -178,7 +178,7 @@ function buildOfferRow(listing) {
         <button class="listing-offer-btn" onclick="showOfferPopup('${safeId}','${safeUid}','${safeN}','${safeI}','${safeCat}',this)">
             <i class="fas fa-handshake"></i> Offer
         </button>
-        <span class="listing-offer-count" id="offer-count-${safeId}" style="display:none">
+        <span class="listing-offer-count" id="offer-count-${safeId}">
             <i class="fas fa-handshake"></i> <span class="offer-count-num">0</span> Offers
         </span>
     </div>`;
@@ -198,11 +198,7 @@ async function loadOfferCounts(listingIds) {
         listingIds.forEach(id => {
             const el = document.getElementById(`offer-count-${id}`);
             if (!el) return;
-            const n = counts[id] || 0;
-            if (n > 0) {
-                el.querySelector('.offer-count-num').textContent = n;
-                el.style.display = 'inline-flex';
-            }
+            el.querySelector('.offer-count-num').textContent = counts[id] || 0;
         });
     } catch(e) { console.warn('loadOfferCounts', e); }
 }
