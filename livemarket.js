@@ -584,6 +584,10 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
                         <button class="lc-menu-delete" onclick="deleteListing('${listing.id}', this)">
                             <i class="fas fa-trash"></i> Delete
                         </button>` : ''}
+                        ${matchLabel && localUser && listing.user_name !== localUser.name ? `
+                        <button class="lc-menu-delete" onclick="closeCardMenu(this); confirmDismissMatch('${listing.id}')">
+                            <i class="fas fa-times-circle"></i> Dismiss Match
+                        </button>` : ''}
                     </div>
                 </div>
             </div>
