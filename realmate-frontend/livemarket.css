@@ -521,11 +521,11 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 }
 /* Sold ribbon — diagonal top-right corner */
 .sold-ribbon {
-  position: absolute; top: 18px; right: -28px;
+  position: absolute; top: 18px; left: -28px;
   width: 110px; z-index: 10;
   background: linear-gradient(135deg, #991b1b, #ef4444);
   box-shadow: 0 2px 8px rgba(239,68,68,0.5);
-  transform: rotate(45deg);
+  transform: rotate(-45deg);
   overflow: hidden;
 }
 .sold-ribbon span {
