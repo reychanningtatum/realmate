@@ -493,7 +493,7 @@ function addMsgBubble(container, m) {
     } else if (type === 'TEXT') {
         bubble = `<div class="chat-msg-bubble">${esc(m.message_text || '')}</div>`;
     } else if (type === 'IMAGE') {
-        bubble = `<div class="chat-msg-bubble chat-msg-image-bubble"><img class="chat-msg-image" src="${m.file_url}" alt="Image" onclick="event.stopPropagation();openLightbox('${m.file_url}')" loading="lazy"><a href="${m.file_url}" download onclick="event.stopPropagation();" style="position:absolute;bottom:8px;right:8px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,0.5);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;text-decoration:none;backdrop-filter:blur(4px);"><i class="fas fa-download"></i></a></div>`;
+        bubble = `<div class="chat-msg-bubble chat-msg-image-bubble"><img class="chat-msg-image" src="${m.file_url}" alt="Image" onclick="event.stopPropagation();toggleMsgTimestamp(this.closest('.chat-msg-row'));openLightbox('${m.file_url}')" loading="lazy"><a href="${m.file_url}" download onclick="event.stopPropagation();" style="position:absolute;bottom:8px;right:8px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,0.5);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;text-decoration:none;backdrop-filter:blur(4px);"><i class="fas fa-download"></i></a></div>`;
     } else if (type === 'PDF') {
         bubble = fileBubble(m, '📄', true);
     } else if (type === 'DOC' || type === 'DOCX') {
