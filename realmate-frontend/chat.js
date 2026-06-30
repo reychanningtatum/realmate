@@ -463,7 +463,7 @@ function addMsgBubble(container, m) {
         // Get HH:MM of this message
         const msgMinute = new Date(m.created_at).toISOString().slice(0, 16);
         // Hide receipts on previous own messages sharing the same minute
-        container.querySelectorAll('.chat-msg-row.sent').forEach(row => {
+        container.querySelectorAll('.chat-msg-row.own').forEach(row => {
             const prev = row.querySelector('.chat-msg-receipt');
             if (prev && row.dataset.msgMinute === msgMinute) prev.style.display = 'none';
         });
