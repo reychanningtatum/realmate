@@ -379,6 +379,7 @@ async function confirmOffer() {
                 body: JSON.stringify({
                     recipient_user_name: ownerName,
                     sender_user_name: senderName,
+                    sender_profile_picture: localUser.image || localUser.img || localUser.avatar || '',
                     type: 'offer',
                     message: `${senderName} sent you an offer on your ${category || 'property'} listing.`,
                     is_read: false,
