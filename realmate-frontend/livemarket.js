@@ -504,6 +504,7 @@ function enhanceListingText(listing) {
 // ── Listing card ──────────────────────────────────
 // matchLabel: { myCategory, myContent } when this card matches one of the user's own listings
 function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchCount = 0) {
+    const localUser = JSON.parse(localStorage.getItem('user') || 'null');
     const card = document.createElement('div');
     card.className = 'listing-card' + (matchLabel ? ' is-match' : '');
 
