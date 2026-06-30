@@ -1425,15 +1425,19 @@ function exitMatchView() {
 }
 
 function openMatchForListing(otherListingId) {
-    // Find which of the user's own listings matched this card, then show its matches
     const other = allListings.find(l => String(l.id) === String(otherListingId));
     if (!other) return;
-    const partnerCat = PARTNER_MAP[other.category];
-    const myMatch = (typeof myListings !== 'undefined' ? myListings : []).find(l => l.category === partnerCat);
-    if (myMatch) showAllMatches(myMatch.id);
+    const parsedOther = parseListing(other);
+    // Find the specific myListing that actually scores against this card
+    const myMatch = (typeof myListings !== 'undefined' ? myListings : []).find(l => {
+        const { score } = computeMatchScore(parseListing(l), parsedOther);
+        return score > 0;
+    });
+    if (!myMatch) return;
+    showAllMatches(myMatch.id, otherListingId);
 }
 
-function showAllMatches(listingId) {
+function showAllMatches(listingId, scrollToId) {
     const myListing = myListings.find(l => String(l.id) === String(listingId));
     if (!myListing) return;
     const partnerCat = PARTNER_MAP[myListing.category];
@@ -1449,6 +1453,12 @@ function showAllMatches(listingId) {
         return sb - sa;
     });
     showMatchView(myListing, matches);
+    if (scrollToId) {
+        setTimeout(() => {
+            const el = document.querySelector(`[data-listing-id="${scrollToId}"]`);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+    }
 }
 
 function showMatchView(query, matches) {
@@ -1506,6 +1516,7 @@ function showMatchView(query, matches) {
 
         const card = document.createElement('div');
         card.className = 'match-card';
+        card.dataset.listingId = String(m.id);
         const matchImgs = m.image_urls?.length ? m.image_urls : (m.image_url || m.image ? [m.image_url || m.image] : []);
         const userName = m.user_name || m.userName || 'Unknown';
 
