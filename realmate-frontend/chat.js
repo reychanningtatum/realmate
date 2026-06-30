@@ -604,8 +604,10 @@ async function doSendFile(file, convId) {
     if (msg && activeConversationId === convId) {
         const container = document.getElementById('chatMessages');
         if (container.querySelector('div[style*="text-align"]')) container.innerHTML = '';
-        addMsgBubble(container, msg);
-        container.scrollTop = container.scrollHeight;
+        if (!container.querySelector(`[data-msg-id="${msg.id}"]`)) {
+            addMsgBubble(container, msg);
+            container.scrollTop = container.scrollHeight;
+        }
     }
     const conv = conversations.find(c => c.id === convId);
     if (conv && msg) { conv.lastMessage = msg; sortAndRenderConvs(); }
