@@ -317,8 +317,8 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
             <div class="listing-card-user">
                 <img src="${listing.user_img || avatarFallback(listing.user_name)}"
                      onerror="this.src='${avatarFallback(listing.user_name)}'"
-                     ${listing.is_anonymous || !listing.user_id ? '' : `onclick="event.stopPropagation();location.href='user-profile.html?user_id=${listing.user_id}'" style="cursor:pointer;"`}>
-                <div class="listing-card-user-info" ${listing.is_anonymous || !listing.user_id ? '' : `onclick="event.stopPropagation();location.href='user-profile.html?user_id=${listing.user_id}'" style="cursor:pointer;"`}>
+                     ${listing.is_anonymous || !listing.user_id ? '' : `onclick="event.stopPropagation();showSellerPopup('${listing.user_id}','${(listing.user_name||'').replace(/'/g,"\\'")}','${(listing.user_img||'').replace(/'/g,"\\'")}','${(listing.user_job||'').replace(/'/g,"\\'")}');return false;" style="cursor:pointer;"`}>
+                <div class="listing-card-user-info" ${listing.is_anonymous || !listing.user_id ? '' : `onclick="event.stopPropagation();showSellerPopup('${listing.user_id}','${(listing.user_name||'').replace(/'/g,"\\'")}','${(listing.user_img||'').replace(/'/g,"\\'")}','${(listing.user_job||'').replace(/'/g,"\\'")}');return false;" style="cursor:pointer;"`}>
                     <div class="listing-card-user-name">${listing.user_name || 'Unknown'}</div>
                     <div class="listing-card-user-job">${listing.user_job || ''}</div>
                 </div>
@@ -1771,4 +1771,87 @@ function closeYtVideo() {
     }
     setTimeout(updateFilterBarTop, 100);
 })();
+
+// ── Seller Popup ───────────────────────────────────────────────────────────
+function _ensureSellerPopup() {
+    if (document.getElementById('sellerPopupOverlay')) return;
+    const el = document.createElement('div');
+    el.id = 'sellerPopupOverlay';
+    el.innerHTML = `
+        <div id="sellerPopupBackdrop" onclick="closeSellerPopup()"></div>
+        <div id="sellerPopupSheet">
+            <div id="sellerPopupHandle"></div>
+            <div id="sellerPopupHeader">
+                <div id="sellerPopupAvatar"></div>
+                <div>
+                    <div id="sellerPopupName"></div>
+                    <div id="sellerPopupJob"></div>
+                </div>
+            </div>
+            <div id="sellerPopupOptions">
+                <button id="sellerOptListings" onclick="closeSellerPopup(); location.href=window._spUserId?'user-profile.html?user_id='+window._spUserId:''">
+                    <span class="sp-opt-icon"><i class="fas fa-store"></i></span>
+                    <span class="sp-opt-text">
+                        <span class="sp-opt-title">View Listings</span>
+                        <span class="sp-opt-sub">Browse all active property listings</span>
+                    </span>
+                    <i class="fas fa-chevron-right sp-opt-arrow"></i>
+                </button>
+                <button id="sellerOptProfile" onclick="closeSellerPopup(); location.href=window._spUserId?'dashboard.html?user_id='+window._spUserId:''">
+                    <span class="sp-opt-icon sp-opt-icon-profile"><i class="fas fa-user-tie"></i></span>
+                    <span class="sp-opt-text">
+                        <span class="sp-opt-title">View Profile</span>
+                        <span class="sp-opt-sub">See full Realmate profile</span>
+                    </span>
+                    <i class="fas fa-chevron-right sp-opt-arrow"></i>
+                </button>
+            </div>
+            <button id="sellerPopupCancel" onclick="closeSellerPopup()">Cancel</button>
+        </div>
+    `;
+    document.body.appendChild(el);
+
+    // Swipe-down to dismiss on mobile
+    const sheet = document.getElementById('sellerPopupSheet');
+    let startY = 0, curY = 0, dragging = false;
+    sheet.addEventListener('touchstart', e => {
+        if (e.target.closest('button')) return;
+        startY = e.touches[0].clientY; dragging = true; curY = 0;
+        sheet.style.transition = 'none';
+    }, { passive: true });
+    sheet.addEventListener('touchmove', e => {
+        if (!dragging) return;
+        curY = e.touches[0].clientY - startY;
+        if (curY > 0) sheet.style.transform = `translateY(${curY}px)`;
+    }, { passive: true });
+    sheet.addEventListener('touchend', () => {
+        if (!dragging) return;
+        dragging = false;
+        sheet.style.transition = '';
+        sheet.style.transform = '';
+        if (curY > 80) closeSellerPopup();
+    });
+}
+
+function showSellerPopup(userId, name, img, job) {
+    _ensureSellerPopup();
+    window._spUserId = userId;
+    const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(name||'S')}&background=0f172a&color=32cd32`;
+    const avatarEl = document.getElementById('sellerPopupAvatar');
+    avatarEl.innerHTML = img
+        ? `<img src="${img}" onerror="this.src='${fallback}'">`
+        : `<img src="${fallback}">`;
+    document.getElementById('sellerPopupName').textContent = name || 'Seller';
+    document.getElementById('sellerPopupJob').textContent  = job  || '';
+    const overlay = document.getElementById('sellerPopupOverlay');
+    overlay.classList.add('sp-open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeSellerPopup() {
+    const overlay = document.getElementById('sellerPopupOverlay');
+    if (!overlay) return;
+    overlay.classList.remove('sp-open');
+    document.body.style.overflow = '';
+}
 
