@@ -446,6 +446,10 @@ function enhanceListingText(listing) {
     // Remove price + attached words (e.g. "18M budget", "19M negotiable")
     let priceContext = '';
     if (price) {
+        // Remove range patterns first e.g. "BUDGET 30-40M", "ASKING 30 to 40M"
+        body = body.replace(/\b(?:budget|asking|price|php|₱)?\s*\d+\.?\d*\s*m?\s*(?:-|to)\s*\d+\.?\d*\s*m(?:illion)?\b/gi, '');
+        // Remove leading price keywords left behind e.g. "BUDGET", "ASKING"
+        body = body.replace(/\b(?:budget|asking price|asking)\b/gi, '');
         const pricePatterns = [
             /₱?\s*\d{1,3}(,\d{3})+(\.\d+)?\s*\w*/g,
             /(\d+\.?\d*)\s*[Mm](?:illion)?\s*\w*/gi,
