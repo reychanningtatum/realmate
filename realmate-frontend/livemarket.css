@@ -1752,3 +1752,100 @@ html[data-theme="dark"] .sp-opt-title { color: #f1f5f9; }
 html[data-theme="dark"] #sellerPopupCancel { background: #0f172a; color: #64748b; }
 html[data-theme="dark"] #sellerPopupCancel:hover { background: #162032; }
 html[data-theme="dark"] #sellerPopupHandle { background: #334155; }
+
+/* ── Locked Popup ────────────────────────────────────────────────────────── */
+#spLockedOverlay {
+    display: none; position: fixed; inset: 0; z-index: 99999;
+}
+#spLockedOverlay.sp-open { display: block; }
+
+#spLockedBackdrop {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0); transition: background 0.3s;
+}
+#spLockedOverlay.sp-open #spLockedBackdrop { background: rgba(0,0,0,0.55); }
+
+#spLockedSheet {
+    position: absolute; bottom: 0; left: 50%; right: auto;
+    transform: translateX(-50%) translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    background: #fff; border-radius: 24px 24px 0 0;
+    width: 100%; max-width: 520px;
+    padding: 0 20px calc(24px + env(safe-area-inset-bottom));
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.2);
+    text-align: center;
+}
+#spLockedOverlay.sp-open #spLockedSheet {
+    transform: translateX(-50%) translateY(0);
+}
+
+#spLockedHandle {
+    width: 40px; height: 4px; background: #e2e8f0; border-radius: 2px;
+    margin: 12px auto 20px;
+}
+
+#spLockedIcon {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: linear-gradient(135deg, #0f172a 0%, #1a2744 100%);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+    box-shadow: 0 4px 20px rgba(15,23,42,0.25);
+}
+#spLockedIcon i { font-size: 26px; color: #32cd32; }
+
+#spLockedTitle {
+    font-size: 18px; font-weight: 800; color: #0f172a;
+    letter-spacing: -0.02em; margin-bottom: 10px;
+}
+
+#spLockedMsg {
+    font-size: 13px; color: #64748b; line-height: 1.65;
+    margin-bottom: 24px; max-width: 340px; margin-left: auto; margin-right: auto;
+}
+
+#spLockedActions { display: flex; flex-direction: column; gap: 10px; }
+
+#spLockedAddBtn {
+    width: 100%; padding: 15px; border-radius: 14px;
+    background: #32cd32; color: #fff; border: none;
+    font-size: 15px; font-weight: 800; cursor: pointer;
+    font-family: inherit; transition: background 0.15s, transform 0.1s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+#spLockedAddBtn:hover { background: #28b828; }
+#spLockedAddBtn:active { transform: scale(0.98); }
+#spLockedAddBtn:disabled { opacity: 0.7; cursor: default; }
+
+#spLockedCancelBtn {
+    width: 100%; padding: 14px; border-radius: 14px;
+    background: #f1f5f9; color: #64748b; border: none;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    font-family: inherit; transition: background 0.15s;
+}
+#spLockedCancelBtn:hover { background: #e2e8f0; }
+
+/* Desktop: centered modal */
+@media (min-width: 640px) {
+    #spLockedSheet {
+        bottom: auto; top: 50%; border-radius: 20px;
+        width: 420px; padding: 0 28px 28px;
+        transform: translateX(-50%) translateY(calc(-50% + 30px));
+        opacity: 0;
+        transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.3s;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.1);
+    }
+    #spLockedOverlay.sp-open #spLockedSheet {
+        transform: translateX(-50%) translateY(-50%);
+        opacity: 1;
+    }
+    #spLockedHandle { display: none; }
+    #spLockedIcon { margin-top: 28px; }
+}
+
+/* Dark mode */
+html[data-theme="dark"] #spLockedSheet { background: #1e293b; }
+html[data-theme="dark"] #spLockedTitle { color: #f1f5f9; }
+html[data-theme="dark"] #spLockedMsg { color: #94a3b8; }
+html[data-theme="dark"] #spLockedHandle { background: #334155; }
+html[data-theme="dark"] #spLockedCancelBtn { background: #0f172a; color: #64748b; }
+html[data-theme="dark"] #spLockedCancelBtn:hover { background: #162032; }

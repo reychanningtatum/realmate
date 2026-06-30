@@ -1789,7 +1789,7 @@ function _ensureSellerPopup() {
                 </div>
             </div>
             <div id="sellerPopupOptions">
-                <button id="sellerOptListings" onclick="closeSellerPopup(); location.href=window._spUserId?'user-profile.html?user_id='+window._spUserId:''">
+                <button id="sellerOptListings" onclick="handleViewListings()">
                     <span class="sp-opt-icon"><i class="fas fa-store"></i></span>
                     <span class="sp-opt-text">
                         <span class="sp-opt-title">View Listings</span>
@@ -1833,9 +1833,53 @@ function _ensureSellerPopup() {
     });
 }
 
+function _ensureLockedPopup() {
+    if (document.getElementById('spLockedOverlay')) return;
+    const el = document.createElement('div');
+    el.id = 'spLockedOverlay';
+    el.innerHTML = `
+        <div id="spLockedBackdrop" onclick="closeLockedPopup()"></div>
+        <div id="spLockedSheet">
+            <div id="spLockedHandle"></div>
+            <div id="spLockedIcon"><i class="fas fa-lock"></i></div>
+            <div id="spLockedTitle">Seller Listings Locked</div>
+            <div id="spLockedMsg">To view this seller's active listings, you must first become Realmates. Connect with this user to unlock their Live Market listings and build your trusted real estate network.</div>
+            <div id="spLockedActions">
+                <button id="spLockedAddBtn" onclick="handleAddMateFromLocked()">
+                    <i class="fas fa-user-plus"></i> Add as Realmate
+                </button>
+                <button id="spLockedCancelBtn" onclick="closeLockedPopup()">Cancel</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(el);
+
+    const sheet = document.getElementById('spLockedSheet');
+    let startY = 0, curY = 0, dragging = false;
+    sheet.addEventListener('touchstart', e => {
+        if (e.target.closest('button')) return;
+        startY = e.touches[0].clientY; dragging = true; curY = 0;
+        sheet.style.transition = 'none';
+    }, { passive: true });
+    sheet.addEventListener('touchmove', e => {
+        if (!dragging) return;
+        curY = e.touches[0].clientY - startY;
+        if (curY > 0) sheet.style.transform = `translateY(${curY}px)`;
+    }, { passive: true });
+    sheet.addEventListener('touchend', () => {
+        if (!dragging) return;
+        dragging = false;
+        sheet.style.transition = '';
+        sheet.style.transform = '';
+        if (curY > 80) closeLockedPopup();
+    });
+}
+
 function showSellerPopup(userId, name, img, job) {
     _ensureSellerPopup();
-    window._spUserId = userId;
+    window._spUserId   = userId;
+    window._spName     = name;
+    window._spImg      = img;
     const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(name||'S')}&background=0f172a&color=32cd32`;
     const avatarEl = document.getElementById('sellerPopupAvatar');
     avatarEl.innerHTML = img
@@ -1853,5 +1897,79 @@ function closeSellerPopup() {
     if (!overlay) return;
     overlay.classList.remove('sp-open');
     document.body.style.overflow = '';
+}
+
+function closeLockedPopup() {
+    const overlay = document.getElementById('spLockedOverlay');
+    if (!overlay) return;
+    overlay.classList.remove('sp-open');
+    document.body.style.overflow = '';
+}
+
+async function handleViewListings() {
+    closeSellerPopup();
+    const targetId = window._spUserId;
+    if (!targetId) return;
+
+    // Get current user id
+    let myId = null;
+    try {
+        const { data: auth } = await _sb.auth.getUser();
+        myId = auth?.user?.id;
+    } catch {}
+
+    // If viewing own profile, allow directly
+    if (!myId || myId === targetId) {
+        location.href = `user-profile.html?user_id=${targetId}`;
+        return;
+    }
+
+    // Check Realmate status by user IDs
+    let areRealmates = false;
+    try {
+        const { data: rows } = await _sb
+            .from('mates')
+            .select('status')
+            .or(`and(requester_id.eq.${myId},recipient_id.eq.${targetId}),and(requester_id.eq.${targetId},recipient_id.eq.${myId})`)
+            .eq('status', 'accepted')
+            .limit(1);
+        areRealmates = !!(rows && rows.length > 0);
+    } catch {}
+
+    if (areRealmates) {
+        location.href = `user-profile.html?user_id=${targetId}`;
+    } else {
+        _ensureLockedPopup();
+        document.getElementById('spLockedOverlay').classList.add('sp-open');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+async function handleAddMateFromLocked() {
+    const btn = document.getElementById('spLockedAddBtn');
+    if (!btn || btn.disabled) return;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sending...';
+    try {
+        const result = await sendMateRequest(window._spName, window._spImg);
+        if (result?.success) {
+            btn.innerHTML = '<i class="fas fa-check"></i> Request Sent';
+            btn.style.background = '#16a34a';
+            setTimeout(closeLockedPopup, 1400);
+        } else {
+            const msg = result?.error || 'Could not send request';
+            btn.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${msg}`;
+            btn.style.background = '#dc2626';
+            btn.disabled = false;
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-user-plus"></i> Add as Realmate';
+                btn.style.background = '';
+                btn.disabled = false;
+            }, 2500);
+        }
+    } catch {
+        btn.innerHTML = '<i class="fas fa-user-plus"></i> Add as Realmate';
+        btn.disabled = false;
+    }
 }
 
