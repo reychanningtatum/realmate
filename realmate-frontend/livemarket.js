@@ -145,7 +145,7 @@ async function setListingStatus(listingId, status, btn) {
 
 function buildStatusBadge(listing) {
     if (listing.status === 'sold') return '<span class="listing-status-badge sold"><i class="fas fa-check-circle"></i> Sold</span>';
-    if (listing.status === 'negotiation') return '<span class="listing-status-badge negotiation"><i class="fas fa-handshake"></i> In Negotiation</span>';
+    if (listing.status === 'negotiation') return '<span class="listing-status-badge negotiation"><i class="fas fa-comments-dollar"></i> In Negotiation</span>';
     return '';
 }
 
@@ -156,7 +156,7 @@ function buildStatusButtons(listing) {
     const isSold = listing.status === 'sold';
     return `<div class="listing-status-btns" onclick="event.stopPropagation();">
         <button class="status-btn ${isNeg ? 'active' : ''}" onclick="setListingStatus('${listing.id}', ${isNeg ? 'null' : "'negotiation'"}, this)">
-            <i class="fas fa-handshake"></i> ${isNeg ? 'Remove' : 'In Negotiation'}
+            <i class="fas fa-comments-dollar"></i> ${isNeg ? 'Remove' : 'In Negotiation'}
         </button>
         <button class="status-btn sold-btn ${isSold ? 'active' : ''}" onclick="setListingStatus('${listing.id}', ${isSold ? 'null' : "'sold'"}, this)">
             <i class="fas fa-check-circle"></i> ${isSold ? 'Remove' : 'Sold'}
