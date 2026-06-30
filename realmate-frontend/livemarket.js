@@ -316,8 +316,9 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
             ${buildFMVBadge(fmvResult)}
             <div class="listing-card-user">
                 <img src="${listing.user_img || avatarFallback(listing.user_name)}"
-                     onerror="this.src='${avatarFallback(listing.user_name)}'">
-                <div class="listing-card-user-info">
+                     onerror="this.src='${avatarFallback(listing.user_name)}'"
+                     ${listing.is_anonymous || !listing.user_id ? '' : `onclick="event.stopPropagation();location.href='user-profile.html?user_id=${listing.user_id}'" style="cursor:pointer;"`}>
+                <div class="listing-card-user-info" ${listing.is_anonymous || !listing.user_id ? '' : `onclick="event.stopPropagation();location.href='user-profile.html?user_id=${listing.user_id}'" style="cursor:pointer;"`}>
                     <div class="listing-card-user-name">${listing.user_name || 'Unknown'}</div>
                     <div class="listing-card-user-job">${listing.user_job || ''}</div>
                 </div>
@@ -1312,7 +1313,7 @@ function resetPostModal() {
     if (sub) { sub.textContent = 'Using your real identity'; }
 }
 
-document.getElementById('lmCatGrid').addEventListener('click', e => {
+document.getElementById('lmCatGrid')?.addEventListener('click', e => {
     const btn = e.target.closest('.lm-cat-btn');
     if (!btn) return;
     document.querySelectorAll('.lm-cat-btn').forEach(b => b.classList.remove('selected'));
