@@ -191,22 +191,25 @@ function buildOfferBadge(listing) {
 async function loadOfferCounts(listingIds) {
     if (!listingIds.length) return;
     try {
-        const idList = listingIds.map(id => `"${id}"`).join(',');
-        const rows = await _sb
-            .from('listing_offers')
-            .select('listing_id')
-            .in('listing_id', listingIds);
-        if (!rows.data) return;
+        // Use REST directly — avoids SDK type coercion issues with listing_id
+        const ids = listingIds.map(String);
+        const idList = ids.join(',');
+        const resp = await fetch(
+            `${supabaseUrl}/rest/v1/listing_offers?select=listing_id&listing_id=in.(${idList})`,
+            { headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` } }
+        );
+        const rows = await resp.json();
+        if (!Array.isArray(rows)) { console.warn('loadOfferCounts unexpected response', rows); return; }
         const counts = {};
-        rows.data.forEach(r => { counts[r.listing_id] = (counts[r.listing_id] || 0) + 1; });
-        listingIds.forEach(id => {
+        rows.forEach(r => { counts[String(r.listing_id)] = (counts[String(r.listing_id)] || 0) + 1; });
+        ids.forEach(id => {
             const el = document.getElementById(`offer-count-${id}`);
             if (!el) return;
             const n = counts[id] || 0;
             el.querySelector('.offer-count-num').textContent = n;
             el.style.display = n > 0 ? 'inline-flex' : 'none';
         });
-    } catch(e) { console.warn('loadOfferCounts', e); }
+    } catch(e) { console.warn('loadOfferCounts error', e); }
 }
 
 function showOfferPopup(listingId, ownerId, ownerName, img, category, btn) {
