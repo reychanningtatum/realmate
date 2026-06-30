@@ -252,6 +252,47 @@ const LOCATION_KW = {
 
 const PROJECTS = ['One Maridien','Two Maridien','Verve One','Verve Two','Park Triangle Residences','Two Serendra','Kroma','Lerato','Senta','TREC','The Residences At Greenbelt'];
 
+function enhanceLd(listing) {
+  const raw = listing.content || '';
+  const p = parse(raw);
+  let body = raw;
+
+  // Strip unit range e.g. "2-BEDROOM OR 3-BEDROOM"
+  body = body.replace(/(?:studio|\d[\s-]*(?:br|bedroom\w*))\s+or\s+(?:studio|\d[\s-]*(?:br|bedroom\w*))/gi, '');
+  // Strip single bedroom mentions
+  body = body.replace(/\b(studio|1[\s-]*br|2[\s-]*br|3[\s-]*br|4[\s-]*br|\d+[\s-]*bedroom\w*|one\s*bedroom|two\s*bedroom|three\s*bedroom|four\s*bedroom)\b/gi, '');
+  // Strip price range e.g. "BUDGET 40M TO 50M" or "40M OR 50M"
+  body = body.replace(/\b(?:budget|asking|price|php|₱)?\s*\d+\.?\d*\s*m?\s*(?:-|to|or)\s*\d+\.?\d*\s*m(?:illion)?\b/gi, '');
+  body = body.replace(/\b(?:budget|asking price|asking)\b/gi, '');
+  // Strip single price
+  body = body.replace(/(?:₱|php)?\s*\d+\.?\d*\s*m(?:illion)?\b/gi, '');
+  body = body.replace(/\b\d{7,9}\b/g, '');
+  // Strip locations
+  Object.keys(LOCATION_KW).forEach(k => { body = body.replace(new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'), ''); });
+  // Strip project
+  if (p.project) body = body.replace(new RegExp(p.project.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'), '');
+  // Clean artifacts
+  body = body.replace(/\n\s*\n/g,'\n').replace(/^\s*[,\-–—·•:;\n]+/gm,'').replace(/[,\-–—·•:;]\s*$/gm,'').replace(/\n{2,}/g,'\n').trim();
+
+  // Detect unit range
+  const unitRangeMatch = raw.match(/(studio|\d[\s-]*(?:br|bedroom\w*))\s+or\s+(studio|\d[\s-]*(?:br|bedroom\w*))/i);
+  const unitLabel = unitRangeMatch
+    ? (() => { const a = unitRangeMatch[1].trim(), b = unitRangeMatch[2].trim(); const norm = s => { const m = s.match(/^(\d)/); return m ? m[1]+'BR' : 'Studio'; }; return norm(a)+' or '+norm(b); })()
+    : p.unit;
+
+  // Price range detection
+  const priceRange = (() => { const m = raw.toLowerCase().match(/(\d+\.?\d*)\s*m?\s*(?:-|to|or)\s*(\d+\.?\d*)\s*m(?:illion)?/); return m ? { low: parseFloat(m[1]), high: parseFloat(m[2]) } : null; })();
+
+  let result = '';
+  if (p.locs.length) result += `<span class="lc-hl-location">${p.locs.join(', ')}</span>`;
+  if (p.project)     result += `<span class="lc-hl-project">${p.project}</span>`;
+  if (unitLabel)     result += `<span class="lc-hl-unit">${unitLabel}</span>`;
+  if (priceRange)    result += `<span class="lc-hl-price">₱${priceRange.low}M – ₱${priceRange.high}M</span>`;
+  else if (p.price)  result += `<span class="lc-hl-price">₱${(p.price/1e6).toFixed(1)}M</span>`;
+  if (body)          result += safeText(body);
+  return result || safeText(raw);
+}
+
 function parse(text) {
   const lower = text.toLowerCase();
   const locs = [...new Set(Object.entries(LOCATION_KW).filter(([k]) => lower.includes(k)).map(([,v]) => v))];
@@ -332,21 +373,8 @@ async function loadListing() {
         <!-- Category -->
         <span class="ld-cat ${CAT_CLASSES[listing.category] || ''}">${listing.category}</span>
 
-        <!-- Content -->
-        <div class="ld-content">${safeText(listing.content)}</div>
-
-        <!-- AI-Detected tags -->
-        ${hasTags ? `
-        <div class="ld-ai-card">
-          <div class="ld-section-label"><i class="fas fa-circle-nodes ld-ai-icon"></i> AI-Detected Details</div>
-          <div class="ld-tags">
-            ${p.locs.map(l => `<span class="ld-tag ld-tag-loc"><i class="fas fa-map-marker-alt"></i>${l}</span>`).join('')}
-            ${p.unit ? `<span class="ld-tag ld-tag-unit"><i class="fas fa-bed"></i>${p.unit}</span>` : ''}
-            ${p.project ? `<span class="ld-tag ld-tag-project"><i class="fas fa-building"></i>${p.project}</span>` : ''}
-            ${p.price ? `<span class="ld-tag ld-tag-price"><i class="fas fa-tag"></i>₱${(p.price/1e6).toFixed(1)}M</span>` : ''}
-            ${p.features.map(f => `<span class="ld-tag ld-tag-feature">${f}</span>`).join('')}
-          </div>
-        </div>` : ''}
+        <!-- Content (enhanced) -->
+        <div class="ld-content listing-text">${enhanceLd(listing)}</div>
 
         <!-- Action row -->
         ${!listing.is_anonymous ? `

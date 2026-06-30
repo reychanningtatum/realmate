@@ -1482,7 +1482,7 @@ function showMatchView(query, matches) {
             <span style="margin-left:auto;"></span>
         </div>
         ${imgStrip}
-        <p class="your-listing-text">${safeText(query.content || query.text)}</p>
+        <p class="your-listing-text">${enhanceListingText(query)}</p>
     `;
 
 
@@ -1567,7 +1567,7 @@ function showMatchView(query, matches) {
                 <div style="height:100%;width:${pct}%;background:${gradeColor};border-radius:4px;transition:width 0.5s;"></div>
             </div>
             ${catTag(m.category)}
-            <p class="match-card-text">${safeText(m.content || m.text)}</p>
+            <p class="match-card-text">${enhanceListingText(m)}</p>
             ${matchImgs.length ? `<img class="match-card-img" src="${matchImgs[0]}" loading="lazy">` : ''}
             ${detailRows ? `<div style="margin-top:12px;padding:12px;background:${gradeBg};border-radius:12px;border:1px solid ${gradeColor}22;">
                 <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:${gradeColor};margin-bottom:8px;"><i class="fas fa-circle-nodes" style="margin-right:5px;"></i>AI Analysis</div>
