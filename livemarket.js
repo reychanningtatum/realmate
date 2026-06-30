@@ -1485,16 +1485,49 @@ function openMatchForListing(otherListingId) {
     showAllMatches(myMatch.id, otherListingId);
 }
 
+function _dismissKey() {
+    const u = JSON.parse(localStorage.getItem('user') || 'null');
+    return u?.id ? `dismissed_matches_${u.id}` : 'dismissed_matches_anon';
+}
+
 function getDismissedMatches() {
-    try { return new Set(JSON.parse(localStorage.getItem(`dismissed_matches_${myId}`) || '[]').map(String)); }
+    try { return new Set(JSON.parse(localStorage.getItem(_dismissKey()) || '[]').map(String)); }
     catch { return new Set(); }
+}
+
+function confirmDismissMatch(listingId) {
+    // Show bottom-sheet confirmation
+    let overlay = document.getElementById('dismissMatchOverlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'dismissMatchOverlay';
+        overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:flex-end;justify-content:center;';
+        overlay.innerHTML = `
+            <div id="dismissMatchSheet" style="background:#fff;border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%;max-width:480px;box-shadow:0 -4px 30px rgba(0,0,0,0.15);">
+                <div style="width:40px;height:4px;background:#e2e8f0;border-radius:4px;margin:0 auto 20px;"></div>
+                <div style="text-align:center;margin-bottom:20px;">
+                    <div style="width:52px;height:52px;border-radius:50%;background:#fff5f5;border:2px solid #fca5a5;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+                        <i class="fas fa-times" style="color:#ef4444;font-size:20px;"></i>
+                    </div>
+                    <div style="font-size:16px;font-weight:800;color:#0f172a;margin-bottom:6px;">Dismiss this match?</div>
+                    <div style="font-size:13px;color:#64748b;line-height:1.5;">This post will be removed from your Matches and will no longer show an AI match badge. <strong>This cannot be undone.</strong></div>
+                </div>
+                <button id="dismissMatchConfirmBtn" style="width:100%;height:44px;border-radius:12px;border:none;background:#ef4444;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;">Yes, Dismiss</button>
+                <button onclick="document.getElementById('dismissMatchOverlay').remove();" style="width:100%;height:44px;border-radius:12px;border:1.5px solid #e2e8f0;background:#fff;color:#64748b;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Cancel</button>
+            </div>`;
+        overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+        document.body.appendChild(overlay);
+    }
+    document.getElementById('dismissMatchConfirmBtn').onclick = () => {
+        overlay.remove();
+        dismissMatch(listingId);
+    };
 }
 
 function dismissMatch(listingId) {
     const dismissed = getDismissedMatches();
     dismissed.add(String(listingId));
-    localStorage.setItem(`dismissed_matches_${myId}`, JSON.stringify([...dismissed]));
-    // Remove the card from view
+    localStorage.setItem(_dismissKey(), JSON.stringify([...dismissed]));
     const card = document.querySelector(`.match-card[data-listing-id="${listingId}"]`);
     if (card) {
         card.style.transition = 'opacity 0.25s, transform 0.25s';
@@ -1502,7 +1535,6 @@ function dismissMatch(listingId) {
         card.style.transform = 'translateX(40px)';
         setTimeout(() => {
             card.remove();
-            // Remove AI match badge on livemarket card if visible
             const lmBadge = document.querySelector(`[data-listing-id="${listingId}"] .ai-match-badge`);
             if (lmBadge) lmBadge.remove();
         }, 260);
@@ -1652,7 +1684,7 @@ function showMatchView(query, matches) {
                 <button onclick="event.stopPropagation(); location.href='listing-detail.html?id=${m.id}';" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 16px;border-radius:10px;border:1.5px solid var(--border);background:#fff;color:var(--text-main);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">
                     <i class="fas fa-eye"></i> View Listing
                 </button>
-                <button onclick="event.stopPropagation(); dismissMatch('${m.id}');" title="Not a match" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1.5px solid #fca5a5;background:#fff5f5;color:#ef4444;font-size:13px;cursor:pointer;font-family:inherit;flex-shrink:0;">
+                <button onclick="event.stopPropagation(); confirmDismissMatch('${m.id}');" title="Not a match" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1.5px solid #fca5a5;background:#fff5f5;color:#ef4444;font-size:13px;cursor:pointer;font-family:inherit;flex-shrink:0;">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
