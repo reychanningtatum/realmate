@@ -1938,15 +1938,13 @@ html[data-theme="dark"] .listing-view-btn:hover { background: #243044; }
 .listing-offer-btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
     padding: 8px 14px; border-radius: 10px; flex: 1;
-    background: #0f172a; color: #fff;
-    border: none; font-size: 12px; font-weight: 700;
+    background: #f8fafc; color: #0f172a;
+    border: 1.5px solid #e2e8f0; font-size: 12px; font-weight: 700;
     cursor: pointer; font-family: inherit;
-    transition: background 0.15s, transform 0.1s;
-    white-space: nowrap;
-    justify-content: center;
+    transition: background 0.15s, border-color 0.15s; white-space: nowrap;
 }
-.listing-offer-btn i { color: #32cd32; font-size: 12px; }
-.listing-offer-btn:hover { background: #1e293b; }
+.listing-offer-btn i { color: #64748b; font-size: 12px; }
+.listing-offer-btn:hover { background: #f1f5f9; border-color: #cbd5e1; }
 .listing-offer-btn:active { transform: scale(0.97); }
 
 /* Offer badge — top of card, beside category */
@@ -1976,8 +1974,9 @@ html[data-theme="dark"] .listing-view-btn:hover { background: #243044; }
 .listing-offer-count { display: none; }
 
 html[data-theme="dark"] .listing-offer-row { border-top-color: #334155; }
-html[data-theme="dark"] .listing-offer-btn { background: #1e293b; }
+html[data-theme="dark"] .listing-offer-btn { background: #1e293b; color: #e2e8f0; border-color: #334155; }
 html[data-theme="dark"] .listing-offer-btn:hover { background: #243044; }
+html[data-theme="dark"] .listing-offer-btn i { color: #94a3b8; }
 html[data-theme="dark"] .listing-offer-badge { background: linear-gradient(135deg, #052e16 0%, #14532d 100%); }
 
 /* ── Offer Confirmation Popup ────────────────────────────────────────────── */
