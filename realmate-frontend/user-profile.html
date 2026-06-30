@@ -3,32 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Realmate | Profile</title>
+  <title>Realmate | Seller Listings</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="livemarket.css">
   <script src="theme.js"></script>
   <style>
-    /* ── Page base ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', sans-serif; background: var(--bg, #f8fafc); min-height: 100vh; }
 
-    /* ── Fixed top header ── */
+    /* ── Fixed header (same dark style as listing-detail / market-summary) ── */
     .up-header {
       position: fixed; top: 0; left: 0; right: 0; z-index: 200;
       background: linear-gradient(135deg, #0f172a 0%, #1a1a2e 50%, #0f172a 100%);
       display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 20px;
-      border-bottom: 2px solid #32cd32;
-      overflow: hidden;
+      padding: 10px 20px; border-bottom: 2px solid #32cd32; overflow: hidden;
     }
     .up-header::after {
       content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
       background: linear-gradient(90deg, transparent, #32cd32, #3b82f6, #32cd32, transparent);
-      background-size: 200% 100%;
-      animation: upBar 4s linear infinite;
+      background-size: 200% 100%; animation: upBar 4s linear infinite;
     }
-    @keyframes upBar { 0% { background-position: 0% 0; } 100% { background-position: 200% 0; } }
+    @keyframes upBar { 0% { background-position: 0%; } 100% { background-position: 200%; } }
     .up-back {
       display: inline-flex; align-items: center; gap: 5px;
       font-size: 12px; font-weight: 600; color: #94a3b8;
@@ -37,100 +33,86 @@
       transition: all 0.15s; position: relative; z-index: 1; text-decoration: none;
     }
     .up-back:hover { background: rgba(255,255,255,0.12); color: #fff; }
-    .up-header-title { font-size: 15px; font-weight: 800; color: #fff; position: relative; z-index: 1; }
+    .up-header-badge {
+      background: rgba(50,205,50,0.15); color: #32cd32;
+      border: 1px solid rgba(50,205,50,0.3);
+      font-size: 10px; font-weight: 800; padding: 4px 10px;
+      border-radius: 50px; text-transform: uppercase; letter-spacing: 0.5px;
+      position: relative; z-index: 1;
+    }
     .up-header-right { width: 80px; display: flex; justify-content: flex-end; }
 
     /* ── Page wrapper ── */
-    .up-page { max-width: 640px; margin: 0 auto; padding: 56px 12px 90px; }
+    .up-page { max-width: 640px; margin: 0 auto; padding: 62px 12px 90px; }
 
-    /* ── Profile card ── */
-    .up-card {
-      background: #fff; border-radius: 20px; overflow: hidden;
+    /* ── Seller card (compact broker header) ── */
+    .seller-card {
+      background: #fff; border-radius: 16px;
       border: 1px solid #e2e8f0;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.05);
-      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.05);
+      margin-bottom: 14px; overflow: hidden;
     }
-
-    /* Cover */
-    .up-cover {
-      width: 100%; height: 140px; object-fit: cover;
-      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
-      display: block; position: relative;
-    }
-    .up-cover-placeholder {
-      width: 100%; height: 140px;
-      background: linear-gradient(135deg, #0f172a 0%, #1a2744 40%, #0d2137 100%);
+    .seller-card-top {
+      background: linear-gradient(135deg, #0f172a 0%, #1a2744 50%, #0f172a 100%);
+      padding: 18px 18px 0;
       position: relative;
     }
-    .up-cover-placeholder::after {
+    .seller-card-top::after {
       content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 60% 50%, rgba(50,205,50,0.08) 0%, transparent 70%);
+      background: radial-gradient(ellipse at 70% 50%, rgba(50,205,50,0.07) 0%, transparent 65%);
+      pointer-events: none;
     }
-
-    /* Avatar section */
-    .up-avatar-row {
-      display: flex; align-items: flex-end; gap: 14px;
-      padding: 0 20px; margin-top: -36px; margin-bottom: 14px; position: relative; z-index: 1;
+    .seller-avatar-row {
+      display: flex; align-items: flex-end; gap: 14px; position: relative; z-index: 1;
     }
-    .up-avatar-wrap {
-      width: 76px; height: 76px; border-radius: 50%;
-      border: 4px solid #fff; overflow: hidden; flex-shrink: 0;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-      background: #cbd5e1;
+    .seller-avatar {
+      width: 68px; height: 68px; border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.15);
+      overflow: hidden; flex-shrink: 0;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+      background: #1e293b; margin-bottom: -20px;
     }
-    .up-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .up-avatar-actions { display: flex; gap: 8px; margin-left: auto; padding-bottom: 4px; flex-wrap: wrap; justify-content: flex-end; }
-
-    /* Action buttons */
+    .seller-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .seller-name-col { padding-bottom: 20px; flex: 1; min-width: 0; }
+    .seller-name-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 3px; }
+    .seller-name { font-size: 17px; font-weight: 800; color: #fff; letter-spacing: -0.02em; }
+    .seller-verified { color: #32cd32; font-size: 14px; }
+    .seller-job { font-size: 12px; color: #64748b; font-weight: 500; }
+    .seller-card-body { padding: 28px 18px 16px; }
+    .seller-meta { display: flex; flex-wrap: wrap; gap: 10px 18px; margin-bottom: 14px; }
+    .seller-meta-item {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 12px; color: #64748b; font-weight: 500;
+    }
+    .seller-meta-item i { color: #9ca3af; font-size: 11px; }
+    .seller-actions { display: flex; gap: 8px; flex-wrap: wrap; }
     .up-btn {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 8px 16px; border-radius: 50px; font-size: 13px; font-weight: 700;
       cursor: pointer; border: none; font-family: inherit; transition: all 0.15s; white-space: nowrap;
     }
-    .up-btn-msg {
-      background: #0f172a; color: #fff;
-    }
+    .up-btn-msg { background: #0f172a; color: #fff; }
     .up-btn-msg:hover { background: #1e293b; }
-    .up-btn-follow {
-      background: #32cd32; color: #fff;
-    }
+    .up-btn-follow { background: #32cd32; color: #fff; }
     .up-btn-follow:hover { background: #28b828; }
-    .up-btn-follow.following {
-      background: #f1f5f9; color: #64748b; border: 1.5px solid #e2e8f0;
-    }
+    .up-btn-follow.following { background: #f1f5f9; color: #64748b; border: 1.5px solid #e2e8f0; }
     .up-btn-follow.following:hover { background: #fee2e2; color: #ef4444; border-color: #fca5a5; }
 
-    /* Info block */
-    .up-info { padding: 0 20px 20px; }
-    .up-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; flex-wrap: wrap; }
-    .up-name { font-size: 20px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; }
-    .up-verified { color: #32cd32; font-size: 16px; }
-    .up-job { font-size: 13px; color: #64748b; font-weight: 500; margin-bottom: 10px; }
-    .up-bio { font-size: 14px; color: #374151; line-height: 1.6; margin-bottom: 12px; }
-    .up-meta { display: flex; flex-wrap: wrap; gap: 12px 20px; margin-bottom: 14px; }
-    .up-meta-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #6b7280; font-weight: 500; }
-    .up-meta-item i { color: #9ca3af; font-size: 12px; }
+    /* Listing count banner */
+    .seller-listing-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 18px; border-top: 1px solid #f1f5f9;
+      background: #fafbfc;
+    }
+    .seller-listing-label {
+      font-size: 12px; font-weight: 700; color: #64748b;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .seller-listing-count {
+      font-size: 13px; font-weight: 800; color: #32cd32;
+    }
 
-    /* Stats row */
-    .up-stats {
-      display: flex; gap: 0; border-top: 1px solid #f1f5f9;
-      padding-top: 14px; margin-top: 4px;
-    }
-    .up-stat { flex: 1; text-align: center; }
-    .up-stat + .up-stat { border-left: 1px solid #f1f5f9; }
-    .up-stat-num { font-size: 18px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; display: block; }
-    .up-stat-label { font-size: 11px; color: #9ca3af; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; display: block; margin-top: 1px; }
-
-    /* ── Listings section ── */
-    .up-section-header {
-      display: flex; align-items: center; gap: 8px;
-      padding: 14px 4px 10px; margin-bottom: 0;
-    }
-    .up-section-title { font-size: 15px; font-weight: 800; color: #0f172a; letter-spacing: -0.01em; }
-    .up-section-count {
-      background: #f1f5f9; color: #64748b;
-      font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px;
-    }
+    /* ── Listings ── */
     .up-listings { display: flex; flex-direction: column; gap: 12px; }
     .up-empty {
       text-align: center; padding: 50px 24px;
@@ -138,21 +120,14 @@
       color: #94a3b8; font-size: 14px; font-weight: 600;
     }
     .up-empty i { display: block; font-size: 32px; margin-bottom: 10px; color: #cbd5e1; }
-    .up-loading {
-      text-align: center; padding: 40px; color: #94a3b8; font-size: 14px;
-    }
+    .up-loading { text-align: center; padding: 40px; color: #94a3b8; font-size: 14px; }
 
     /* Dark mode */
-    html[data-theme="dark"] .up-card { background: #1e293b; border-color: #334155; }
-    html[data-theme="dark"] .up-avatar-wrap { border-color: #1e293b; }
-    html[data-theme="dark"] .up-name { color: #f1f5f9; }
-    html[data-theme="dark"] .up-job { color: #94a3b8; }
-    html[data-theme="dark"] .up-bio { color: #cbd5e1; }
-    html[data-theme="dark"] .up-meta-item { color: #94a3b8; }
-    html[data-theme="dark"] .up-stats { border-top-color: #334155; }
-    html[data-theme="dark"] .up-stat { border-left-color: #334155; }
-    html[data-theme="dark"] .up-stat-num { color: #f1f5f9; }
-    html[data-theme="dark"] .up-section-title { color: #f1f5f9; }
+    html[data-theme="dark"] .seller-card { background: #1e293b; border-color: #334155; }
+    html[data-theme="dark"] .seller-card-body { background: #1e293b; }
+    html[data-theme="dark"] .seller-listing-bar { background: #162032; border-top-color: #334155; }
+    html[data-theme="dark"] .seller-listing-label { color: #64748b; }
+    html[data-theme="dark"] .seller-meta-item { color: #94a3b8; }
     html[data-theme="dark"] .up-empty { background: #1e293b; border-color: #334155; }
     html[data-theme="dark"] .up-btn-follow.following { background: #1e293b; color: #64748b; border-color: #334155; }
     html[data-theme="dark"] body { background: #0f172a; }
@@ -160,7 +135,7 @@
     /* Mobile nav */
     .mobile-bottom-nav {
       display: none; position: fixed; bottom: 0; left: 0; right: 0;
-      height: 64px; background: #ffffff; border-top: 1px solid #e2e8f0;
+      height: 64px; background: #fff; border-top: 1px solid #e2e8f0;
       box-shadow: 0 -4px 20px rgba(0,0,0,0.06); z-index: 1000;
       justify-content: space-evenly; align-items: center; padding: 0;
     }
@@ -193,16 +168,14 @@
     }
     .mob-nav-item.mob-nav-center i { font-size: 20px; color: #94a3b8; }
     .mob-nav-item.mob-nav-center span { font-size: 9px; color: #94a3b8; font-weight: 600; white-space: nowrap; line-height: 1; }
-    .mob-nav-item.mob-nav-center:hover i, .mob-nav-item.mob-nav-center:hover span { color: #32cd32; }
+    .mob-nav-item.mob-nav-center:hover i,
+    .mob-nav-item.mob-nav-center:hover span { color: #32cd32; }
     @media (max-width: 768px) {
       .mobile-bottom-nav { display: flex; height: 56px; }
       .sidebar { display: none !important; }
-      .up-page { padding: 56px 10px 80px; }
-      .up-cover, .up-cover-placeholder { height: 110px; }
-      .up-avatar-wrap { width: 64px; height: 64px; }
-      .up-avatar-row { margin-top: -30px; padding: 0 14px; gap: 10px; }
-      .up-info { padding: 0 14px 16px; }
-      .up-name { font-size: 17px; }
+      .up-page { padding: 58px 10px 80px; }
+      .seller-avatar { width: 56px; height: 56px; }
+      .seller-name { font-size: 15px; }
       .up-btn { font-size: 12px; padding: 7px 13px; }
     }
   </style>
@@ -211,12 +184,12 @@
 
 <!-- Fixed header -->
 <div class="up-header">
-  <a class="up-back" id="upBackBtn" href="livemarket.html"><i class="fas fa-chevron-left"></i> Back</a>
-  <span class="up-header-title" id="upHeaderName">Profile</span>
+  <a class="up-back" id="upBackBtn" href="livemarket.html"><i class="fas fa-chevron-left"></i> Live Market</a>
+  <span class="up-header-badge"><i class="fas fa-store" style="margin-right:4px;"></i>Seller</span>
   <div class="up-header-right"></div>
 </div>
 
-<!-- Page content -->
+<!-- Page -->
 <div class="up-page" id="upPage">
   <div class="up-loading"><i class="fas fa-circle-notch fa-spin" style="color:#32cd32;font-size:22px;"></i></div>
 </div>
@@ -226,7 +199,7 @@
   <a class="mob-nav-item" href="home.html"><i class="fas fa-border-all"></i><span>Feed</span></a>
   <a class="mob-nav-item" href="forum.html"><i class="fas fa-bullhorn"></i><span>Forum</span></a>
   <a class="mob-nav-item" href="realmates.html"><i class="fas fa-user-group"></i><span>Realmates</span></a>
-  <a class="mob-nav-item mob-nav-center" href="livemarket.html"><i class="fas fa-globe"></i><span>Portal</span></a>
+  <a class="mob-nav-item mob-nav-center active" href="livemarket.html"><i class="fas fa-globe"></i><span>Portal</span></a>
   <a class="mob-nav-item" href="chat.html"><i class="fas fa-comment-dots"></i><span>Chat</span></a>
   <a class="mob-nav-item" href="notifications.html"><i class="fas fa-bell"></i><span>Notifications</span></a>
   <div class="mob-nav-item mob-nav-avatar-wrap" onclick="toggleNavMenu(event)">
@@ -253,65 +226,46 @@ const _sbUp = supabase.createClient(
   'sb_publishable_Rm_fIBDUfu3DEyLj0_bWZw_qEqo8cd4'
 );
 
-function upAvatarFallback(name) {
-  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name||'User')}&background=32cd32&color=fff`;
+function upFallback(name) {
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name||'S')}&background=0f172a&color=32cd32`;
 }
 
-function upTimeAgo(d) {
-  const s = Math.floor((Date.now() - new Date(d).getTime()) / 1000);
-  if (s < 60) return 'Just now';
-  if (s < 3600) return Math.floor(s/60) + 'm ago';
-  if (s < 86400) return Math.floor(s/3600) + 'h ago';
-  if (s < 2592000) return Math.floor(s/86400) + 'd ago';
-  if (s < 31536000) return Math.floor(s/2592000) + 'mo ago';
-  return Math.floor(s/31536000) + 'y ago';
-}
-
-function upFormatDate(d) {
+function upJoinedDate(d) {
   return new Date(d).toLocaleDateString('en-PH', { year: 'numeric', month: 'long' });
 }
 
-// Back button — go back without losing scroll if referrer is same origin
+// Back — preserve scroll via history.back() when coming from same origin
 const backBtn = document.getElementById('upBackBtn');
 if (document.referrer && new URL(document.referrer).origin === location.origin) {
   backBtn.addEventListener('click', e => { e.preventDefault(); history.back(); });
 }
 
-async function loadUserProfile() {
+async function loadSellerProfile() {
   const page = document.getElementById('upPage');
-  const params = new URLSearchParams(location.search);
-  const userId = params.get('user_id');
-  if (!userId) { page.innerHTML = '<div class="up-empty"><i class="fas fa-user-slash"></i>User not found.</div>'; return; }
+  const userId = new URLSearchParams(location.search).get('user_id');
+  if (!userId) {
+    page.innerHTML = '<div class="up-empty"><i class="fas fa-user-slash"></i>Seller not found.</div>';
+    return;
+  }
 
   // Fetch profile and listings in parallel
   const [{ data: profile }, { data: listings }] = await Promise.all([
-    _sbUp.from('profiles').select('*').eq('id', userId).single(),
+    _sbUp.from('profiles').select('id,full_name,avatar_url,job_title,location,division,created_at,is_verified').eq('id', userId).single(),
     _sbUp.from('listings').select('*').eq('user_id', userId).eq('archived', false).order('created_at', { ascending: false })
   ]);
 
-  const name = profile?.full_name || listings?.[0]?.user_name || 'Realmate Member';
-  const avatar = profile?.avatar_url || listings?.[0]?.user_img || upAvatarFallback(name);
-  const job = profile?.job_title || listings?.[0]?.user_job || '';
-  const bio = profile?.bio || '';
-  const coverUrl = profile?.cover_url || '';
-  const memberSince = profile?.created_at ? upFormatDate(profile.created_at) : null;
-  const location = profile?.location || profile?.division || '';
-  const isVerified = profile?.is_verified || false;
+  const name    = profile?.full_name || listings?.[0]?.user_name || 'Realmate Agent';
+  const avatar  = profile?.avatar_url || listings?.[0]?.user_img || upFallback(name);
+  const job     = profile?.job_title  || listings?.[0]?.user_job  || 'Alveo Land Agent';
+  const loc     = profile?.location   || profile?.division || '';
+  const joined  = profile?.created_at ? upJoinedDate(profile.created_at) : null;
+  const verified = !!profile?.is_verified;
+  const count   = listings?.length || 0;
 
-  document.getElementById('upHeaderName').textContent = name;
-  document.title = `Realmate | ${name}`;
+  document.title = `${name} — Live Market`;
 
-  // Follow counts
-  let followers = 0, following = 0;
-  try {
-    const fc = await getFollowCounts(userId);
-    followers = fc.followers;
-    following = fc.following;
-  } catch {}
-
-  // Check if current user follows this profile
-  let amFollowing = false;
-  let myId = null;
+  // Auth check (for follow button / hide if self)
+  let myId = null, amFollowing = false;
   try {
     const { data: auth } = await _sbUp.auth.getUser();
     myId = auth?.user?.id;
@@ -319,92 +273,60 @@ async function loadUserProfile() {
   } catch {}
 
   const isSelf = myId === userId;
-  const listingCount = listings?.length || 0;
 
-  // Cover
-  const coverHtml = coverUrl
-    ? `<img class="up-cover" src="${coverUrl}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="up-cover-placeholder" style="display:none"></div>`
-    : `<div class="up-cover-placeholder"></div>`;
-
-  // Action buttons
   const actionBtns = isSelf ? '' : `
-    <button class="up-btn up-btn-msg" onclick="goToChat('${userId}', '${name.replace(/'/g,"\\'")}')">
+    <button class="up-btn up-btn-msg" onclick="goToChat('${userId}','${name.replace(/'/g,"\\'")}')">
       <i class="fas fa-comment-dots"></i> Message
     </button>
-    <button class="up-btn up-btn-follow ${amFollowing ? 'following' : ''}" id="upFollowBtn" onclick="toggleFollow('${userId}', '${name.replace(/'/g,"\\'")}')">
+    <button class="up-btn up-btn-follow${amFollowing ? ' following' : ''}" id="upFollowBtn"
+      onclick="toggleFollow('${userId}','${name.replace(/'/g,"\\'")}')">
       ${amFollowing ? '<i class="fas fa-check"></i> Following' : '<i class="fas fa-user-plus"></i> Follow'}
-    </button>
-  `;
+    </button>`;
 
   page.innerHTML = `
-    <!-- Profile card -->
-    <div class="up-card">
-      ${coverHtml}
-      <div class="up-avatar-row">
-        <div class="up-avatar-wrap">
-          <img src="${avatar}" onerror="this.src='${upAvatarFallback(name)}'">
+    <div class="seller-card">
+      <div class="seller-card-top">
+        <div class="seller-avatar-row">
+          <div class="seller-avatar">
+            <img src="${avatar}" onerror="this.src='${upFallback(name)}'">
+          </div>
+          <div class="seller-name-col">
+            <div class="seller-name-row">
+              <span class="seller-name">${name}</span>
+              ${verified ? '<i class="fas fa-circle-check seller-verified"></i>' : ''}
+            </div>
+            <div class="seller-job">${job}</div>
+          </div>
         </div>
-        <div class="up-avatar-actions">${actionBtns}</div>
       </div>
-      <div class="up-info">
-        <div class="up-name-row">
-          <span class="up-name">${name}</span>
-          ${isVerified ? '<i class="fas fa-circle-check up-verified" title="Verified"></i>' : ''}
+      <div class="seller-card-body">
+        <div class="seller-meta">
+          ${loc    ? `<span class="seller-meta-item"><i class="fas fa-map-marker-alt"></i>${loc}</span>` : ''}
+          ${joined ? `<span class="seller-meta-item"><i class="fas fa-calendar-alt"></i>Member since ${joined}</span>` : ''}
         </div>
-        ${job ? `<div class="up-job">${job}</div>` : ''}
-        ${bio ? `<div class="up-bio">${bio}</div>` : ''}
-        <div class="up-meta">
-          ${location ? `<span class="up-meta-item"><i class="fas fa-map-marker-alt"></i>${location}</span>` : ''}
-          ${memberSince ? `<span class="up-meta-item"><i class="fas fa-calendar-alt"></i>Joined ${memberSince}</span>` : ''}
-          <span class="up-meta-item"><i class="fas fa-list-ul"></i>${listingCount} listing${listingCount !== 1 ? 's' : ''}</span>
-        </div>
-        <div class="up-stats">
-          <div class="up-stat">
-            <span class="up-stat-num" id="upFollowersNum">${followers}</span>
-            <span class="up-stat-label">Followers</span>
-          </div>
-          <div class="up-stat">
-            <span class="up-stat-num" id="upFollowingNum">${following}</span>
-            <span class="up-stat-label">Following</span>
-          </div>
-          <div class="up-stat">
-            <span class="up-stat-num">${listingCount}</span>
-            <span class="up-stat-label">Listings</span>
-          </div>
-        </div>
+        ${actionBtns ? `<div class="seller-actions">${actionBtns}</div>` : ''}
+      </div>
+      <div class="seller-listing-bar">
+        <span class="seller-listing-label"><i class="fas fa-store" style="margin-right:5px;color:#9ca3af;"></i>Active Listings</span>
+        <span class="seller-listing-count">${count} listing${count !== 1 ? 's' : ''}</span>
       </div>
     </div>
 
-    <!-- Listings -->
-    <div class="up-section-header">
-      <span class="up-section-title">Listings</span>
-      <span class="up-section-count">${listingCount}</span>
-    </div>
     <div class="up-listings" id="upListings"></div>
   `;
 
-  // Render listing cards using livemarket.js buildListingCard
   const listingsEl = document.getElementById('upListings');
-  if (!listings || listings.length === 0) {
-    listingsEl.innerHTML = '<div class="up-empty"><i class="fas fa-inbox"></i>No active listings.</div>';
-  } else {
-    listings.forEach(l => {
-      try {
-        const card = buildListingCard(l);
-        listingsEl.appendChild(card);
-      } catch(e) {
-        console.warn('card error', e);
-      }
-    });
+  if (!count) {
+    listingsEl.innerHTML = '<div class="up-empty"><i class="fas fa-store-slash"></i>No active listings from this seller.</div>';
+    return;
   }
+  listings.forEach(l => {
+    try { listingsEl.appendChild(buildListingCard(l)); }
+    catch(e) { console.warn('card error', e); }
+  });
 }
 
 async function goToChat(targetUserId, targetName) {
-  // Find or create conversation, then go to chat
-  const { data: auth } = await _sbUp.auth.getUser();
-  const myId = auth?.user?.id;
-  if (!myId) { location.href = 'chat.html'; return; }
-  // Store target for chat.js to pick up
   sessionStorage.setItem('openChatWith', JSON.stringify({ userId: targetUserId, name: targetName }));
   location.href = 'chat.html';
 }
@@ -418,21 +340,15 @@ async function toggleFollow(targetId, targetName) {
       await unfollowUser(targetId);
       btn.classList.remove('following');
       btn.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
-      const el = document.getElementById('upFollowersNum');
-      if (el) el.textContent = Math.max(0, parseInt(el.textContent) - 1);
     } else {
       await followUser(targetId, targetName);
       btn.classList.add('following');
       btn.innerHTML = '<i class="fas fa-check"></i> Following';
-      const el = document.getElementById('upFollowersNum');
-      if (el) el.textContent = parseInt(el.textContent) + 1;
     }
-  } catch(e) {
-    console.warn('follow toggle error', e);
-  }
+  } catch(e) { console.warn('follow error', e); }
 }
 
-loadUserProfile();
+loadSellerProfile();
 </script>
 </body>
 </html>
