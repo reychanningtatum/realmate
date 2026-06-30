@@ -447,9 +447,11 @@ function enhanceListingText(listing) {
     let priceContext = '';
     if (price) {
         // Remove range patterns first e.g. "BUDGET 30-40M", "ASKING 30 to 40M"
-        body = body.replace(/\b(?:budget|asking|price|php|₱)?\s*\d+\.?\d*\s*m?\s*(?:-|to)\s*\d+\.?\d*\s*m(?:illion)?\b/gi, '');
+        body = body.replace(/\b(?:budget|asking|price|php|₱)?\s*\d+\.?\d*\s*m?\s*(?:-|to|or)\s*\d+\.?\d*\s*m(?:illion)?\b/gi, '');
         // Remove leading price keywords left behind e.g. "BUDGET", "ASKING"
         body = body.replace(/\b(?:budget|asking price|asking)\b/gi, '');
+        // Remove standalone "OR" left after range extraction
+        body = body.replace(/\bor\b/gi, '');
         const pricePatterns = [
             /₱?\s*\d{1,3}(,\d{3})+(\.\d+)?\s*\w*/g,
             /(\d+\.?\d*)\s*[Mm](?:illion)?\s*\w*/gi,
@@ -652,7 +654,7 @@ const NON_PROJECT_TOKENS = new Set([
 
 function extractPriceRange(text) {
     const lower = text.toLowerCase();
-    const rangeM = lower.match(/(\d+\.?\d*)\s*m?\s*(?:-|to)\s*(\d+\.?\d*)\s*m(?:illion)?/);
+    const rangeM = lower.match(/(\d+\.?\d*)\s*m?\s*(?:-|to|or)\s*(\d+\.?\d*)\s*m(?:illion)?/);
     if (rangeM) return { low: parseFloat(rangeM[1]), high: parseFloat(rangeM[2]) };
     return null;
 }
@@ -660,7 +662,7 @@ function extractPriceRange(text) {
 function extractPrice(text) {
     const lower = text.toLowerCase();
     // Detect price range e.g. "30-40M", "30 to 40M", "30M-40M"
-    const rangeM = lower.match(/(\d+\.?\d*)\s*m?\s*(?:-|to)\s*(\d+\.?\d*)\s*m(?:illion)?/);
+    const rangeM = lower.match(/(\d+\.?\d*)\s*m?\s*(?:-|to|or)\s*(\d+\.?\d*)\s*m(?:illion)?/);
     if (rangeM) return parseFloat(rangeM[2]) * 1_000_000; // use upper bound for matching
     const lines = text.split(/\n/).map(l => l.trim()).filter(Boolean);
     // Try each line first (price alone on a line is unambiguous)
