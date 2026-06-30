@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: realmate
+    env: static
+    staticPublishPath: ./
+    headers:
+      - path: /*.html
+        name: Cache-Control
+        value: no-cache, no-store, must-revalidate
+      - path: /*.js
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /*.css
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
