@@ -164,6 +164,174 @@ function buildStatusButtons(listing) {
     </div>`;
 }
 
+function buildOfferRow(listing) {
+    const localUser = JSON.parse(localStorage.getItem('user'));
+    // Don't show offer button on own listings or anonymous listings
+    if (!listing.user_id || listing.is_anonymous || (localUser && listing.user_name === localUser.name)) return '';
+    const img   = (listing.image_urls || [])[0] || '';
+    const safeN = (listing.user_name  || '').replace(/'/g, "\\'");
+    const safeI = img.replace(/'/g, "\\'");
+    const safeCat = (listing.category || '').replace(/'/g, "\\'");
+    const safeId  = listing.id;
+    const safeUid = listing.user_id;
+    return `<div class="listing-offer-row" onclick="event.stopPropagation()">
+        <button class="listing-offer-btn" onclick="showOfferPopup('${safeId}','${safeUid}','${safeN}','${safeI}','${safeCat}',this)">
+            <i class="fas fa-handshake"></i> Offer
+        </button>
+        <span class="listing-offer-count" id="offer-count-${safeId}" style="display:none">
+            <i class="fas fa-handshake"></i> <span class="offer-count-num">0</span> Offers
+        </span>
+    </div>`;
+}
+
+async function loadOfferCounts(listingIds) {
+    if (!listingIds.length) return;
+    try {
+        const idList = listingIds.map(id => `"${id}"`).join(',');
+        const rows = await _sb
+            .from('listing_offers')
+            .select('listing_id')
+            .in('listing_id', listingIds);
+        if (!rows.data) return;
+        const counts = {};
+        rows.data.forEach(r => { counts[r.listing_id] = (counts[r.listing_id] || 0) + 1; });
+        listingIds.forEach(id => {
+            const el = document.getElementById(`offer-count-${id}`);
+            if (!el) return;
+            const n = counts[id] || 0;
+            if (n > 0) {
+                el.querySelector('.offer-count-num').textContent = n;
+                el.style.display = 'inline-flex';
+            }
+        });
+    } catch(e) { console.warn('loadOfferCounts', e); }
+}
+
+function showOfferPopup(listingId, ownerId, ownerName, img, category, btn) {
+    window._offerListingId = listingId;
+    window._offerOwnerId   = ownerId;
+    window._offerOwnerName = ownerName;
+    window._offerImg       = img;
+    window._offerCategory  = category;
+    window._offerBtn       = btn;
+
+    let overlay = document.getElementById('offerPopupOverlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'offerPopupOverlay';
+        overlay.innerHTML = `
+            <div id="offerPopupBackdrop" onclick="closeOfferPopup()"></div>
+            <div id="offerPopupSheet">
+                <div id="offerPopupHandle"></div>
+                <div id="offerPopupIcon"><i class="fas fa-handshake"></i></div>
+                <div id="offerPopupTitle">Send Offer</div>
+                <div id="offerPopupSub">Send an offer to start a conversation with this seller about the listing.</div>
+                <div id="offerPopupActions">
+                    <button id="offerConfirmBtn" onclick="confirmOffer()">
+                        <i class="fas fa-handshake"></i> Send Offer
+                    </button>
+                    <button id="offerCancelBtn" onclick="closeOfferPopup()">Cancel</button>
+                </div>
+            </div>`;
+        document.body.appendChild(overlay);
+
+        const sheet = document.getElementById('offerPopupSheet');
+        let startY = 0, curY = 0, dragging = false;
+        sheet.addEventListener('touchstart', e => {
+            if (e.target.closest('button')) return;
+            startY = e.touches[0].clientY; dragging = true; curY = 0;
+            sheet.style.transition = 'none';
+        }, { passive: true });
+        sheet.addEventListener('touchmove', e => {
+            if (!dragging) return;
+            curY = e.touches[0].clientY - startY;
+            if (curY > 0) sheet.style.transform = `translateY(${curY}px)`;
+        }, { passive: true });
+        sheet.addEventListener('touchend', () => {
+            if (!dragging) return;
+            dragging = false; sheet.style.transition = ''; sheet.style.transform = '';
+            if (curY > 80) closeOfferPopup();
+        });
+    }
+
+    const confirmBtn = document.getElementById('offerConfirmBtn');
+    confirmBtn.disabled = false;
+    confirmBtn.innerHTML = '<i class="fas fa-handshake"></i> Send Offer';
+    confirmBtn.style.background = '';
+    overlay.classList.add('op-open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeOfferPopup() {
+    document.getElementById('offerPopupOverlay')?.classList.remove('op-open');
+    document.body.style.overflow = '';
+}
+
+async function confirmOffer() {
+    const btn = document.getElementById('offerConfirmBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sending...';
+
+    const listingId = window._offerListingId;
+    const ownerId   = window._offerOwnerId;
+    const ownerName = window._offerOwnerName;
+    const img       = window._offerImg;
+    const category  = window._offerCategory;
+
+    try {
+        const { data: authData } = await _sb.auth.getUser();
+        const myId = authData?.user?.id;
+        if (!myId) throw new Error('Not authenticated');
+
+        // Record offer (unique per user per listing — ignore duplicate)
+        await _sb.from('listing_offers').upsert(
+            { listing_id: listingId, user_id: myId },
+            { onConflict: 'listing_id,user_id', ignoreDuplicates: true }
+        );
+
+        // Update counter in DOM
+        const countEl = document.getElementById(`offer-count-${listingId}`);
+        if (countEl) {
+            const numEl = countEl.querySelector('.offer-count-num');
+            const cur = parseInt(numEl?.textContent || '0');
+            // Only increment display if this is a new offer (fetch fresh count)
+            const { count } = await _sb.from('listing_offers')
+                .select('*', { count: 'exact', head: true })
+                .eq('listing_id', listingId);
+            if (numEl) numEl.textContent = count || (cur + 1);
+            countEl.style.display = 'inline-flex';
+            countEl.classList.add('offer-count-bump');
+            setTimeout(() => countEl.classList.remove('offer-count-bump'), 400);
+        }
+
+        btn.innerHTML = '<i class="fas fa-check"></i> Offer Sent!';
+        btn.style.background = '#16a34a';
+
+        // Get listing data for reference card
+        const { data: listingData } = await _sb.from('listings').select('*').eq('id', listingId).single();
+
+        setTimeout(async () => {
+            closeOfferPopup();
+            // Navigate to chat with listing ref
+            sessionStorage.setItem('openChatWith', JSON.stringify({ userId: ownerId, name: ownerName }));
+            sessionStorage.setItem('chatListingRef', JSON.stringify({
+                id:       listingId,
+                img:      img,
+                category: category,
+                content:  listingData?.content || '',
+                created_at: listingData?.created_at || ''
+            }));
+            location.href = 'chat.html';
+        }, 900);
+
+    } catch(e) {
+        console.warn('confirmOffer error', e);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-handshake"></i> Send Offer';
+        btn.style.background = '';
+    }
+}
+
 // ── AI text extraction helpers ──────────────────────
 function _xSqm(t) { const m = t.match(/(\d[\d,.]*)\s*(?:sqm|sq\.?\s*m)/i); return m ? m[1].replace(/,/g, '') + ' sqm' : null; }
 function _xLot(t) { const m = t.match(/lot\s*area[:\s]*(\d[\d,.]*)/i); return m ? m[1].replace(/,/g, '') + ' sqm' : null; }
@@ -325,6 +493,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
                 ${listing.is_anonymous ? '' : mateButtonHtml(listing.user_name, 'btn-mate btn-mate-sm')}
             </div>
             ${buildStatusButtons(listing)}
+            ${buildOfferRow(listing)}
         </div>
     `;
 
@@ -1050,6 +1219,7 @@ function applyFilters() {
     pool.forEach(l => grid.appendChild(
         buildListingCard(l, matchMap.get(l.id) || null, fmvMap.get(l.id) || null, myMatchCountMap.get(l.id) || 0)
     ));
+    loadOfferCounts(pool.map(l => l.id));
 }
 
 function selectCatByName(catName) {

@@ -72,9 +72,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (openWith) {
         await openConversationWithUser(openWith);
     } else {
-        const lastConv = sessionStorage.getItem('chat_active_conv');
-        if (lastConv && conversations.find(c => c.id === lastConv)) {
-            await openConversation(lastConv);
+        const openChatWith = sessionStorage.getItem('openChatWith');
+        if (openChatWith) {
+            try {
+                const { userId } = JSON.parse(openChatWith);
+                sessionStorage.removeItem('openChatWith');
+                if (userId) await openConversationWithUser(userId);
+            } catch {}
+        } else {
+            const lastConv = sessionStorage.getItem('chat_active_conv');
+            if (lastConv && conversations.find(c => c.id === lastConv)) {
+                await openConversation(lastConv);
+            }
         }
     }
 });
@@ -316,6 +325,17 @@ async function openConversation(convId) {
 
     const container = document.getElementById('chatMessages');
     container.innerHTML = '';
+
+    // Show pinned listing reference card if coming from an Offer
+    const listingRefRaw = sessionStorage.getItem('chatListingRef');
+    if (listingRefRaw) {
+        try {
+            const ref = JSON.parse(listingRefRaw);
+            sessionStorage.removeItem('chatListingRef');
+            renderListingRefCard(container, ref);
+        } catch {}
+    }
+
     const msgs = await chatGet('messages', `select=*&conversation_id=eq.${convId}&order=created_at.asc`);
 
     if (activeConversationId !== convId) return;
@@ -380,6 +400,38 @@ function addDateSep(container, text) {
     div.className = 'chat-date-sep';
     div.innerHTML = `<span>${text}</span>`;
     container.appendChild(div);
+}
+
+function renderListingRefCard(container, ref) {
+    const { extractLocations } = window;
+    const locs = typeof extractLocations === 'function' ? extractLocations(ref.content || '') : [];
+    const locText = locs.length ? locs.join(', ') : '';
+    const priceMatch = (ref.content || '').match(/(\d+\.?\d*)\s*[Mm](?:illion)?/);
+    const price = priceMatch ? `₱${parseFloat(priceMatch[1])}M` : '';
+
+    const catColors = {
+        'FOR SALE': '#16a34a', 'FOR RENT': '#2563eb', 'FOR LEASE': '#7c3aed',
+        'WILLING TO BUY': '#b45309', 'WILLING TO RENT': '#0e7490', 'WILLING TO LEASE': '#be185d'
+    };
+    const catColor = catColors[ref.category] || '#64748b';
+
+    const card = document.createElement('div');
+    card.className = 'chat-listing-ref';
+    card.innerHTML = `
+        <div class="clr-label"><i class="fas fa-handshake"></i> Offer Reference</div>
+        <div class="clr-body">
+            ${ref.img ? `<img class="clr-img" src="${ref.img}" onerror="this.style.display='none'">` : ''}
+            <div class="clr-info">
+                ${ref.category ? `<span class="clr-cat" style="color:${catColor};border-color:${catColor}20;background:${catColor}10">${ref.category}</span>` : ''}
+                ${locText ? `<div class="clr-loc"><i class="fas fa-map-marker-alt"></i>${locText}</div>` : ''}
+                ${price    ? `<div class="clr-price">${price}</div>` : ''}
+            </div>
+        </div>
+        <a class="clr-view-btn" href="listing-detail.html?id=${ref.id}" onclick="event.stopPropagation()">
+            View Listing <i class="fas fa-arrow-right"></i>
+        </a>
+    `;
+    container.appendChild(card);
 }
 
 function addMsgBubble(container, m) {

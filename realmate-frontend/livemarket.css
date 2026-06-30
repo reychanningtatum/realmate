@@ -1849,3 +1849,112 @@ html[data-theme="dark"] #spLockedMsg { color: #94a3b8; }
 html[data-theme="dark"] #spLockedHandle { background: #334155; }
 html[data-theme="dark"] #spLockedCancelBtn { background: #0f172a; color: #64748b; }
 html[data-theme="dark"] #spLockedCancelBtn:hover { background: #162032; }
+
+/* ── Offer Button & Counter ──────────────────────────────────────────────── */
+.listing-offer-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0 2px; border-top: 1px solid #f1f5f9; margin-top: 10px;
+}
+.listing-offer-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 16px; border-radius: 50px;
+    background: #0f172a; color: #fff;
+    border: none; font-size: 12px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+    transition: background 0.15s, transform 0.1s;
+    white-space: nowrap;
+}
+.listing-offer-btn i { color: #32cd32; font-size: 12px; }
+.listing-offer-btn:hover { background: #1e293b; }
+.listing-offer-btn:active { transform: scale(0.97); }
+
+.listing-offer-count {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 12px; border-radius: 50px;
+    background: #f0fdf4; border: 1px solid #bbf7d0;
+    color: #16a34a; font-size: 12px; font-weight: 700;
+    white-space: nowrap;
+}
+.listing-offer-count i { font-size: 11px; }
+@keyframes offerCountBump {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.18); }
+    100% { transform: scale(1); }
+}
+.listing-offer-count.offer-count-bump { animation: offerCountBump 0.35s ease; }
+
+html[data-theme="dark"] .listing-offer-row { border-top-color: #334155; }
+html[data-theme="dark"] .listing-offer-btn { background: #1e293b; }
+html[data-theme="dark"] .listing-offer-btn:hover { background: #243044; }
+html[data-theme="dark"] .listing-offer-count { background: rgba(22,163,74,0.1); border-color: rgba(22,163,74,0.25); }
+
+/* ── Offer Confirmation Popup ────────────────────────────────────────────── */
+#offerPopupOverlay {
+    display: none; position: fixed; inset: 0; z-index: 99999;
+}
+#offerPopupOverlay.op-open { display: block; }
+#offerPopupBackdrop {
+    position: absolute; inset: 0; background: rgba(0,0,0,0);
+    transition: background 0.3s;
+}
+#offerPopupOverlay.op-open #offerPopupBackdrop { background: rgba(0,0,0,0.5); }
+#offerPopupSheet {
+    position: absolute; bottom: 0; left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    background: #fff; border-radius: 24px 24px 0 0;
+    width: 100%; max-width: 520px;
+    padding: 0 20px calc(24px + env(safe-area-inset-bottom));
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.18); text-align: center;
+}
+#offerPopupOverlay.op-open #offerPopupSheet { transform: translateX(-50%) translateY(0); }
+#offerPopupHandle {
+    width: 40px; height: 4px; background: #e2e8f0; border-radius: 2px;
+    margin: 12px auto 20px;
+}
+#offerPopupIcon {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: linear-gradient(135deg, #0f172a 0%, #1a2744 100%);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+    box-shadow: 0 4px 20px rgba(15,23,42,0.25);
+}
+#offerPopupIcon i { font-size: 26px; color: #32cd32; }
+#offerPopupTitle { font-size: 18px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; margin-bottom: 8px; }
+#offerPopupSub { font-size: 13px; color: #64748b; line-height: 1.6; margin-bottom: 22px; max-width: 320px; margin-left: auto; margin-right: auto; }
+#offerPopupActions { display: flex; flex-direction: column; gap: 10px; }
+#offerConfirmBtn {
+    width: 100%; padding: 15px; border-radius: 14px;
+    background: #32cd32; color: #fff; border: none;
+    font-size: 15px; font-weight: 800; cursor: pointer;
+    font-family: inherit; transition: background 0.15s, transform 0.1s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+#offerConfirmBtn:hover { background: #28b828; }
+#offerConfirmBtn:active { transform: scale(0.98); }
+#offerConfirmBtn:disabled { opacity: 0.75; cursor: default; }
+#offerCancelBtn {
+    width: 100%; padding: 14px; border-radius: 14px;
+    background: #f1f5f9; color: #64748b; border: none;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    font-family: inherit; transition: background 0.15s;
+}
+#offerCancelBtn:hover { background: #e2e8f0; }
+@media (min-width: 640px) {
+    #offerPopupSheet {
+        bottom: auto; top: 50%; border-radius: 20px;
+        width: 420px; padding: 0 28px 28px;
+        transform: translateX(-50%) translateY(calc(-50% + 30px)); opacity: 0;
+        transition: transform 0.3s cubic-bezier(0.32,0.72,0,1), opacity 0.3s;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.22);
+    }
+    #offerPopupOverlay.op-open #offerPopupSheet { transform: translateX(-50%) translateY(-50%); opacity: 1; }
+    #offerPopupHandle { display: none; }
+    #offerPopupIcon { margin-top: 28px; }
+}
+html[data-theme="dark"] #offerPopupSheet { background: #1e293b; }
+html[data-theme="dark"] #offerPopupTitle { color: #f1f5f9; }
+html[data-theme="dark"] #offerPopupSub { color: #94a3b8; }
+html[data-theme="dark"] #offerPopupHandle { background: #334155; }
+html[data-theme="dark"] #offerCancelBtn { background: #0f172a; color: #64748b; }
+html[data-theme="dark"] #offerCancelBtn:hover { background: #162032; }
