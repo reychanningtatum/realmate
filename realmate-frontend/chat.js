@@ -460,6 +460,13 @@ function addMsgBubble(container, m) {
 
     let receipt = '';
     if (isOwn) {
+        // Get HH:MM of this message
+        const msgMinute = new Date(m.created_at).toISOString().slice(0, 16);
+        // Hide receipts on previous own messages sharing the same minute
+        container.querySelectorAll('.chat-msg-row.sent').forEach(row => {
+            const prev = row.querySelector('.chat-msg-receipt');
+            if (prev && row.dataset.msgMinute === msgMinute) prev.style.display = 'none';
+        });
         receipt = m.is_read
             ? '<span class="chat-msg-receipt"><span class="seen">✓✓</span></span>'
             : '<span class="chat-msg-receipt"><span class="delivered">✓✓</span></span>';
@@ -497,7 +504,8 @@ function addMsgBubble(container, m) {
 
     const ctxAttr = `oncontextmenu="event.preventDefault();showCtxMenu(event,this)" data-msg-text="${esc(m.message_text || '')}" data-msg-type="${type}" data-msg-sender="${m.sender_id}"`;
 
-    const html = `<div class="chat-msg-row ${side}" data-msg-id="${m.id}" onclick="toggleMsgTimestamp(this)" ${ctxAttr}><div class="chat-msg-tap-ts">${fullTimestamp}</div><div>${bubble}<div class="chat-msg-meta" style="justify-content:${isOwn ? 'flex-end' : 'flex-start'}">${receipt}</div></div></div>`;
+    const msgMinuteAttr = isOwn ? `data-msg-minute="${new Date(m.created_at).toISOString().slice(0,16)}"` : '';
+    const html = `<div class="chat-msg-row ${side}" data-msg-id="${m.id}" ${msgMinuteAttr} onclick="toggleMsgTimestamp(this)" ${ctxAttr}><div class="chat-msg-tap-ts">${fullTimestamp}</div><div>${bubble}<div class="chat-msg-meta" style="justify-content:${isOwn ? 'flex-end' : 'flex-start'}">${receipt}</div></div></div>`;
 
     container.insertAdjacentHTML('beforeend', html);
 }
