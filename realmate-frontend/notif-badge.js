@@ -100,9 +100,53 @@
         }
     }
 
+    async function fetchUnreadChatCount() {
+        try {
+            const u = JSON.parse(localStorage.getItem('user') || 'null');
+            if (!u?.id) return 0;
+            const res = await fetch(
+                `${SUPABASE_URL}/rest/v1/messages?select=id&is_read=eq.false&sender_id=neq.${u.id}`,
+                { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
+            );
+            const data = await res.json();
+            if (!Array.isArray(data)) return 0;
+            // Filter to only messages in conversations the user participates in
+            const partRes = await fetch(
+                `${SUPABASE_URL}/rest/v1/conversation_participants?select=conversation_id&user_id=eq.${u.id}`,
+                { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
+            );
+            const parts = await partRes.json();
+            const convIds = new Set((Array.isArray(parts) ? parts : []).map(p => String(p.conversation_id)));
+            return data.filter(m => convIds.has(String(m.conversation_id))).length;
+        } catch { return 0; }
+    }
+
+    function applyChatBadge(count) {
+        document.querySelectorAll('.global-chat-badge').forEach(el => el.remove());
+        if (count <= 0) return;
+        const label = count > 99 ? '99+' : String(count);
+        const style = (pos) => `position:absolute;${pos}background:#ef4444;color:#fff;font-size:9px;font-weight:800;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 3px;pointer-events:none;line-height:1;box-shadow:0 2px 6px rgba(239,68,68,0.4);z-index:10;`;
+        const sidebarChat = document.querySelector('.nav-item [class*="fa-comment"]');
+        if (sidebarChat) {
+            const w = sidebarChat.parentElement; w.style.position = 'relative';
+            const b = document.createElement('span'); b.className = 'global-chat-badge';
+            b.textContent = label; b.style.cssText = style('top:6px;right:10px;');
+            w.appendChild(b);
+        }
+        const mobileChat = document.querySelector('.mob-nav-item [class*="fa-comment"]');
+        if (mobileChat) {
+            const w = mobileChat.parentElement; w.style.position = 'relative';
+            const b = document.createElement('span'); b.className = 'global-chat-badge';
+            b.textContent = label; b.style.cssText = style('top:2px;right:50%;transform:translateX(calc(50% + 8px));');
+            w.appendChild(b);
+        }
+    }
+
     async function refresh() {
         const count = await fetchUnreadCount();
         applyBadge(count);
+        const chatCount = await fetchUnreadChatCount();
+        applyChatBadge(chatCount);
     }
 
     // Run on load then every 60 seconds as fallback

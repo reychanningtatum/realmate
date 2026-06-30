@@ -373,6 +373,18 @@ async function confirmOffer() {
                 method: 'POST', headers: h,
                 body: JSON.stringify({ conversation_id: convId, sender_id: myId, message_type: 'TEXT', message_text: autoMsg, is_read: false })
             });
+            // Insert offer notification for the listing owner
+            await fetch(`${SUPA_URL}/rest/v1/notifications`, {
+                method: 'POST', headers: h,
+                body: JSON.stringify({
+                    recipient_user_name: ownerName,
+                    sender_user_name: senderName,
+                    type: 'offer',
+                    message: `${senderName} sent you an offer on your ${category || 'property'} listing.`,
+                    is_read: false,
+                    created_at: new Date().toISOString()
+                })
+            });
         } catch(refErr) {
             console.warn('LISTING_REF insert error', refErr);
         }

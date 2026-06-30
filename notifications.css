@@ -157,6 +157,7 @@
 .badge-reply { background: var(--primary); }
 .badge-mention { background: #8b5cf6; }
 .badge-mate { background: #3b82f6; }
+.badge-offer { background: linear-gradient(135deg, #14532d, #15803d); }
 
 .mate-request-actions { display: flex; gap: 8px; margin-top: 10px; }
 .mate-accept-btn, .mate-decline-btn {

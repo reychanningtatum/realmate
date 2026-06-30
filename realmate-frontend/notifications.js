@@ -113,7 +113,10 @@ function renderNotificationsInterface() {
         let typeIcon = "fa-bell";
         let contextClass = "badge-reply";
 
-        if (notif.type === 'mate_request') {
+        if (notif.type === 'offer') {
+            typeIcon = "fa-handshake";
+            contextClass = "badge-offer";
+        } else if (notif.type === 'mate_request') {
             typeIcon = "fa-user-plus";
             contextClass = "badge-mate";
         } else if (notif.type === 'mate_accepted') {
