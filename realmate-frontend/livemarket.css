@@ -502,7 +502,7 @@ html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-co
 
 /* ── Card menu (⋮ top-right) ── */
 .lc-menu-wrap {
-    position: absolute; top: 10px; right: 10px; z-index: 20;
+    position: relative; flex-shrink: 0; margin-left: auto;
 }
 .lc-menu-btn {
     width: 28px; height: 28px; border-radius: 50%;
