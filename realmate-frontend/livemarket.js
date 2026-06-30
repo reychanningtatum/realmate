@@ -180,35 +180,32 @@ function buildOfferRow(listing) {
     </div>`;
 }
 
-function buildOfferBadge(listing) {
-    const localUser = JSON.parse(localStorage.getItem('user'));
-    if (!listing.user_id || listing.is_anonymous) return '';
-    return `<span class="listing-offer-badge" id="offer-count-${listing.id}" style="display:none;" onclick="event.stopPropagation()">
-        <i class="fas fa-handshake"></i> <span class="offer-count-num">0</span>
-    </span>`;
-}
+// Preloaded offer counts — populated before cards render
+window._offerCountMap = {};
 
-async function loadOfferCounts(listingIds) {
-    if (!listingIds.length) return;
+async function preloadOfferCounts() {
     try {
-        const ids = listingIds.map(String);
-        // Fetch all offers then count in JS — avoids any in() URL encoding issues
         const resp = await fetch(
             `${supabaseUrl}/rest/v1/listing_offers?select=listing_id`,
             { headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` } }
         );
         const rows = await resp.json();
         if (!Array.isArray(rows)) return;
-        const counts = {};
-        rows.forEach(r => { const k = String(r.listing_id); counts[k] = (counts[k] || 0) + 1; });
-        ids.forEach(id => {
-            const el = document.getElementById(`offer-count-${id}`);
-            if (!el) return;
-            const n = counts[id] || 0;
-            el.querySelector('.offer-count-num').textContent = n;
-            el.style.display = n > 0 ? 'inline-flex' : 'none';
+        window._offerCountMap = {};
+        rows.forEach(r => {
+            const k = String(r.listing_id);
+            window._offerCountMap[k] = (window._offerCountMap[k] || 0) + 1;
         });
-    } catch(e) { console.warn('loadOfferCounts error', e); }
+    } catch(e) { console.warn('preloadOfferCounts error', e); }
+}
+
+function buildOfferBadge(listing) {
+    if (!listing.user_id || listing.is_anonymous) return '';
+    const n = window._offerCountMap[String(listing.id)] || 0;
+    if (n === 0) return '';
+    return `<span class="listing-offer-badge" onclick="event.stopPropagation()">
+        <i class="fas fa-handshake"></i> <span class="offer-count-num">${n}</span>
+    </span>`;
 }
 
 function showOfferPopup(listingId, ownerId, ownerName, img, category, btn) {
@@ -293,19 +290,9 @@ async function confirmOffer() {
                 { listing_id: listingId, user_id: myId },
                 { onConflict: 'listing_id,user_id', ignoreDuplicates: true }
             );
-            // Update counter badge in DOM
-            const countEl = document.getElementById(`offer-count-${listingId}`);
-            if (countEl) {
-                const numEl = countEl.querySelector('.offer-count-num');
-                const { count } = await _sb.from('listing_offers')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('listing_id', listingId);
-                const n = count || (parseInt(numEl?.textContent || '0') + 1);
-                if (numEl) numEl.textContent = n;
-                if (n > 0) countEl.style.display = 'inline-flex';
-                countEl.classList.add('offer-count-bump');
-                setTimeout(() => countEl.classList.remove('offer-count-bump'), 400);
-            }
+            // Bump the in-memory count map so the badge updates immediately
+            const k = String(listingId);
+            window._offerCountMap[k] = (window._offerCountMap[k] || 0) + 1;
         } catch(offerErr) { console.warn('listing_offers table error (run migration?):', offerErr); }
 
         btn.innerHTML = '<i class="fas fa-check"></i> Offer Sent!';
@@ -1259,10 +1246,10 @@ function applyFilters() {
     } else {
         pool.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     }
+    await preloadOfferCounts();
     pool.forEach(l => grid.appendChild(
         buildListingCard(l, matchMap.get(l.id) || null, fmvMap.get(l.id) || null, myMatchCountMap.get(l.id) || 0)
     ));
-    loadOfferCounts(pool.map(l => l.id));
 }
 
 function selectCatByName(catName) {
