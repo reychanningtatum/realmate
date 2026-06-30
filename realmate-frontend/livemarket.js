@@ -483,8 +483,8 @@ function enhanceListingText(listing) {
     const sqm = _xSqm(raw);
     if (unitType) body = body.replace(/\b(residential\s*lot|commercial\s*lot|condo(?:minium)?|townhouse|house\s*(?:and|&)\s*lot|office\s*space|office)\b/gi, '');
     if (bedrooms) {
-        // Remove full range pattern first e.g. "2-BEDROOM OR 3-BEDROOM"
-        body = body.replace(/\d[\s-]*(?:br|bedroom\w*)\s+or\s+\d[\s-]*(?:br|bedroom\w*)/gi, '');
+        // Remove full range pattern first e.g. "Studio OR 1BR", "2-BEDROOM OR 3-BEDROOM"
+        body = body.replace(/(?:studio|\d[\s-]*(?:br|bedroom\w*))\s+or\s+(?:studio|\d[\s-]*(?:br|bedroom\w*))/gi, '');
         // Then remove any remaining single bedroom mentions
         body = body.replace(/\b(studio|1[\s-]*br|2[\s-]*br|3[\s-]*br|4[\s-]*br|\d+[\s-]*bedroom\w*|one\s*bedroom|two\s*bedroom|three\s*bedroom|four\s*bedroom)\b/gi, '');
     }
@@ -682,11 +682,24 @@ function extractPrice(text) {
     return null;
 }
 
+function _unitToken(str) {
+    const s = str.toLowerCase().trim();
+    if (s.match(/^studio$/)) return 'Studio';
+    const m = s.match(/^(\d)[\s-]*(?:br|bedroom)$/);
+    if (m) return `${m[1]}BR`;
+    return null;
+}
+
 function extractUnit(text) {
     const lower = text.toLowerCase();
-    // Detect unit range: "2-BEDROOM OR 3-BEDROOM", "2BR or 3BR"
-    const rangeMatch = lower.match(/(\d)[\s-]*(?:br|bedroom)\s+or\s+(\d)[\s-]*(?:br|bedroom)/);
-    if (rangeMatch) return `${rangeMatch[1]}BR or ${rangeMatch[2]}BR`;
+    // Detect unit range across any combo: "Studio or 1BR", "2-BEDROOM OR 3-BEDROOM", "1BR or 2 Bedroom"
+    const rangeRe = /(studio|\d[\s-]*(?:br|bedroom\w*))\s+or\s+(studio|\d[\s-]*(?:br|bedroom\w*))/i;
+    const rangeMatch = text.match(rangeRe);
+    if (rangeMatch) {
+        const a = _unitToken(rangeMatch[1]);
+        const b = _unitToken(rangeMatch[2]);
+        if (a && b) return `${a} or ${b}`;
+    }
     const lines = text.split(/\n/).map(l => l.trim()).filter(Boolean);
     // Check each line — a line with just "1BR" or "1 BEDROOM" is definitive
     for (const line of lines) {
