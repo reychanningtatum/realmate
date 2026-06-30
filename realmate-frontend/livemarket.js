@@ -423,7 +423,9 @@ function enhanceListingText(listing) {
     const raw = text;
 
     const locations = extractLocations(raw);
-    const project = extractProject(raw);
+    const projectFull = extractProjectFull(raw);
+    const project = projectFull ? projectFull.project : null;
+    const projectOriginal = projectFull ? (projectFull.originalPhrase || project) : null;
     const priceRange = extractPriceRange(raw);
     const price = extractPrice(raw);
 
@@ -432,6 +434,10 @@ function enhanceListingText(listing) {
 
     if (project) {
         body = body.replace(new RegExp(project.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '');
+        // Also strip the original misspelled phrase if it differs from the corrected name
+        if (projectOriginal && projectOriginal.toLowerCase() !== project.toLowerCase()) {
+            body = body.replace(new RegExp(projectOriginal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '');
+        }
     }
 
     // Remove location keywords + "area" suffix from body
@@ -1092,26 +1098,26 @@ function levenshtein(a, b) {
 function fuzzyMatchProject(text) {
     const allProjects = [...KNOWN_PROJECTS, ...getLearnedProjects()];
     const words = text.toLowerCase().split(/\s+/);
-    let bestProj = null, bestDist = Infinity;
+    let bestProj = null, bestPhrase = null, bestDist = Infinity;
     for (const proj of allProjects) {
         const projLower = proj.toLowerCase();
         const projWords = projLower.split(/\s+/);
-        // Slide a window of same word-count as the project name across the text
         for (let i = 0; i <= words.length - projWords.length; i++) {
             const phrase = words.slice(i, i + projWords.length).join(' ');
             const dist = levenshtein(phrase, projLower);
-            // Allow up to 2 edits per word in the project name (but min 2, max 4)
             const threshold = Math.min(4, Math.max(2, Math.floor(projLower.length * 0.2)));
             if (dist > 0 && dist <= threshold && dist < bestDist) {
                 bestDist = dist;
                 bestProj = proj;
+                bestPhrase = phrase; // original misspelled text
             }
         }
     }
-    return bestProj;
+    return bestProj ? { project: bestProj, originalPhrase: bestPhrase } : null;
 }
 
-function extractProject(text) {
+// Returns { project, originalPhrase } — originalPhrase is what appeared in the raw text
+function extractProjectFull(text) {
     const upper = text.toUpperCase();
     let earliest = Infinity, found = null;
     for (const proj of [...KNOWN_PROJECTS, ...getLearnedProjects()]) {
@@ -1121,9 +1127,15 @@ function extractProject(text) {
             found = proj;
         }
     }
-    if (found) return found;
+    if (found) return { project: found, originalPhrase: null };
     // Fuzzy fallback — catch misspellings like "two maridiem" → "Two Maridien"
-    return fuzzyMatchProject(text);
+    const fuzzy = fuzzyMatchProject(text);
+    return fuzzy || null;
+}
+
+function extractProject(text) {
+    const r = extractProjectFull(text);
+    return r ? r.project : null;
 }
 
 function extractFeatures(text) {
