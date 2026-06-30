@@ -498,7 +498,12 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
             <i class="fas fa-chevron-right match-banner-arrow" style="color:#475569;"></i>
         </div>` : '';
 
+    const soldRibbon = listing.status === 'sold'
+        ? `<div class="sold-ribbon"><span>SOLD</span></div>`
+        : '';
+
     card.innerHTML = `
+        ${soldRibbon}
         ${matchBanner}
         ${imagesHtml(listing)}
         <div class="listing-card-body">
