@@ -185,7 +185,7 @@
 <!-- Fixed header -->
 <div class="up-header">
   <a class="up-back" id="upBackBtn" href="livemarket.html"><i class="fas fa-chevron-left"></i> Live Market</a>
-  <span class="up-header-badge"><i class="fas fa-store" style="margin-right:4px;"></i>Seller</span>
+  <span class="up-header-badge" id="upHeaderBadge"></span>
   <div class="up-header-right"></div>
 </div>
 
@@ -263,6 +263,8 @@ async function loadSellerProfile() {
   const count   = listings?.length || 0;
 
   document.title = `${name} — Live Market`;
+  const badge = document.getElementById('upHeaderBadge');
+  if (badge) badge.textContent = `${name}'s Listings`;
 
   // Auth check (for follow button / hide if self)
   let myId = null, amFollowing = false;
@@ -305,10 +307,6 @@ async function loadSellerProfile() {
           ${joined ? `<span class="seller-meta-item"><i class="fas fa-calendar-alt"></i>Member since ${joined}</span>` : ''}
         </div>
         ${actionBtns ? `<div class="seller-actions">${actionBtns}</div>` : ''}
-      </div>
-      <div class="seller-listing-bar">
-        <span class="seller-listing-label"><i class="fas fa-list-ul" style="margin-right:5px;color:#9ca3af;"></i>${name}'s Listings</span>
-        <span class="seller-listing-count">${count} listing${count !== 1 ? 's' : ''}</span>
       </div>
     </div>
 
