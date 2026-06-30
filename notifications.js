@@ -242,6 +242,13 @@ async function handleNotificationRowClick(id) {
         localStorage.setItem("route_target_post_id", String(notif.target_post_id));
     }
 
+    // Offer notifications → open chat with the sender
+    if (notif.type === 'offer') {
+        sessionStorage.setItem('openChatWith', JSON.stringify({ userId: notif.sender_user_id || null, name: notif.sender_user_name }));
+        location.href = 'chat.html';
+        return;
+    }
+
     // Mate/follow notifications → go to sender's profile
     if (notif.type === 'mate_request' || notif.type === 'mate_accepted' || notif.type === 'follow') {
         try {
