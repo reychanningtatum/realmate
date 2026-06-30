@@ -1246,7 +1246,6 @@ function applyFilters() {
     } else {
         pool.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     }
-    await preloadOfferCounts();
     pool.forEach(l => grid.appendChild(
         buildListingCard(l, matchMap.get(l.id) || null, fmvMap.get(l.id) || null, myMatchCountMap.get(l.id) || 0)
     ));
@@ -1292,7 +1291,8 @@ async function loadLedger() {
         localUser
             ? _sb.from('listings').select('*').eq('archived', false).eq('user_id', (await _sb.auth.getUser()).data?.user?.id || '__none__')
             : Promise.resolve({ data: [] }),
-        typeof loadMatesCache === 'function' ? loadMatesCache() : Promise.resolve()
+        typeof loadMatesCache === 'function' ? loadMatesCache() : Promise.resolve(),
+        preloadOfferCounts()
     ]);
 
     if (error || !data) {
