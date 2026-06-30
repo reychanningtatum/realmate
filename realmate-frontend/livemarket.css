@@ -1958,3 +1958,20 @@ html[data-theme="dark"] #offerPopupSub { color: #94a3b8; }
 html[data-theme="dark"] #offerPopupHandle { background: #334155; }
 html[data-theme="dark"] #offerCancelBtn { background: #0f172a; color: #64748b; }
 html[data-theme="dark"] #offerCancelBtn:hover { background: #162032; }
+
+/* Message option in seller popup */
+.sp-opt-icon-msg { background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%); }
+.sp-opt-icon-msg i { color: #60a5fa; }
+
+/* Message Instead button in locked popup */
+#spLockedMsgBtn {
+    width: 100%; padding: 13px; border-radius: 14px;
+    background: #f8fafc; color: #0f172a; border: 1px solid #e2e8f0;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    font-family: inherit; transition: background 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+#spLockedMsgBtn i { color: #60a5fa; }
+#spLockedMsgBtn:hover { background: #f1f5f9; }
+html[data-theme="dark"] #spLockedMsgBtn { background: #0f172a; color: #e2e8f0; border-color: #334155; }
+html[data-theme="dark"] #spLockedMsgBtn:hover { background: #162032; }

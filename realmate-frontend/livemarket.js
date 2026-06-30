@@ -1968,6 +1968,14 @@ function _ensureSellerPopup() {
                     </span>
                     <i class="fas fa-chevron-right sp-opt-arrow"></i>
                 </button>
+                <button id="sellerOptMessage" onclick="closeSellerPopup(); sessionStorage.setItem('openChatWith', JSON.stringify({userId:window._spUserId,name:window._spName})); location.href='chat.html'">
+                    <span class="sp-opt-icon sp-opt-icon-msg"><i class="fas fa-comment-dots"></i></span>
+                    <span class="sp-opt-text">
+                        <span class="sp-opt-title">Message</span>
+                        <span class="sp-opt-sub">Send a direct message</span>
+                    </span>
+                    <i class="fas fa-chevron-right sp-opt-arrow"></i>
+                </button>
                 <button id="sellerOptProfile" onclick="closeSellerPopup(); location.href=window._spUserId?'dashboard.html?user_id='+window._spUserId:''">
                     <span class="sp-opt-icon sp-opt-icon-profile"><i class="fas fa-user-tie"></i></span>
                     <span class="sp-opt-text">
@@ -2018,6 +2026,9 @@ function _ensureLockedPopup() {
             <div id="spLockedActions">
                 <button id="spLockedAddBtn" onclick="handleAddMateFromLocked()">
                     <i class="fas fa-user-plus"></i> Add as Realmate
+                </button>
+                <button id="spLockedMsgBtn" onclick="closeLockedPopup(); sessionStorage.setItem('openChatWith', JSON.stringify({userId:window._spUserId,name:window._spName})); location.href='chat.html'">
+                    <i class="fas fa-comment-dots"></i> Message Instead
                 </button>
                 <button id="spLockedCancelBtn" onclick="closeLockedPopup()">Cancel</button>
             </div>
