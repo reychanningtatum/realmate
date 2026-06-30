@@ -310,59 +310,48 @@ async function confirmOffer() {
         // Get listing data for reference card
         const { data: listingData } = await _sb.from('listings').select('*').eq('id', listingId).single();
 
-        // Find or create the conversation between the two users, then post a LISTING_REF message
-        (async () => {
-            try {
-                const SUPA_URL = supabaseUrl;
-                const SUPA_KEY = supabaseKey;
-                const headers  = { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
+        // Find or create the conversation and insert LISTING_REF message — await before navigating
+        const SUPA_URL = supabaseUrl;
+        const SUPA_KEY = supabaseKey;
+        const h = { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
 
-                // Find conversations where myId is a participant
-                const myPartsResp = await fetch(`${SUPA_URL}/rest/v1/conversation_participants?select=conversation_id&user_id=eq.${myId}`, { headers });
-                const myParts = await myPartsResp.json();
-                const myConvIds = myParts.map(p => p.conversation_id);
+        let convId = null;
+        try {
+            const myPartsResp = await fetch(`${SUPA_URL}/rest/v1/conversation_participants?select=conversation_id&user_id=eq.${myId}`, { headers: h });
+            const myParts = await myPartsResp.json();
+            const myConvIds = (Array.isArray(myParts) ? myParts : []).map(p => p.conversation_id);
 
-                let convId = null;
-                if (myConvIds.length) {
-                    // Find one where the other user is also a participant
-                    const idStr = myConvIds.map(id => `"${id}"`).join(',');
-                    const otherPartsResp = await fetch(`${SUPA_URL}/rest/v1/conversation_participants?select=conversation_id&user_id=eq.${ownerId}&conversation_id=in.(${idStr})`, { headers });
-                    const otherParts = await otherPartsResp.json();
-                    if (otherParts.length) convId = otherParts[0].conversation_id;
-                }
-
-                if (!convId) {
-                    // Create new conversation
-                    const now = new Date().toISOString();
-                    const convResp = await fetch(`${SUPA_URL}/rest/v1/conversations`, { method: 'POST', headers, body: JSON.stringify({ created_at: now, updated_at: now }) });
-                    const convData = await convResp.json();
-                    convId = convData[0]?.id;
-                    if (!convId) throw new Error('Could not create conversation');
-                    // Add participants
-                    await fetch(`${SUPA_URL}/rest/v1/conversation_participants`, { method: 'POST', headers, body: JSON.stringify({ conversation_id: convId, user_id: myId }) });
-                    await fetch(`${SUPA_URL}/rest/v1/conversation_participants`, { method: 'POST', headers, body: JSON.stringify({ conversation_id: convId, user_id: ownerId }) });
-                }
-
-                // Post the LISTING_REF message
-                const refPayload = JSON.stringify({
-                    id: listingId, img, category,
-                    content: listingData?.content || '',
-                    created_at: listingData?.created_at || ''
-                });
-                await fetch(`${SUPA_URL}/rest/v1/messages`, {
-                    method: 'POST', headers,
-                    body: JSON.stringify({ conversation_id: convId, sender_id: myId, message_type: 'LISTING_REF', message_text: refPayload, is_read: false })
-                });
-            } catch(refErr) {
-                console.warn('LISTING_REF message error', refErr);
+            if (myConvIds.length) {
+                const idStr = myConvIds.map(id => `"${id}"`).join(',');
+                const otherPartsResp = await fetch(`${SUPA_URL}/rest/v1/conversation_participants?select=conversation_id&user_id=eq.${ownerId}&conversation_id=in.(${idStr})`, { headers: h });
+                const otherParts = await otherPartsResp.json();
+                if (Array.isArray(otherParts) && otherParts.length) convId = otherParts[0].conversation_id;
             }
-        })();
 
-        setTimeout(() => {
-            closeOfferPopup();
-            sessionStorage.setItem('openChatWith', JSON.stringify({ userId: ownerId, name: ownerName }));
-            location.href = 'chat.html';
-        }, 900);
+            if (!convId) {
+                const now = new Date().toISOString();
+                const convResp = await fetch(`${SUPA_URL}/rest/v1/conversations`, { method: 'POST', headers: h, body: JSON.stringify({ created_at: now, updated_at: now }) });
+                const convData = await convResp.json();
+                convId = (Array.isArray(convData) ? convData[0] : convData)?.id;
+                if (!convId) throw new Error('No conv id returned');
+                await fetch(`${SUPA_URL}/rest/v1/conversation_participants`, { method: 'POST', headers: h, body: JSON.stringify({ conversation_id: convId, user_id: myId }) });
+                await fetch(`${SUPA_URL}/rest/v1/conversation_participants`, { method: 'POST', headers: h, body: JSON.stringify({ conversation_id: convId, user_id: ownerId }) });
+            }
+
+            const refPayload = JSON.stringify({ id: listingId, img, category, content: listingData?.content || '', created_at: listingData?.created_at || '' });
+            await fetch(`${SUPA_URL}/rest/v1/messages`, {
+                method: 'POST', headers: h,
+                body: JSON.stringify({ conversation_id: convId, sender_id: myId, message_type: 'LISTING_REF', message_text: refPayload, is_read: false })
+            });
+        } catch(refErr) {
+            console.warn('LISTING_REF insert error', refErr);
+        }
+
+        // Show success briefly, then navigate
+        await new Promise(r => setTimeout(r, 700));
+        closeOfferPopup();
+        sessionStorage.setItem('openChatWith', JSON.stringify({ userId: ownerId, name: ownerName }));
+        location.href = 'chat.html';
 
     } catch(e) {
         console.warn('confirmOffer error', e);
