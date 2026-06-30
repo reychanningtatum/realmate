@@ -1276,3 +1276,52 @@ html[data-theme="dark"] .chat-file-preview { background: #1e293b; border-color: 
 html[data-theme="dark"] .chat-file-preview-info { color: #f1f5f9; }
 html[data-theme="dark"] .chat-msg-search-bar { background: #1e293b; border-color: #334155; }
 html[data-theme="dark"] .chat-msg-search-bar input { background: #0f172a; color: #f1f5f9; border-color: #334155; }
+
+/* ── Listing Reference Card (pinned in chat from Offer) ─────────────────── */
+.chat-listing-ref {
+    margin: 10px 12px 4px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-left: 3px solid #32cd32;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+}
+.clr-label {
+    font-size: 10px; font-weight: 800; color: #32cd32;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 8px 12px 0;
+    display: flex; align-items: center; gap: 5px;
+}
+.clr-body {
+    display: flex; gap: 10px; padding: 8px 12px 10px; align-items: center;
+}
+.clr-img {
+    width: 58px; height: 58px; border-radius: 8px;
+    object-fit: cover; flex-shrink: 0; background: #f1f5f9;
+}
+.clr-info { flex: 1; min-width: 0; }
+.clr-cat {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 2px 8px; border-radius: 50px; border: 1px solid;
+    margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.03em;
+}
+.clr-loc {
+    font-size: 11px; color: #64748b; display: flex; align-items: center; gap: 4px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px;
+}
+.clr-loc i { color: #9ca3af; font-size: 10px; flex-shrink: 0; }
+.clr-price { font-size: 13px; font-weight: 800; color: #0f172a; }
+.clr-view-btn {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 9px 12px; background: #f8fafc; border-top: 1px solid #f1f5f9;
+    font-size: 12px; font-weight: 700; color: #0f172a;
+    text-decoration: none; transition: background 0.15s;
+}
+.clr-view-btn:hover { background: #f1f5f9; }
+.clr-view-btn i { font-size: 10px; color: #9ca3af; }
+
+html[data-theme="dark"] .chat-listing-ref { background: #1e293b; border-color: #334155; border-left-color: #32cd32; }
+html[data-theme="dark"] .clr-price { color: #f1f5f9; }
+html[data-theme="dark"] .clr-view-btn { background: #162032; border-top-color: #334155; color: #e2e8f0; }
+html[data-theme="dark"] .clr-view-btn:hover { background: #1e293b; }

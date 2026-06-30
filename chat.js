@@ -72,9 +72,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (openWith) {
         await openConversationWithUser(openWith);
     } else {
-        const lastConv = sessionStorage.getItem('chat_active_conv');
-        if (lastConv && conversations.find(c => c.id === lastConv)) {
-            await openConversation(lastConv);
+        const openChatWith = sessionStorage.getItem('openChatWith');
+        if (openChatWith) {
+            try {
+                const { userId } = JSON.parse(openChatWith);
+                sessionStorage.removeItem('openChatWith');
+                if (userId) await openConversationWithUser(userId);
+            } catch {}
+        } else {
+            const lastConv = sessionStorage.getItem('chat_active_conv');
+            if (lastConv && conversations.find(c => c.id === lastConv)) {
+                await openConversation(lastConv);
+            }
         }
     }
 });
@@ -316,12 +325,13 @@ async function openConversation(convId) {
 
     const container = document.getElementById('chatMessages');
     container.innerHTML = '';
+
     const msgs = await chatGet('messages', `select=*&conversation_id=eq.${convId}&order=created_at.asc`);
 
     if (activeConversationId !== convId) return;
 
     if (!msgs.length) {
-        container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--chat-sub);font-size:13px;">No messages yet. Say hello! 👋</div>';
+        container.insertAdjacentHTML('beforeend', '<div style="text-align:center;padding:40px;color:var(--chat-sub);font-size:13px;">No messages yet. Say hello! 👋</div>');
     } else {
         let lastDate = '';
         msgs.forEach(m => {
@@ -382,6 +392,38 @@ function addDateSep(container, text) {
     container.appendChild(div);
 }
 
+function renderListingRefCard(container, ref) {
+    const { extractLocations } = window;
+    const locs = typeof extractLocations === 'function' ? extractLocations(ref.content || '') : [];
+    const locText = locs.length ? locs.join(', ') : '';
+    const priceMatch = (ref.content || '').match(/(\d+\.?\d*)\s*[Mm](?:illion)?/);
+    const price = priceMatch ? `₱${parseFloat(priceMatch[1])}M` : '';
+
+    const catColors = {
+        'FOR SALE': '#16a34a', 'FOR RENT': '#2563eb', 'FOR LEASE': '#7c3aed',
+        'WILLING TO BUY': '#b45309', 'WILLING TO RENT': '#0e7490', 'WILLING TO LEASE': '#be185d'
+    };
+    const catColor = catColors[ref.category] || '#64748b';
+
+    const card = document.createElement('div');
+    card.className = 'chat-listing-ref';
+    card.innerHTML = `
+        <div class="clr-label"><i class="fas fa-handshake"></i> Offer Reference</div>
+        <div class="clr-body">
+            ${ref.img ? `<img class="clr-img" src="${ref.img}" onerror="this.style.display='none'">` : ''}
+            <div class="clr-info">
+                ${ref.category ? `<span class="clr-cat" style="color:${catColor};border-color:${catColor}20;background:${catColor}10">${ref.category}</span>` : ''}
+                ${locText ? `<div class="clr-loc"><i class="fas fa-map-marker-alt"></i>${locText}</div>` : ''}
+                ${price    ? `<div class="clr-price">${price}</div>` : ''}
+            </div>
+        </div>
+        <a class="clr-view-btn" href="listing-detail.html?id=${ref.id}" onclick="event.stopPropagation()">
+            View Listing <i class="fas fa-arrow-right"></i>
+        </a>
+    `;
+    container.appendChild(card);
+}
+
 function addMsgBubble(container, m) {
     const isOwn = m.sender_id === currentUser.id;
     const side = isOwn ? 'own' : 'other';
@@ -413,7 +455,23 @@ function addMsgBubble(container, m) {
 
     let bubble = '';
     const type = (m.message_type || 'TEXT').toUpperCase();
-    if (type === 'TEXT') {
+    if (type === 'LISTING_REF' || (type === 'TEXT' && (m.message_text || '').startsWith('__LISTING_REF__'))) {
+        try {
+            const rawText = (m.message_text || '').replace('__LISTING_REF__', '');
+            const ref = JSON.parse(rawText || '{}');
+            const priceMatch = (ref.content || '').match(/(\d+\.?\d*)\s*[Mm](?:illion)?/);
+            const price = priceMatch ? `₱${parseFloat(priceMatch[1])}M` : '';
+            const catColors = { 'FOR SALE': '#16a34a', 'FOR RENT': '#2563eb', 'PRE-SELLING': '#d97706', 'RESALE': '#7c3aed' };
+            const catColor = catColors[ref.category] || '#64748b';
+            const imgHtml = ref.img ? `<img class="clr-img" src="${ref.img}" alt="" style="width:64px;height:64px;object-fit:cover;border-radius:8px;flex-shrink:0;">` : '';
+            const catHtml = ref.category ? `<span class="clr-cat" style="background:${catColor}15;color:${catColor};font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;">${ref.category}</span>` : '';
+            const priceHtml = price ? `<div class="clr-price" style="font-size:13px;font-weight:800;color:#0f172a;margin-top:4px;">${price}</div>` : '';
+            bubble = `<div class="chat-listing-ref" style="cursor:default;"><div class="clr-label"><i class="fas fa-handshake"></i> Offer Reference</div><div class="clr-body" style="display:flex;gap:10px;align-items:flex-start;">${imgHtml}<div class="clr-info">${catHtml}${priceHtml}</div></div><a class="clr-view-btn" href="listing-detail.html?id=${ref.id}" onclick="event.stopPropagation();" style="display:block;margin-top:10px;text-align:center;padding:8px;background:#0f172a;color:#fff;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;">View Listing</a></div>`;
+        } catch { bubble = `<div class="chat-msg-bubble">📋 Offer Reference</div>`; }
+        const html = `<div class="chat-msg-row ${side}" data-msg-id="${m.id}">${bubble}</div>`;
+        container.insertAdjacentHTML('beforeend', html);
+        return;
+    } else if (type === 'TEXT') {
         bubble = `<div class="chat-msg-bubble">${esc(m.message_text || '')}</div>`;
     } else if (type === 'IMAGE') {
         bubble = `<div class="chat-msg-bubble chat-msg-image-bubble"><img class="chat-msg-image" src="${m.file_url}" alt="Image" onclick="event.stopPropagation();openLightbox('${m.file_url}')" loading="lazy"></div>`;

@@ -143,9 +143,33 @@ async function setListingStatus(listingId, status, btn) {
     applyFilters();
 }
 
+function toggleCardMenu(btn) {
+    const dropdown = btn.nextElementSibling;
+    const isOpen = dropdown.classList.contains('open');
+    // Close all open menus first
+    document.querySelectorAll('.lc-menu-dropdown.open').forEach(d => d.classList.remove('open'));
+    if (!isOpen) dropdown.classList.add('open');
+}
+function closeCardMenu(el) {
+    el.closest('.lc-menu-dropdown')?.classList.remove('open');
+}
+document.addEventListener('click', () => {
+    document.querySelectorAll('.lc-menu-dropdown.open').forEach(d => d.classList.remove('open'));
+});
+
+async function deleteListing(listingId, btn) {
+    if (!confirm('Delete this listing? This cannot be undone.')) return;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+    const { error } = await _sb.from('listings').update({ archived: true }).eq('id', listingId);
+    if (error) { alert('Failed to delete listing'); btn.disabled = false; btn.innerHTML = '<i class="fas fa-trash"></i> Delete'; return; }
+    allListings = allListings.filter(l => String(l.id) !== String(listingId));
+    applyFilters();
+}
+
 function buildStatusBadge(listing) {
-    if (listing.status === 'sold') return '<span class="listing-status-badge sold"><i class="fas fa-check-circle"></i> Sold</span>';
-    if (listing.status === 'negotiation') return '<span class="listing-status-badge negotiation"><i class="fas fa-handshake"></i> In Negotiation</span>';
+    if (listing.status === 'sold') return '';
+    if (listing.status === 'negotiation') return '<span class="listing-status-badge negotiation"><i class="fas fa-comments-dollar"></i> In Negotiation</span>';
     return '';
 }
 
@@ -155,13 +179,216 @@ function buildStatusButtons(listing) {
     const isNeg = listing.status === 'negotiation';
     const isSold = listing.status === 'sold';
     return `<div class="listing-status-btns" onclick="event.stopPropagation();">
+        <button class="listing-view-btn" onclick="location.href='listing-detail.html?id=${listing.id}'">
+            <i class="fas fa-arrow-up-right-from-square"></i> View Listing
+        </button>
         <button class="status-btn ${isNeg ? 'active' : ''}" onclick="setListingStatus('${listing.id}', ${isNeg ? 'null' : "'negotiation'"}, this)">
-            <i class="fas fa-handshake"></i> ${isNeg ? 'Remove' : 'In Negotiation'}
+            <i class="fas fa-comments-dollar"></i> ${isNeg ? 'Remove' : 'In Negotiation'}
         </button>
         <button class="status-btn sold-btn ${isSold ? 'active' : ''}" onclick="setListingStatus('${listing.id}', ${isSold ? 'null' : "'sold'"}, this)">
             <i class="fas fa-check-circle"></i> ${isSold ? 'Remove' : 'Sold'}
         </button>
     </div>`;
+}
+
+function buildOfferRow(listing) {
+    const localUser = JSON.parse(localStorage.getItem('user'));
+    if (!listing.user_id || listing.is_anonymous || (localUser && listing.user_name === localUser.name)) return '';
+    const img   = (listing.image_urls || [])[0] || '';
+    const safeN = (listing.user_name  || '').replace(/'/g, "\\'");
+    const safeI = img.replace(/'/g, "\\'");
+    const safeCat = (listing.category || '').replace(/'/g, "\\'");
+    const safeId  = listing.id;
+    const safeUid = listing.user_id;
+    return `<div class="listing-offer-row" onclick="event.stopPropagation()">
+        <button class="listing-view-btn" onclick="location.href='listing-detail.html?id=${safeId}'">
+            <i class="fas fa-arrow-up-right-from-square"></i> View Listing
+        </button>
+        <button class="listing-offer-btn" onclick="showOfferPopup('${safeId}','${safeUid}','${safeN}','${safeI}','${safeCat}',this)">
+            <i class="fas fa-handshake"></i> Send Offer
+        </button>
+    </div>`;
+}
+
+// Preloaded offer counts — populated before cards render
+window._offerCountMap = {};
+
+async function preloadOfferCounts() {
+    try {
+        const resp = await fetch(
+            `${supabaseUrl}/rest/v1/listing_offers?select=listing_id`,
+            { headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` } }
+        );
+        const rows = await resp.json();
+        if (!Array.isArray(rows)) return;
+        window._offerCountMap = {};
+        rows.forEach(r => {
+            const k = String(r.listing_id);
+            window._offerCountMap[k] = (window._offerCountMap[k] || 0) + 1;
+        });
+    } catch(e) { console.warn('preloadOfferCounts error', e); }
+}
+
+function buildOfferBadge(listing) {
+    if (!listing.user_id || listing.is_anonymous) return '';
+    const n = window._offerCountMap[String(listing.id)] || 0;
+    if (n === 0) return '';
+    return `<span class="listing-offer-badge" onclick="event.stopPropagation()">
+        <i class="fas fa-handshake"></i> <span class="offer-count-num">${n}</span> Offer${n !== 1 ? 's' : ''}
+    </span>`;
+}
+
+function showOfferPopup(listingId, ownerId, ownerName, img, category, btn) {
+    window._offerListingId = listingId;
+    window._offerOwnerId   = ownerId;
+    window._offerOwnerName = ownerName;
+    window._offerImg       = img;
+    window._offerCategory  = category;
+    window._offerBtn       = btn;
+
+    let overlay = document.getElementById('offerPopupOverlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'offerPopupOverlay';
+        overlay.innerHTML = `
+            <div id="offerPopupBackdrop" onclick="closeOfferPopup()"></div>
+            <div id="offerPopupSheet">
+                <div id="offerPopupHandle"></div>
+                <div id="offerPopupIcon"><i class="fas fa-handshake"></i></div>
+                <div id="offerPopupTitle">Send Offer</div>
+                <div id="offerPopupSub">Send an offer to start a conversation with this seller about the listing.</div>
+                <div id="offerPopupActions">
+                    <button id="offerConfirmBtn" onclick="confirmOffer()">
+                        <i class="fas fa-handshake"></i> Send Offer
+                    </button>
+                    <button id="offerCancelBtn" onclick="closeOfferPopup()">Cancel</button>
+                </div>
+            </div>`;
+        document.body.appendChild(overlay);
+
+        const sheet = document.getElementById('offerPopupSheet');
+        let startY = 0, curY = 0, dragging = false;
+        sheet.addEventListener('touchstart', e => {
+            if (e.target.closest('button')) return;
+            startY = e.touches[0].clientY; dragging = true; curY = 0;
+            sheet.style.transition = 'none';
+        }, { passive: true });
+        sheet.addEventListener('touchmove', e => {
+            if (!dragging) return;
+            curY = e.touches[0].clientY - startY;
+            if (curY > 0) sheet.style.transform = `translateY(${curY}px)`;
+        }, { passive: true });
+        sheet.addEventListener('touchend', () => {
+            if (!dragging) return;
+            dragging = false; sheet.style.transition = ''; sheet.style.transform = '';
+            if (curY > 80) closeOfferPopup();
+        });
+    }
+
+    const confirmBtn = document.getElementById('offerConfirmBtn');
+    confirmBtn.disabled = false;
+    confirmBtn.innerHTML = '<i class="fas fa-handshake"></i> Send Offer';
+    confirmBtn.style.background = '';
+    overlay.classList.add('op-open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeOfferPopup() {
+    document.getElementById('offerPopupOverlay')?.classList.remove('op-open');
+    document.body.style.overflow = '';
+}
+
+async function confirmOffer() {
+    const btn = document.getElementById('offerConfirmBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sending...';
+
+    const listingId = window._offerListingId;
+    const ownerId   = window._offerOwnerId;
+    const ownerName = window._offerOwnerName;
+    const img       = window._offerImg;
+    const category  = window._offerCategory;
+
+    try {
+        const { data: authData } = await _sb.auth.getUser();
+        const myId = authData?.user?.id;
+        if (!myId) throw new Error('Not authenticated');
+
+        // Record offer (unique per user per listing — 1 row per user enforced by PRIMARY KEY)
+        try {
+            await _sb.from('listing_offers').upsert(
+                { listing_id: listingId, user_id: myId },
+                { onConflict: 'listing_id,user_id', ignoreDuplicates: true }
+            );
+            // Bump the in-memory count map so the badge updates immediately
+            const k = String(listingId);
+            window._offerCountMap[k] = (window._offerCountMap[k] || 0) + 1;
+        } catch(offerErr) { console.warn('listing_offers table error (run migration?):', offerErr); }
+
+        btn.innerHTML = '<i class="fas fa-check"></i> Offer Sent!';
+        btn.style.background = '#16a34a';
+
+        // Get listing data for reference card
+        const { data: listingData } = await _sb.from('listings').select('*').eq('id', listingId).single();
+
+        // Find or create the conversation and insert LISTING_REF message — await before navigating
+        const SUPA_URL = supabaseUrl;
+        const SUPA_KEY = supabaseKey;
+        const h = { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
+
+        let convId = null;
+        try {
+            const myPartsResp = await fetch(`${SUPA_URL}/rest/v1/conversation_participants?select=conversation_id&user_id=eq.${myId}`, { headers: h });
+            const myParts = await myPartsResp.json();
+            const myConvIds = (Array.isArray(myParts) ? myParts : []).map(p => p.conversation_id);
+
+            if (myConvIds.length) {
+                const idStr = myConvIds.map(id => `"${id}"`).join(',');
+                const otherPartsResp = await fetch(`${SUPA_URL}/rest/v1/conversation_participants?select=conversation_id&user_id=eq.${ownerId}&conversation_id=in.(${idStr})`, { headers: h });
+                const otherParts = await otherPartsResp.json();
+                if (Array.isArray(otherParts) && otherParts.length) convId = otherParts[0].conversation_id;
+            }
+
+            if (!convId) {
+                const now = new Date().toISOString();
+                const convResp = await fetch(`${SUPA_URL}/rest/v1/conversations`, { method: 'POST', headers: h, body: JSON.stringify({ created_at: now, updated_at: now }) });
+                const convData = await convResp.json();
+                convId = (Array.isArray(convData) ? convData[0] : convData)?.id;
+                if (!convId) throw new Error('No conv id returned');
+                await fetch(`${SUPA_URL}/rest/v1/conversation_participants`, { method: 'POST', headers: h, body: JSON.stringify({ conversation_id: convId, user_id: myId }) });
+                await fetch(`${SUPA_URL}/rest/v1/conversation_participants`, { method: 'POST', headers: h, body: JSON.stringify({ conversation_id: convId, user_id: ownerId }) });
+            }
+
+            const refPayload = JSON.stringify({ id: listingId, img, category, content: listingData?.content || '', created_at: listingData?.created_at || '' });
+            // Insert LISTING_REF card first
+            await fetch(`${SUPA_URL}/rest/v1/messages`, {
+                method: 'POST', headers: h,
+                body: JSON.stringify({ conversation_id: convId, sender_id: myId, message_type: 'TEXT', message_text: `__LISTING_REF__${refPayload}`, is_read: false })
+            });
+            // Automated offer message from the offerer
+            const localUser = JSON.parse(localStorage.getItem('user') || '{}');
+            const senderName = localUser.name || 'Someone';
+            const autoMsg = `Hi ${ownerName}! I'd like to make an offer on your ${category || 'property'} listing. Please let me know if you're open to discussing. 🤝`;
+            await fetch(`${SUPA_URL}/rest/v1/messages`, {
+                method: 'POST', headers: h,
+                body: JSON.stringify({ conversation_id: convId, sender_id: myId, message_type: 'TEXT', message_text: autoMsg, is_read: false })
+            });
+        } catch(refErr) {
+            console.warn('LISTING_REF insert error', refErr);
+        }
+
+        // Show success briefly, then navigate
+        await new Promise(r => setTimeout(r, 700));
+        closeOfferPopup();
+        sessionStorage.setItem('openChatWith', JSON.stringify({ userId: ownerId, name: ownerName }));
+        location.href = 'chat.html';
+
+    } catch(e) {
+        console.warn('confirmOffer error', e);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-handshake"></i> Send Offer';
+        btn.style.background = '';
+    }
 }
 
 // ── AI text extraction helpers ──────────────────────
@@ -283,6 +510,7 @@ function enhanceListingText(listing) {
 // ── Listing card ──────────────────────────────────
 // matchLabel: { myCategory, myContent } when this card matches one of the user's own listings
 function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchCount = 0) {
+    const localUser = JSON.parse(localStorage.getItem('user') || 'null');
     const card = document.createElement('div');
     card.className = 'listing-card' + (matchLabel ? ' is-match' : '');
 
@@ -301,29 +529,56 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
             <i class="fas fa-chevron-right match-banner-arrow" style="color:#475569;"></i>
         </div>` : '';
 
+    const soldRibbon = listing.status === 'sold'
+        ? `<div class="sold-ribbon"><span>SOLD</span></div>`
+        : '';
+
     card.innerHTML = `
+        ${soldRibbon}
         ${matchBanner}
         ${imagesHtml(listing)}
         <div class="listing-card-body">
             <div class="listing-card-top">
                 ${catTag(listing.category)}
+                ${buildOfferBadge(listing)}
                 ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : ''}
                 <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
-                <button class="pin-btn ${getPinnedIds().includes(String(listing.id)) ? 'pinned' : ''}" onclick="event.stopPropagation(); togglePin('${listing.id}', this)" title="${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}"><i class="fas fa-thumbtack"></i></button>
+                <div class="lc-menu-wrap" onclick="event.stopPropagation()">
+                    <button class="lc-menu-btn" onclick="toggleCardMenu(this)"><i class="fas fa-ellipsis-vertical"></i></button>
+                    <div class="lc-menu-dropdown">
+                        <button onclick="togglePin('${listing.id}', this); closeCardMenu(this)">
+                            <i class="fas fa-thumbtack ${getPinnedIds().includes(String(listing.id)) ? 'pinned-icon' : ''}"></i>
+                            ${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}
+                        </button>
+                        ${localUser && listing.user_name === localUser.name ? `
+                        <button class="lc-menu-delete" onclick="deleteListing('${listing.id}', this)">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>` : ''}
+                    </div>
+                </div>
             </div>
             ${buildStatusBadge(listing)}
             <p class="listing-text">${enhanceListingText(listing)}</p>
             ${buildFMVBadge(fmvResult)}
             <div class="listing-card-user">
-                <img src="${listing.user_img || avatarFallback(listing.user_name)}"
-                     onerror="this.src='${avatarFallback(listing.user_name)}'">
-                <div class="listing-card-user-info">
+                ${(() => {
+                    const isSelf = localUser && String(listing.user_id) === String(localUser.id);
+                    const clickAttr = listing.is_anonymous || !listing.user_id ? '' :
+                        isSelf
+                            ? `onclick="event.stopPropagation();showSelfPopup();return false;" style="cursor:pointer;"`
+                            : `onclick="event.stopPropagation();showSellerPopup('${listing.user_id}','${(listing.user_name||'').replace(/'/g,"\\'")}','${(listing.user_img||'').replace(/'/g,"\\'")}','${(listing.user_job||'').replace(/'/g,"\\'")}');return false;" style="cursor:pointer;"`;
+                    return `<img src="${listing.user_img || avatarFallback(listing.user_name)}"
+                     onerror="this.src='${avatarFallback(listing.user_name)}'"
+                     ${clickAttr}>`;
+                })()}
+                <div class="listing-card-user-info" ${listing.is_anonymous || !listing.user_id ? '' : localUser && String(listing.user_id) === String(localUser.id) ? `onclick="event.stopPropagation();showSelfPopup();return false;" style="cursor:pointer;"` : `onclick="event.stopPropagation();showSellerPopup('${listing.user_id}','${(listing.user_name||'').replace(/'/g,"\\'")}','${(listing.user_img||'').replace(/'/g,"\\'")}','${(listing.user_job||'').replace(/'/g,"\\'")}');return false;" style="cursor:pointer;"`}>
                     <div class="listing-card-user-name">${listing.user_name || 'Unknown'}</div>
                     <div class="listing-card-user-job">${listing.user_job || ''}</div>
                 </div>
                 ${listing.is_anonymous ? '' : mateButtonHtml(listing.user_name, 'btn-mate btn-mate-sm')}
             </div>
             ${buildStatusButtons(listing)}
+            ${buildOfferRow(listing)}
         </div>
     `;
 
@@ -339,14 +594,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
         });
     }
 
-    card.style.cursor = 'pointer';
-    card.addEventListener('click', (e) => {
-        if (matchLabel) {
-            showMatchView(matchLabel.myListing, [listing]);
-        } else {
-            location.href = `listing-detail.html?id=${listing.id}`;
-        }
-    });
+    card.style.cursor = 'default';
 
     return card;
 }
@@ -1090,7 +1338,9 @@ async function loadLedger() {
             .order('created_at', { ascending: false }),
         localUser
             ? _sb.from('listings').select('*').eq('archived', false).eq('user_id', (await _sb.auth.getUser()).data?.user?.id || '__none__')
-            : Promise.resolve({ data: [] })
+            : Promise.resolve({ data: [] }),
+        typeof loadMatesCache === 'function' ? loadMatesCache() : Promise.resolve(),
+        preloadOfferCounts()
     ]);
 
     if (error || !data) {
@@ -1312,7 +1562,7 @@ function resetPostModal() {
     if (sub) { sub.textContent = 'Using your real identity'; }
 }
 
-document.getElementById('lmCatGrid').addEventListener('click', e => {
+document.getElementById('lmCatGrid')?.addEventListener('click', e => {
     const btn = e.target.closest('.lm-cat-btn');
     if (!btn) return;
     document.querySelectorAll('.lm-cat-btn').forEach(b => b.classList.remove('selected'));
@@ -1770,4 +2020,271 @@ function closeYtVideo() {
     }
     setTimeout(updateFilterBarTop, 100);
 })();
+
+// ── Seller Popup ───────────────────────────────────────────────────────────
+function _ensureSellerPopup() {
+    if (document.getElementById('sellerPopupOverlay')) return;
+    const el = document.createElement('div');
+    el.id = 'sellerPopupOverlay';
+    el.innerHTML = `
+        <div id="sellerPopupBackdrop" onclick="closeSellerPopup()"></div>
+        <div id="sellerPopupSheet">
+            <div id="sellerPopupHandle"></div>
+            <div id="sellerPopupHeader">
+                <div id="sellerPopupAvatar"></div>
+                <div>
+                    <div id="sellerPopupName"></div>
+                    <div id="sellerPopupJob"></div>
+                </div>
+            </div>
+            <div id="sellerPopupOptions">
+                <button id="sellerOptListings" onclick="handleViewListings()">
+                    <span class="sp-opt-icon"><i class="fas fa-store"></i></span>
+                    <span class="sp-opt-text">
+                        <span class="sp-opt-title">View Listings</span>
+                        <span class="sp-opt-sub">Browse all active property listings</span>
+                    </span>
+                    <i class="fas fa-chevron-right sp-opt-arrow"></i>
+                </button>
+                <button id="sellerOptMessage" onclick="closeSellerPopup(); sessionStorage.setItem('openChatWith', JSON.stringify({userId:window._spUserId,name:window._spName})); location.href='chat.html'">
+                    <span class="sp-opt-icon sp-opt-icon-msg"><i class="fas fa-comment-dots"></i></span>
+                    <span class="sp-opt-text">
+                        <span class="sp-opt-title">Message</span>
+                        <span class="sp-opt-sub">Send a direct message</span>
+                    </span>
+                    <i class="fas fa-chevron-right sp-opt-arrow"></i>
+                </button>
+                <button id="sellerOptProfile" onclick="closeSellerPopup(); location.href=window._spUserId?'dashboard.html?user_id='+window._spUserId:''">
+                    <span class="sp-opt-icon sp-opt-icon-profile"><i class="fas fa-user-tie"></i></span>
+                    <span class="sp-opt-text">
+                        <span class="sp-opt-title">View Profile</span>
+                        <span class="sp-opt-sub">See full Realmate profile</span>
+                    </span>
+                    <i class="fas fa-chevron-right sp-opt-arrow"></i>
+                </button>
+            </div>
+            <button id="sellerPopupCancel" onclick="closeSellerPopup()">Cancel</button>
+        </div>
+    `;
+    document.body.appendChild(el);
+
+    // Swipe-down to dismiss on mobile
+    const sheet = document.getElementById('sellerPopupSheet');
+    let startY = 0, curY = 0, dragging = false;
+    sheet.addEventListener('touchstart', e => {
+        if (e.target.closest('button')) return;
+        startY = e.touches[0].clientY; dragging = true; curY = 0;
+        sheet.style.transition = 'none';
+    }, { passive: true });
+    sheet.addEventListener('touchmove', e => {
+        if (!dragging) return;
+        curY = e.touches[0].clientY - startY;
+        if (curY > 0) sheet.style.transform = `translateY(${curY}px)`;
+    }, { passive: true });
+    sheet.addEventListener('touchend', () => {
+        if (!dragging) return;
+        dragging = false;
+        sheet.style.transition = '';
+        sheet.style.transform = '';
+        if (curY > 80) closeSellerPopup();
+    });
+}
+
+function _ensureLockedPopup() {
+    if (document.getElementById('spLockedOverlay')) return;
+    const el = document.createElement('div');
+    el.id = 'spLockedOverlay';
+    el.innerHTML = `
+        <div id="spLockedBackdrop" onclick="closeLockedPopup()"></div>
+        <div id="spLockedSheet">
+            <div id="spLockedHandle"></div>
+            <div id="spLockedIcon"><i class="fas fa-lock"></i></div>
+            <div id="spLockedTitle">Seller Listings Locked</div>
+            <div id="spLockedMsg">To view this seller's active listings, you must first become Realmates. Connect with this user to unlock their Live Market listings and build your trusted real estate network.</div>
+            <div id="spLockedActions">
+                <button id="spLockedAddBtn" onclick="handleAddMateFromLocked()">
+                    <i class="fas fa-user-plus"></i> Add as Realmate
+                </button>
+                <button id="spLockedMsgBtn" onclick="closeLockedPopup(); sessionStorage.setItem('openChatWith', JSON.stringify({userId:window._spUserId,name:window._spName})); location.href='chat.html'">
+                    <i class="fas fa-comment-dots"></i> Message Instead
+                </button>
+                <button id="spLockedCancelBtn" onclick="closeLockedPopup()">Cancel</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(el);
+
+    const sheet = document.getElementById('spLockedSheet');
+    let startY = 0, curY = 0, dragging = false;
+    sheet.addEventListener('touchstart', e => {
+        if (e.target.closest('button')) return;
+        startY = e.touches[0].clientY; dragging = true; curY = 0;
+        sheet.style.transition = 'none';
+    }, { passive: true });
+    sheet.addEventListener('touchmove', e => {
+        if (!dragging) return;
+        curY = e.touches[0].clientY - startY;
+        if (curY > 0) sheet.style.transform = `translateY(${curY}px)`;
+    }, { passive: true });
+    sheet.addEventListener('touchend', () => {
+        if (!dragging) return;
+        dragging = false;
+        sheet.style.transition = '';
+        sheet.style.transform = '';
+        if (curY > 80) closeLockedPopup();
+    });
+}
+
+function showSelfPopup() {
+    if (!document.getElementById('selfPopupOverlay')) {
+        const el = document.createElement('div');
+        el.id = 'selfPopupOverlay';
+        el.innerHTML = `
+            <div id="selfPopupBackdrop" onclick="closeSelfPopup()"></div>
+            <div id="selfPopupSheet">
+                <div id="selfPopupHandle"></div>
+                <div id="selfPopupHeader">
+                    <div id="selfPopupTitle">My Account</div>
+                </div>
+                <div id="selfPopupOptions">
+                    <button onclick="closeSelfPopup(); location.href='portfolio.html'">
+                        <span class="sp-opt-icon"><i class="fas fa-briefcase"></i></span>
+                        <span class="sp-opt-text">
+                            <span class="sp-opt-title">My Portfolio</span>
+                            <span class="sp-opt-sub">View your listings &amp; activity</span>
+                        </span>
+                        <i class="fas fa-chevron-right sp-opt-arrow"></i>
+                    </button>
+                    <button onclick="closeSelfPopup(); location.href='profile.html'">
+                        <span class="sp-opt-icon sp-opt-icon-profile"><i class="fas fa-user"></i></span>
+                        <span class="sp-opt-text">
+                            <span class="sp-opt-title">My Profile</span>
+                            <span class="sp-opt-sub">Edit your profile &amp; settings</span>
+                        </span>
+                        <i class="fas fa-chevron-right sp-opt-arrow"></i>
+                    </button>
+                </div>
+                <button id="selfPopupCancel" onclick="closeSelfPopup()">Cancel</button>
+            </div>`;
+        document.body.appendChild(el);
+        const sheet = document.getElementById('selfPopupSheet');
+        let startY = 0, curY = 0, dragging = false;
+        sheet.addEventListener('touchstart', e => {
+            if (e.target.closest('button')) return;
+            startY = e.touches[0].clientY; dragging = true; sheet.style.transition = '';
+        });
+        sheet.addEventListener('touchmove', e => {
+            if (!dragging) return;
+            curY = e.touches[0].clientY - startY;
+            if (curY > 0) sheet.style.transform = `translateY(${curY}px)`;
+        });
+        sheet.addEventListener('touchend', () => {
+            dragging = false; sheet.style.transition = '';
+            if (curY > 80) closeSelfPopup(); else { sheet.style.transition = 'transform 0.3s ease'; sheet.style.transform = ''; }
+        });
+    }
+    const overlay = document.getElementById('selfPopupOverlay');
+    overlay.classList.add('sp-open');
+}
+function closeSelfPopup() {
+    document.getElementById('selfPopupOverlay')?.classList.remove('sp-open');
+}
+
+function showSellerPopup(userId, name, img, job) {
+    _ensureSellerPopup();
+    window._spUserId   = userId;
+    window._spName     = name;
+    window._spImg      = img;
+    const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(name||'S')}&background=0f172a&color=32cd32`;
+    const avatarEl = document.getElementById('sellerPopupAvatar');
+    avatarEl.innerHTML = img
+        ? `<img src="${img}" onerror="this.src='${fallback}'">`
+        : `<img src="${fallback}">`;
+    document.getElementById('sellerPopupName').textContent = name || 'Seller';
+    document.getElementById('sellerPopupJob').textContent  = job  || '';
+    const overlay = document.getElementById('sellerPopupOverlay');
+    overlay.classList.add('sp-open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeSellerPopup() {
+    const overlay = document.getElementById('sellerPopupOverlay');
+    if (!overlay) return;
+    overlay.classList.remove('sp-open');
+    document.body.style.overflow = '';
+}
+
+function closeLockedPopup() {
+    const overlay = document.getElementById('spLockedOverlay');
+    if (!overlay) return;
+    overlay.classList.remove('sp-open');
+    document.body.style.overflow = '';
+}
+
+async function handleViewListings() {
+    closeSellerPopup();
+    const targetId = window._spUserId;
+    if (!targetId) return;
+
+    // Get current user id
+    let myId = null;
+    try {
+        const { data: auth } = await _sb.auth.getUser();
+        myId = auth?.user?.id;
+    } catch {}
+
+    // If viewing own profile, allow directly
+    if (!myId || myId === targetId) {
+        location.href = `user-profile.html?user_id=${targetId}`;
+        return;
+    }
+
+    // Check Realmate status by user IDs
+    let areRealmates = false;
+    try {
+        const { data: rows } = await _sb
+            .from('mates')
+            .select('status')
+            .or(`and(requester_id.eq.${myId},recipient_id.eq.${targetId}),and(requester_id.eq.${targetId},recipient_id.eq.${myId})`)
+            .eq('status', 'accepted')
+            .limit(1);
+        areRealmates = !!(rows && rows.length > 0);
+    } catch {}
+
+    if (areRealmates) {
+        location.href = `user-profile.html?user_id=${targetId}`;
+    } else {
+        _ensureLockedPopup();
+        document.getElementById('spLockedOverlay').classList.add('sp-open');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+async function handleAddMateFromLocked() {
+    const btn = document.getElementById('spLockedAddBtn');
+    if (!btn || btn.disabled) return;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sending...';
+    try {
+        const result = await sendMateRequest(window._spName, window._spImg);
+        if (result?.success) {
+            btn.innerHTML = '<i class="fas fa-check"></i> Request Sent';
+            btn.style.background = '#16a34a';
+            setTimeout(closeLockedPopup, 1400);
+        } else {
+            const msg = result?.error || 'Could not send request';
+            btn.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${msg}`;
+            btn.style.background = '#dc2626';
+            btn.disabled = false;
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-user-plus"></i> Add as Realmate';
+                btn.style.background = '';
+                btn.disabled = false;
+            }, 2500);
+        }
+    } catch {
+        btn.innerHTML = '<i class="fas fa-user-plus"></i> Add as Realmate';
+        btn.disabled = false;
+    }
+}
 
