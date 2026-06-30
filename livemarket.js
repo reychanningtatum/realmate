@@ -1647,12 +1647,12 @@ function showMatchView(query, matches) {
                 <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:${gradeColor};margin-bottom:8px;"><i class="fas fa-circle-nodes" style="margin-right:5px;"></i>AI Analysis</div>
                 ${detailRows}
             </div>` : ''}
-            <div style="display:flex;align-items:center;gap:10px;margin-top:12px;">
+            <div style="display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap;">
                 ${mateButtonHtml(userName)}
-                <button onclick="event.stopPropagation(); location.href='listing-detail.html?id=${m.id}';" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:50px;border:1.5px solid var(--border);background:#fff;color:var(--text-main);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">
+                <button onclick="event.stopPropagation(); location.href='listing-detail.html?id=${m.id}';" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:50px;border:1.5px solid var(--border);background:#fff;color:var(--text-main);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;height:36px;">
                     <i class="fas fa-eye"></i> View Listing
                 </button>
-                <button onclick="event.stopPropagation(); dismissMatch('${m.id}');" title="Not a match" style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;border:1.5px solid #fca5a5;background:#fff5f5;color:#ef4444;font-size:13px;cursor:pointer;font-family:inherit;flex-shrink:0;">
+                <button onclick="event.stopPropagation(); dismissMatch('${m.id}');" title="Not a match" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;border:1.5px solid #fca5a5;background:#fff5f5;color:#ef4444;font-size:13px;cursor:pointer;font-family:inherit;flex-shrink:0;">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
