@@ -1091,7 +1091,8 @@ async function loadLedger() {
             .order('created_at', { ascending: false }),
         localUser
             ? _sb.from('listings').select('*').eq('archived', false).eq('user_id', (await _sb.auth.getUser()).data?.user?.id || '__none__')
-            : Promise.resolve({ data: [] })
+            : Promise.resolve({ data: [] }),
+        typeof loadMatesCache === 'function' ? loadMatesCache() : Promise.resolve()
     ]);
 
     if (error || !data) {
