@@ -191,17 +191,16 @@ function buildOfferBadge(listing) {
 async function loadOfferCounts(listingIds) {
     if (!listingIds.length) return;
     try {
-        // Use REST directly — avoids SDK type coercion issues with listing_id
         const ids = listingIds.map(String);
-        const idList = ids.join(',');
+        // Fetch all offers then count in JS — avoids any in() URL encoding issues
         const resp = await fetch(
-            `${supabaseUrl}/rest/v1/listing_offers?select=listing_id&listing_id=in.(${idList})`,
+            `${supabaseUrl}/rest/v1/listing_offers?select=listing_id`,
             { headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` } }
         );
         const rows = await resp.json();
-        if (!Array.isArray(rows)) { console.warn('loadOfferCounts unexpected response', rows); return; }
+        if (!Array.isArray(rows)) return;
         const counts = {};
-        rows.forEach(r => { counts[String(r.listing_id)] = (counts[String(r.listing_id)] || 0) + 1; });
+        rows.forEach(r => { const k = String(r.listing_id); counts[k] = (counts[k] || 0) + 1; });
         ids.forEach(id => {
             const el = document.getElementById(`offer-count-${id}`);
             if (!el) return;
