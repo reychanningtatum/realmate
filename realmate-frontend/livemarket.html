@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Realmate | Live Market</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="search-overlay.js"></script>
+<script src="auth-guard.js"></script>
+  <link rel="stylesheet" href="livemarket.css">
+  <script src="theme.js"></script>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="brand"><img src="images/realmate2.png" onclick="location.href='home.html'"></div>
+  <div class="nav-item" onclick="location.href='home.html'"><i class="fas fa-house"></i><span>Home Feed</span></div>
+  <div class="nav-item" onclick="location.href='dashboard.html'"><i class="fas fa-user-tie"></i><span>Profile</span></div>
+  <div class="nav-item active"><i class="fas fa-globe"></i><span>Portal</span></div>
+  <div class="nav-item" onclick="location.href='analytics.html'"><i class="fas fa-chart-area"></i><span>Analytics</span></div>
+  <div class="nav-item" onclick="location.href='forum.html'"><i class="fas fa-bullhorn"></i><span>Forum</span></div>
+  <div class="nav-item" onclick="location.href='chat.html'"><i class="fas fa-comment-dots"></i> <span>Chat</span></div>
+  <div class="nav-item" onclick="location.href='notifications.html'"><i class="fas fa-bell"></i><span>Notifications</span></div>
+    <div class="nav-item" onclick="location.href='settings.html'"><i class="fas fa-cog"></i><span>Settings</span></div>
+  <div style="margin-top:auto"><div class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Sign Out</span></div></div>
+</div>
+
+<!-- Main -->
+<div class="main-content">
+
+  <!-- ═══ FIXED TOP: TABS → FILTERS → SEARCH → TICKER ═══ -->
+  <div class="top-fixed-wrap">
+    <div class="filter-bar">
+      <!-- 1. Tabs -->
+      <div class="seg-tabs" id="segTabs">
+        <button class="seg-tab" data-seg="FEED" onclick="selectSegTab(this)">
+          <i class="fas fa-rss"></i><span>Pulse</span>
+        </button>
+        <button class="seg-tab active" data-seg="MARKET" onclick="selectSegTab(this)">
+          <i class="fas fa-store"></i><span>Live Market</span>
+        </button>
+        <button class="seg-tab" data-seg="PORTFOLIO" onclick="selectSegTab(this)">
+          <i class="fas fa-briefcase"></i><span>My Portfolio</span>
+        </button>
+        <button class="seg-tab" data-seg="AI_ENGINE" onclick="selectSegTab(this)">
+          <i class="fas fa-circle-nodes"></i><span>AI Match Engine</span>
+        </button>
+      </div>
+      <!-- 2. Category Filters (right below tabs) -->
+      <div class="filter-chips" id="marketCatFilters">
+        <button class="chip active" data-cat="ALL" onclick="selectMarketCat(this)">All</button>
+        <button class="chip" data-cat="PINNED" onclick="selectMarketCat(this)"><i class="fas fa-thumbtack"></i> Pinned</button>
+        <button class="chip" data-cat="FOR SALE" onclick="selectMarketCat(this)">For Sale</button>
+        <button class="chip" data-cat="FOR RENT" onclick="selectMarketCat(this)">For Rent</button>
+        <button class="chip" data-cat="FOR LEASE" onclick="selectMarketCat(this)">For Lease</button>
+        <button class="chip" data-cat="WILLING TO BUY" onclick="selectMarketCat(this)">Willing to Buy</button>
+        <button class="chip" data-cat="WILLING TO RENT" onclick="selectMarketCat(this)">Willing to Rent</button>
+        <button class="chip" data-cat="WILLING TO LEASE" onclick="selectMarketCat(this)">Willing to Lease</button>
+      </div>
+      <div class="filter-chips" id="portfolioSubfilter" style="display:none;">
+        <button class="chip chip-sub active" data-sub="ALL" onclick="selectSubCat(this)">All</button>
+        <button class="chip chip-sub" data-sub="FOR SALE" onclick="selectSubCat(this)">For Sale</button>
+        <button class="chip chip-sub" data-sub="FOR RENT" onclick="selectSubCat(this)">For Rent</button>
+        <button class="chip chip-sub" data-sub="FOR LEASE" onclick="selectSubCat(this)">For Lease</button>
+        <button class="chip chip-sub" data-sub="WILLING TO BUY" onclick="selectSubCat(this)">Willing to Buy</button>
+        <button class="chip chip-sub" data-sub="WILLING TO RENT" onclick="selectSubCat(this)">Willing to Rent</button>
+        <button class="chip chip-sub" data-sub="WILLING TO LEASE" onclick="selectSubCat(this)">Willing to Lease</button>
+      </div>
+      <div class="filter-chips" id="myListingsSubfilter" style="display:none;">
+        <button class="chip chip-sub active" data-sub="ALL" onclick="selectSubCat(this)">All</button>
+        <button class="chip chip-sub" data-sub="FOR SALE" onclick="selectSubCat(this)">For Sale</button>
+        <button class="chip chip-sub" data-sub="FOR RENT" onclick="selectSubCat(this)">For Rent</button>
+        <button class="chip chip-sub" data-sub="FOR LEASE" onclick="selectSubCat(this)">For Lease</button>
+        <button class="chip chip-sub" data-sub="WILLING TO BUY" onclick="selectSubCat(this)">Willing to Buy</button>
+        <button class="chip chip-sub" data-sub="WILLING TO RENT" onclick="selectSubCat(this)">Willing to Rent</button>
+        <button class="chip chip-sub" data-sub="WILLING TO LEASE" onclick="selectSubCat(this)">Willing to Lease</button>
+      </div>
+      <!-- 3. Search -->
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:nowrap; padding:0 6px;">
+        <div class="search-wrap" style="flex:1; min-width:160px;">
+          <i class="fas fa-search"></i>
+          <input type="text" id="searchInput" placeholder="Search listings, agents, locations…" oninput="onSearchInput()">
+        </div>
+        <div class="location-wrap">
+          <i class="fas fa-map-marker-alt"></i>
+          <select id="locationInput" onchange="applyLocationFilter()">
+            <option value="">All Locations</option>
+            <option value="BGC">BGC</option>
+            <option value="Makati">Makati</option>
+            <option value="Pasig">Pasig</option>
+            <option value="Quezon City">Quezon City</option>
+            <option value="Mandaluyong">Mandaluyong</option>
+            <option value="Pasay">Pasay</option>
+            <option value="Taguig">Taguig</option>
+            <option value="Muntinlupa">Muntinlupa</option>
+            <option value="Las Piñas">Las Piñas</option>
+            <option value="Parañaque">Parañaque</option>
+            <option value="Alabang">Alabang</option>
+            <option value="Laguna">Laguna</option>
+            <option value="Cavite">Cavite</option>
+            <option value="Rizal">Rizal</option>
+            <option value="Bulacan">Bulacan</option>
+            <option value="Pampanga">Pampanga</option>
+            <option value="Cebu">Cebu</option>
+          </select>
+        </div>
+        <button class="btn-post-listing" onclick="openPostModal()">
+          <i class="fas fa-plus"></i> Post
+        </button>
+      </div>
+    </div>
+    <!-- 4. Market Ticker -->
+    <div class="ticker-wrap" id="tickerWrap">
+      <div class="ticker-label" onclick="location.href='market-overview.html'" style="cursor:pointer;"><i class="fas fa-chart-line"></i> MARKET</div>
+      <div class="ticker-track">
+        <div class="ticker-content" id="tickerContent">
+          <span class="ticker-loading">Analyzing market prices…</span>
+        </div>
+      </div>
+    </div>
+  </div><!-- /top-fixed-wrap -->
+
+  <!-- ═══ LEDGER VIEW ═══ -->
+  <div id="ledgerView">
+
+    <!-- ═══ FEED TAB ═══ -->
+    <div id="feedTabPane" class="feed-dashboard" style="display:none;"
+
+      <!-- Graph section -->
+      <div class="feed-section">
+        <div class="feed-section-label"><i class="fas fa-chart-line" style="color:#32cd32;"></i> Capital Appreciation Tracker</div>
+        <div class="feed-graph-strip">
+          <div id="miniChartsRow" class="open"></div>
+        </div>
+      </div>
+
+      <!-- Video section -->
+      <div class="feed-section" id="feedVideoSection">
+        <div class="feed-section-label"><i class="fas fa-play-circle" style="color:#32cd32;"></i> Market Edge ANC</div>
+        <div id="ytEmbedSection" class="feed-video-wrap" style="display:none; position:relative;">
+          <div style="border-radius:14px; overflow:hidden; background:#000; box-shadow:0 4px 20px rgba(0,0,0,0.15);">
+            <div id="ytEmbedFrame" style="width:100%; aspect-ratio:16/9;"></div>
+          </div>
+          <div id="ytMuteHint" style="display:none;position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:#fff;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;white-space:nowrap;z-index:10;pointer-events:none;animation:ytHintPulse 1.5s ease-in-out infinite;">
+            <i class="fas fa-volume-xmark" style="margin-right:4px;"></i>Tap to unmute
+          </div>
+          <div style="position:absolute; top:8px; right:8px; display:flex; gap:4px; z-index:10;">
+            <button id="ytMuteBtn" onclick="toggleYtMute(this)" title="Mute/Unmute"
+              style="width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;color:#fff;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;">
+              <i class="fas fa-volume-high"></i>
+            </button>
+            <button onclick="closeYtVideo()" title="Close video"
+              style="width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;color:#fff;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <div id="videoCourtesy" class="feed-courtesy" style="display:none;">
+          <i class="fas fa-handshake" style="color:#94a3b8;"></i> Courtesy: <span id="videoCourtesyText">ANC</span>
+        </div>
+      </div>
+
+      <!-- PDF section -->
+      <div class="feed-section" id="feedPdfSection">
+        <div class="feed-section-label"><i class="fas fa-file-pdf" style="color:#32cd32;"></i> Property Market Report</div>
+        <div id="pdfStripWrap" class="feed-pdf-wrap" style="display:none;">
+          <div id="pdfPageStrip" class="feed-pdf-strip"></div>
+        </div>
+        <div id="pdfCourtesy" class="feed-courtesy" style="display:none;">
+          <i class="fas fa-handshake" style="color:#94a3b8;"></i> Courtesy: <span id="pdfCourtesyText">Colliers Philippines</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══ LISTINGS TAB ═══ -->
+    <div id="listingsTabPane">
+      <div class="listings-grid" id="listingsGrid">
+        <div class="empty-state" id="listingsLoader">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Loading listings…</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PDF lightbox -->
+    <div id="pdfLightbox" onclick="closePdfLightbox()" class="pdf-lightbox">
+      <button onclick="closePdfLightbox()" class="pdf-lightbox-close">
+        <i class="fas fa-times"></i>
+      </button>
+      <div onclick="event.stopPropagation()" class="pdf-lightbox-inner">
+        <div id="pdfLbPages" class="pdf-lb-pages"></div>
+      </div>
+    </div>
+
+  </div><!-- /ledger-three-col -->
+
+  <!-- ═══ AI MATCH VIEW ═══ -->
+  <div id="matchView" style="display:none;">
+
+    <!-- Match header -->
+    <div class="match-page-header">
+      <button class="btn-back" onclick="exitMatchView()">
+        <i class="fas fa-chevron-left"></i> Back
+      </button>
+      <div class="match-header-center">
+        <i class="fas fa-circle-nodes" style="color:#32cd32;font-size:16px;animation:aiOrbit 5s linear infinite,aiGlow 2s ease-in-out infinite;display:inline-block;"></i>
+        <span style="font-size:15px;font-weight:800;color:#fff;">AI Match <span class="accent">Engine</span></span>
+      </div>
+    </div>
+
+    <div class="match-layout">
+      <!-- Your listing — collapsible -->
+      <div class="match-your-listing-sticky">
+        <div class="your-listing-header" onclick="toggleYourListing()">
+          <p class="section-label" style="margin:0;">Your Listing</p>
+          <i class="fas fa-chevron-up your-listing-arrow" id="yourListingArrow"></i>
+        </div>
+        <div class="your-listing-body" id="yourListingBody">
+          <div class="your-listing-card" id="yourListingCard"></div>
+        </div>
+      </div>
+      <!-- Matches -->
+      <div class="match-results">
+        <div class="match-results-header">
+          <p class="section-label">Matches Found</p>
+          <span class="match-count-badge" id="matchCountBadge">0 matches</span>
+        </div>
+        <div id="matchesContainer">
+          <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Scanning…</p></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ POST LISTING MODAL ═══ -->
+<div class="lm-modal-overlay" id="postModalOverlay" onclick="closePostModal(event)">
+  <div class="lm-modal">
+    <div class="lm-modal-header">
+      <h3>Post a Listing</h3>
+      <button class="lm-modal-close" onclick="closePostModal()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="lm-modal-body">
+      <div class="lm-cat-grid" id="lmCatGrid">
+        <button class="lm-cat-btn cat-sale"   data-cat="FOR SALE">For Sale</button>
+        <button class="lm-cat-btn cat-rent"   data-cat="FOR RENT">For Rent</button>
+        <button class="lm-cat-btn cat-lease"  data-cat="FOR LEASE">For Lease</button>
+        <button class="lm-cat-btn cat-wbuy"   data-cat="WILLING TO BUY">Willing to Buy</button>
+        <button class="lm-cat-btn cat-wrent"  data-cat="WILLING TO RENT">Willing to Rent</button>
+        <button class="lm-cat-btn cat-wlease" data-cat="WILLING TO LEASE">Willing to Lease</button>
+      </div>
+
+      <textarea id="lmPostText" class="lm-textarea" placeholder="Describe your listing — project, unit type, price, location…" rows="5"></textarea>
+
+      <div class="lm-image-wrap">
+        <label class="lm-img-label" for="lmPostImages">
+          <i class="fas fa-image"></i> Add Photos (optional)
+        </label>
+        <input type="file" id="lmPostImages" accept="image/*" multiple onchange="previewLMImages(this)">
+        <div id="lmImagePreview" class="lm-img-preview"></div>
+      </div>
+
+    </div>
+
+    <div class="lm-modal-footer">
+      <span id="lmPostStatus" class="lm-post-status"></span>
+      <button class="btn-post-listing" id="lmSubmitBtn" onclick="submitLMPost()">
+        <i class="fas fa-paper-plane"></i> Post Now
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Image Lightbox -->
+<div id="lmLightbox" class="lm-lightbox" onclick="closeLightbox()">
+  <button class="lm-lb-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+  <button class="lm-lb-nav lm-lb-prev" id="lmLbPrev" onclick="event.stopPropagation(); lbNav(-1)"><i class="fas fa-chevron-left"></i></button>
+  <img id="lmLbImg" src="" onclick="event.stopPropagation()">
+  <button class="lm-lb-nav lm-lb-next" id="lmLbNext" onclick="event.stopPropagation(); lbNav(1)"><i class="fas fa-chevron-right"></i></button>
+  <div class="lm-lb-counter" id="lmLbCounter"></div>
+</div>
+
+<!-- ═══ CAPITAL APPRECIATION TRACKER ═══ -->
+<!-- Mobile nav -->
+<nav class="mobile-bottom-nav">
+  <a class="mob-nav-item" href="home.html"><i class="fas fa-house"></i><span>Home</span></a>
+  <a class="mob-nav-item" href="forum.html"><i class="fas fa-bullhorn"></i><span>Forum</span></a>
+  <a class="mob-nav-item" href="realmates.html"><i class="fas fa-user-group"></i><span>Realmates</span></a>
+  <a class="mob-nav-item mob-nav-center active" href="livemarket.html"><i class="fas fa-globe"></i><span>Portal</span></a>
+  <a class="mob-nav-item" href="chat.html"><i class="fas fa-comment-dots"></i><span>Chat</span></a>
+  <a class="mob-nav-item" href="notifications.html"><i class="fas fa-bell"></i><span>Notifications</span></a>
+  <div class="mob-nav-item mob-nav-avatar-wrap" onclick="toggleNavMenu(event)">
+    <div class="mob-nav-avatar" id="navAvatar"><i class="fas fa-user-tie" style="font-size:13px;"></i></div>
+    <span>Me</span>
+    <div class="mob-nav-menu" id="navMenu">
+      <a href="dashboard.html"><i class="fas fa-user-tie"></i> Profile</a>
+      <a href="analytics.html"><i class="fas fa-chart-area"></i> Analytics</a>
+      <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+      <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+  </div>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="cap-tracker.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="compress.js"></script>
+<script src="fmv.js"></script>
+<script src="anon-generator.js"></script>
+<script src="mates.js"></script>
+<script src="livemarket.js"></script>
+<script src="notif-badge.js"></script>
+<script src="nav-menu.js"></script>
+</body>
+</html>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Realmate | Listing</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="forum.css">
+  <script src="theme.js"></script>
+  <style>
+    /* Fixed header — dark, matching AI analysis */
+    .ld-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      background: linear-gradient(135deg, #0f172a 0%, #1a1a2e 50%, #0f172a 100%);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 48px;
+      border-bottom: 2px solid #32cd32;
+      overflow: hidden;
+    }
+    .ld-header::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(50,205,50,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .ld-header::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, #32cd32, #3b82f6, #32cd32, transparent);
+      background-size: 200% 100%;
+      animation: ldGradientBar 4s linear infinite;
+    }
+    @keyframes ldGradientBar {
+      0% { background-position: 0% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .ld-header .ld-back {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12px; font-weight: 600; color: #94a3b8;
+      cursor: pointer; padding: 6px 12px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06);
+      transition: all 0.15s; position: relative; z-index: 1;
+    }
+    .ld-header .ld-back:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .ld-header-right { display: flex; align-items: center; gap: 8px; }
+    .ld-header-right .ld-badge {
+      background: rgba(50,205,50,0.15); color: #32cd32;
+      border: 1px solid rgba(50,205,50,0.3);
+      font-size: 10px; font-weight: 800; padding: 4px 10px;
+      border-radius: 50px; text-transform: uppercase; letter-spacing: 0.5px;
+      position: relative; z-index: 1;
+    }
+    .ld-header-title { font-size: 16px; font-weight: 800; color: #fff; position: relative; z-index: 1; }
+
+    .ld-page { max-width: 640px; margin: 0 auto; padding: 56px 16px 80px; }
+
+    /* Card */
+    .ld-card {
+      background: #fff; border-radius: 16px; overflow: hidden;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+    }
+
+    /* Images */
+    .ld-images { position: relative; overflow: hidden; background: #f1f5f9; }
+    .ld-images-scroll { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .ld-images-scroll::-webkit-scrollbar { display: none; }
+    .ld-images-scroll img { width: 100%; min-width: 100%; max-height: 380px; object-fit: cover; scroll-snap-align: start; cursor: pointer; flex-shrink: 0; }
+    .ld-img-count { position: absolute; bottom: 10px; right: 10px; background: rgba(15,23,42,0.7); color: #fff; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px; pointer-events: none; backdrop-filter: blur(4px); }
+    .ld-img-dots { display: flex; justify-content: center; gap: 5px; padding: 8px 0 2px; }
+    .ld-img-dot { width: 6px; height: 6px; border-radius: 50%; background: #cbd5e1; transition: all 0.2s; }
+    .ld-img-dot.active { background: #0f172a; width: 16px; border-radius: 3px; }
+
+    /* Lightbox */
+    .ld-lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 99999; display: flex; align-items: center; justify-content: center; cursor: zoom-out; }
+    .ld-lightbox img { max-width: 92vw; max-height: 90vh; object-fit: contain; border-radius: 10px; }
+    .ld-lb-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.15); border: none; color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .ld-lb-nav:hover { background: rgba(255,255,255,0.3); }
+    .ld-lb-prev { left: 16px; }
+    .ld-lb-next { right: 16px; }
+    .ld-lb-close { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.15); border: none; color: #fff; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+    /* Body */
+    .ld-body { padding: 20px 22px 22px; }
+
+    /* User row */
+    .ld-user-row {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 18px; padding-bottom: 16px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .ld-user-row img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; cursor: pointer; flex-shrink: 0; }
+    .ld-user-name { font-size: 14px; font-weight: 600; color: #111827; cursor: pointer; letter-spacing: -0.01em; }
+    .ld-user-name:hover { color: #111827; text-decoration: underline; }
+    .ld-user-job { font-size: 11px; color: #9ca3af; font-weight: 400; }
+    .ld-user-time { font-size: 11px; color: #9ca3af; margin-left: auto; white-space: nowrap; }
+
+    /* Category — monochrome outlined pill */
+    .ld-cat {
+      display: inline-block; font-size: 12px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.02em;
+      padding: 6px 14px; border-radius: 999px; margin-bottom: 14px;
+      border: 1px solid #e5e7eb; background: #fff; color: #111827;
+    }
+    .ld-cat-sale {} .ld-cat-rent {} .ld-cat-lease {}
+    .ld-cat-wbuy {} .ld-cat-wrent {} .ld-cat-wlease {}
+
+    /* Content */
+    .ld-content { font-size: 15px; line-height: 1.7; color: #374151; white-space: pre-line; margin-bottom: 18px; }
+
+    /* AI tags — monochrome */
+    .ld-ai-card {
+      padding: 14px 16px; margin-bottom: 18px;
+      background: #f9fafb; border-radius: 10px; border: 1px solid #e5e7eb;
+    }
+    .ld-section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #9ca3af; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
+    @keyframes ldOrbit { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
+    @keyframes ldGlow { 0%,100% { text-shadow: 0 0 4px rgba(50,205,50,0.3); } 50% { text-shadow: 0 0 14px rgba(50,205,50,0.8), 0 0 28px rgba(50,205,50,0.3); } }
+    .ld-ai-icon { color: #32cd32; display: inline-block; animation: ldOrbit 5s linear infinite, ldGlow 2s ease-in-out infinite; }
+    .ld-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .ld-tag {
+      font-size: 12px; font-weight: 600; padding: 5px 12px;
+      border-radius: 999px; border: 1px solid #e5e7eb;
+      display: inline-flex; align-items: center; gap: 5px;
+      background: #fff; color: #374151; letter-spacing: 0.01em;
+    }
+    .ld-tag i { color: #9ca3af; font-size: 10px; }
+    .ld-tag-loc {} .ld-tag-unit {} .ld-tag-project {}
+    .ld-tag-price {} .ld-tag-feature {}
+
+    /* Action row */
+    .ld-action-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 16px 0 0; margin-top: 6px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    /* Buttons — monochrome */
+    .btn-mate {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 22px; border-radius: 999px;
+      border: 1px solid #111827; background: #111827; color: #fff;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: all 0.15s; font-family: 'Inter', sans-serif;
+      letter-spacing: 0.01em;
+    }
+    .btn-mate:hover:not(:disabled) { background: #374151; border-color: #374151; }
+    .mate-status-pending { background: #fff; border-color: #e5e7eb; color: #9ca3af; cursor: default; }
+    .mate-status-mates { background: #fff; border-color: #e5e7eb; color: #111827; cursor: default; }
+
+    .ld-loading { text-align: center; padding: 60px 20px; color: #94a3b8; }
+
+    @media (max-width: 768px) {
+      .ld-header { padding: 8px 14px; }
+      .ld-header .ld-back { padding: 6px 10px; font-size: 11px; }
+      .ld-header-title { font-size: 13px; }
+      .ld-header-right .ld-badge { font-size: 8px; padding: 3px 7px; }
+      .ld-page { padding-top: 46px; padding-left: 10px; padding-right: 10px; }
+      .ld-body { padding: 14px 16px 16px; }
+      .ld-images-scroll img { max-height: 280px; }
+      .ld-content { font-size: 13px; line-height: 1.6; }
+      .ld-user-row { padding: 10px 12px; }
+      .ld-user-row img { width: 38px; height: 38px; }
+    }
+    @media (min-width: 769px) {
+      .ld-header { left: 240px; }
+    }
+
+    html[data-theme="dark"] .ld-header { background: linear-gradient(135deg, #0f172a 0%, #1a1a2e 50%, #0f172a 100%); }
+    html[data-theme="dark"] .ld-header .ld-back { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); color: #94a3b8; }
+    html[data-theme="dark"] .ld-header-title { color: #fff; }
+    html[data-theme="dark"] .ld-card { background: #111827; border-color: #1f2937; }
+    html[data-theme="dark"] .ld-ai-card { background: #1f2937; border-color: #374151; }
+    html[data-theme="dark"] .ld-section-label { color: #6b7280; }
+    html[data-theme="dark"] .ld-user-row { border-color: #1f2937; }
+    html[data-theme="dark"] .ld-user-name { color: #f9fafb; }
+    html[data-theme="dark"] .ld-action-row { border-color: #1f2937; }
+    html[data-theme="dark"] .ld-content { color: #9ca3af; }
+    html[data-theme="dark"] .ld-cat { background: #1f2937; border-color: #374151; color: #d1d5db; }
+    html[data-theme="dark"] .ld-tag { background: #1f2937; border-color: #374151; color: #d1d5db; }
+    html[data-theme="dark"] .ld-tag i { color: #6b7280; }
+    html[data-theme="dark"] .btn-mate { background: #f9fafb; border-color: #f9fafb; color: #111827; }
+    html[data-theme="dark"] .btn-mate:hover { background: #e5e7eb; }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="brand"><img src="images/realmate2.png" onclick="location.href='home.html'"></div>
+  <div class="nav-item" onclick="location.href='home.html'"><i class="fas fa-house"></i><span>Home Feed</span></div>
+  <div class="nav-item" onclick="location.href='dashboard.html'"><i class="fas fa-user-tie"></i><span>Profile</span></div>
+  <div class="nav-item" onclick="location.href='livemarket.html'"><i class="fas fa-chart-line"></i><span>Live Market</span></div>
+  <div class="nav-item" onclick="location.href='analytics.html'"><i class="fas fa-chart-area"></i><span>Analytics</span></div>
+  <div class="nav-item" onclick="location.href='forum.html'"><i class="fas fa-bullhorn"></i><span>Forum</span></div>
+  <div class="nav-item" onclick="location.href='chat.html'"><i class="fas fa-comment-dots"></i> <span>Chat</span></div>
+  <div class="nav-item" onclick="location.href='notifications.html'"><i class="fas fa-bell"></i><span>Notifications</span></div>
+  <div class="nav-item" onclick="location.href='settings.html'"><i class="fas fa-cog"></i><span>Settings</span></div>
+  <div style="margin-top:auto"><div class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Sign Out</span></div></div>
+</div>
+
+<div class="ld-header">
+  <button class="ld-back" onclick="history.back()"><i class="fas fa-chevron-left"></i> Back</button>
+  <span class="ld-header-title"><i class="fas fa-building" style="margin-right:5px; color:#94a3b8;"></i>Listing Detail</span>
+</div>
+
+<div class="main-content">
+  <div class="ld-page">
+    <div id="ldContent" class="ld-loading"><i class="fas fa-spinner fa-spin" style="font-size:24px;"></i></div>
+  </div>
+</div>
+
+<nav class="mobile-bottom-nav">
+  <a class="mob-nav-item" href="home.html"><i class="fas fa-house"></i><span>Home</span></a>
+  <a class="mob-nav-item" href="forum.html"><i class="fas fa-bullhorn"></i><span>Forum</span></a>
+  <a class="mob-nav-item" href="realmates.html"><i class="fas fa-user-group"></i><span>Realmates</span></a>
+  <a class="mob-nav-item mob-nav-center" href="livemarket.html"><i class="fas fa-globe"></i><span>Portal</span></a>
+  <a class="mob-nav-item" href="chat.html"><i class="fas fa-comment-dots"></i><span>Chat</span></a>
+  <a class="mob-nav-item" href="notifications.html"><i class="fas fa-bell"></i><span>Notifications</span></a>
+  <div class="mob-nav-item mob-nav-avatar-wrap" onclick="toggleNavMenu(event)">
+    <div class="mob-nav-avatar" id="navAvatar"><i class="fas fa-user-tie" style="font-size:13px;"></i></div>
+    <span>Me</span>
+    <div class="mob-nav-menu" id="navMenu">
+      <a href="dashboard.html"><i class="fas fa-user-tie"></i> Profile</a>
+      <a href="analytics.html"><i class="fas fa-chart-area"></i> Analytics</a>
+      <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+      <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+  </div>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth-guard.js"></script>
+<script src="mates.js"></script>
+<script src="nav-menu.js"></script>
+<script src="notif-badge.js"></script>
+<script>
+const _sb = supabase.createClient('https://wmegpgrfrtprhuzmgjma.supabase.co', 'sb_publishable_Rm_fIBDUfu3DEyLj0_bWZw_qEqo8cd4');
+
+const CAT_CLASSES = {
+  'FOR SALE': 'ld-cat-sale', 'FOR RENT': 'ld-cat-rent', 'FOR LEASE': 'ld-cat-lease',
+  'WILLING TO BUY': 'ld-cat-wbuy', 'WILLING TO RENT': 'ld-cat-wrent', 'WILLING TO LEASE': 'ld-cat-wlease'
+};
+
+const LOCATION_KW = {
+  'bgc':'BGC','bonifacio':'BGC','fort':'BGC','taguig':'Taguig',
+  'makati':'Makati','salcedo':'Makati','legazpi':'Makati','rockwell':'Makati',
+  'pasig':'Pasig','ortigas':'Pasig','eastwood':'Pasig',
+  'mandaluyong':'Mandaluyong','quezon city':'Quezon City','qc':'Quezon City',
+  'alabang':'Alabang','muntinlupa':'Muntinlupa','pasay':'Pasay',
+  'laguna':'Laguna','cavite':'Cavite','cebu':'Cebu','rizal':'Rizal',
+  'bulacan':'Bulacan','pampanga':'Pampanga','mckinley':'BGC','uptown':'BGC',
+};
+
+const PROJECTS = ['One Maridien','Two Maridien','Verve One','Verve Two','Park Triangle Residences','Two Serendra','Kroma','Lerato','Senta','TREC','The Residences At Greenbelt'];
+
+function parse(text) {
+  const lower = text.toLowerCase();
+  const locs = [...new Set(Object.entries(LOCATION_KW).filter(([k]) => lower.includes(k)).map(([,v]) => v))];
+  let unit = null;
+  if (/\bstudio\b/i.test(text)) unit = 'Studio';
+  else if (/\b1\s*br\b|1\s*bed/i.test(text)) unit = '1BR';
+  else if (/\b2\s*br\b|2\s*bed/i.test(text)) unit = '2BR';
+  else if (/\b3\s*br\b|3\s*bed/i.test(text)) unit = '3BR';
+  else if (/\b4\s*br\b|4\s*bed/i.test(text)) unit = '4BR';
+  let project = null, projectIdx = Infinity;
+  for (const p of PROJECTS) { const i = text.toUpperCase().indexOf(p.toUpperCase()); if (i !== -1 && i < projectIdx) { projectIdx = i; project = p; } }
+  let price = null;
+  let m = lower.match(/(\d+\.?\d*)\s*m(?:illion)?/);
+  if (m) price = parseFloat(m[1]) * 1e6;
+  else { m = text.replace(/,/g,'').match(/\b(\d{7,9})\b/); if (m) price = parseFloat(m[1]); }
+  const features = ['furnished','fully furnished','semi furnished','bare','parking','balcony','corner unit','penthouse','rfo','preselling','pet friendly']
+    .filter(f => lower.includes(f));
+  return { locs, unit, project, price, features };
+}
+
+function goToProfile(userId) {
+  if (userId) location.href = `dashboard.html?user_id=${userId}`;
+}
+
+function avatarFallback(n) { return `https://ui-avatars.com/api/?name=${encodeURIComponent(n||'?')}&background=random&color=fff`; }
+function safeText(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function timeAgo(d) {
+  const s = Math.floor((Date.now() - new Date(d).getTime()) / 1000);
+  if (s < 60) return 'Just now';
+  if (s < 3600) return Math.floor(s/60) + 'm ago';
+  if (s < 86400) return Math.floor(s/3600) + 'h ago';
+  return Math.floor(s/86400) + 'd ago';
+}
+
+async function loadListing() {
+  const id = new URLSearchParams(location.search).get('id');
+  const container = document.getElementById('ldContent');
+  if (!id) { container.innerHTML = '<p>Listing not found.</p>'; return; }
+
+  const { data: listing, error } = await _sb.from('listings').select('*').eq('id', id).single();
+  if (error || !listing) { container.innerHTML = '<p>Listing not found or has been removed.</p>'; return; }
+
+  const name = listing.user_name || 'Unknown';
+  const img = listing.user_img || avatarFallback(name);
+  const imgs = listing.image_urls || [];
+  const p = parse(listing.content || '');
+
+  let imagesHtml = '';
+  if (imgs.length === 1) {
+    imagesHtml = `<div class="ld-images">
+      <div class="ld-images-scroll"><img src="${imgs[0]}" onclick="openLdLightbox(0)"></div>
+    </div>`;
+  } else if (imgs.length > 1) {
+    imagesHtml = `<div class="ld-images">
+      <div class="ld-images-scroll" id="ldImageScroll">${imgs.map((im, i) => `<img src="${im}" onclick="openLdLightbox(${i})">`).join('')}</div>
+      <span class="ld-img-count"><i class="fas fa-images" style="margin-right:4px;"></i>1 / ${imgs.length}</span>
+      <div class="ld-img-dots" id="ldDots">${imgs.map((_, i) => `<div class="ld-img-dot${i === 0 ? ' active' : ''}"></div>`).join('')}</div>
+    </div>`;
+  }
+
+  const hasTags = p.locs.length || p.unit || p.project || p.price || p.features.length;
+
+  container.innerHTML = `
+    <div class="ld-card">
+      ${imagesHtml}
+      <div class="ld-body">
+
+        <!-- User row -->
+        <div class="ld-user-row">
+          <img src="${img}" onerror="this.src='${avatarFallback(name)}'" onclick="goToProfile('${listing.user_id}')">
+          <div onclick="goToProfile('${listing.user_id}')" style="cursor:pointer;">
+            <div class="ld-user-name">${safeText(name)}</div>
+            <div class="ld-user-job">${listing.user_job || ''}</div>
+          </div>
+          <span class="ld-user-time"><i class="far fa-clock" style="margin-right:3px;"></i>${timeAgo(listing.created_at)}</span>
+        </div>
+
+        <!-- Category -->
+        <span class="ld-cat ${CAT_CLASSES[listing.category] || ''}">${listing.category}</span>
+
+        <!-- Content -->
+        <div class="ld-content">${safeText(listing.content)}</div>
+
+        <!-- AI-Detected tags -->
+        ${hasTags ? `
+        <div class="ld-ai-card">
+          <div class="ld-section-label"><i class="fas fa-circle-nodes ld-ai-icon"></i> AI-Detected Details</div>
+          <div class="ld-tags">
+            ${p.locs.map(l => `<span class="ld-tag ld-tag-loc"><i class="fas fa-map-marker-alt"></i>${l}</span>`).join('')}
+            ${p.unit ? `<span class="ld-tag ld-tag-unit"><i class="fas fa-bed"></i>${p.unit}</span>` : ''}
+            ${p.project ? `<span class="ld-tag ld-tag-project"><i class="fas fa-building"></i>${p.project}</span>` : ''}
+            ${p.price ? `<span class="ld-tag ld-tag-price"><i class="fas fa-tag"></i>₱${(p.price/1e6).toFixed(1)}M</span>` : ''}
+            ${p.features.map(f => `<span class="ld-tag ld-tag-feature">${f}</span>`).join('')}
+          </div>
+        </div>` : ''}
+
+        <!-- Action row -->
+        ${!listing.is_anonymous ? `
+        <div class="ld-action-row">
+          ${mateButtonHtml(name, 'btn-mate')}
+        </div>` : ''}
+
+      </div>
+    </div>
+  `;
+
+  // Wire up scroll tracking for dots and counter
+  const scroll = document.getElementById('ldImageScroll');
+  if (scroll && imgs.length > 1) {
+    scroll.addEventListener('scroll', () => {
+      const idx = Math.round(scroll.scrollLeft / scroll.offsetWidth);
+      document.querySelectorAll('.ld-img-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+      const counter = document.querySelector('.ld-img-count');
+      if (counter) counter.innerHTML = `<i class="fas fa-images" style="margin-right:4px;"></i>${idx + 1} / ${imgs.length}`;
+    });
+  }
+
+  window._ldImages = imgs;
+}
+
+let _ldLbIdx = 0;
+
+function openLdLightbox(idx) {
+  _ldLbIdx = idx;
+  const imgs = window._ldImages || [];
+  if (!imgs.length) return;
+  const existing = document.getElementById('ldLightbox');
+  if (existing) existing.remove();
+  const lb = document.createElement('div');
+  lb.id = 'ldLightbox';
+  lb.className = 'ld-lightbox';
+  lb.innerHTML = `
+    <button class="ld-lb-close" onclick="closeLdLightbox()"><i class="fas fa-times"></i></button>
+    ${imgs.length > 1 ? `<button class="ld-lb-nav ld-lb-prev" onclick="event.stopPropagation(); navLdLightbox(-1)"><i class="fas fa-chevron-left"></i></button>` : ''}
+    <img id="ldLbImg" src="${imgs[idx]}">
+    ${imgs.length > 1 ? `<button class="ld-lb-nav ld-lb-next" onclick="event.stopPropagation(); navLdLightbox(1)"><i class="fas fa-chevron-right"></i></button>` : ''}
+    ${imgs.length > 1 ? `<span style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);color:#fff;font-size:13px;font-weight:700;background:rgba(0,0,0,0.5);padding:4px 14px;border-radius:20px;" id="ldLbCount">${idx+1} / ${imgs.length}</span>` : ''}
+  `;
+  lb.addEventListener('click', (e) => { if (e.target === lb) closeLdLightbox(); });
+  document.body.appendChild(lb);
+}
+
+function closeLdLightbox() {
+  document.getElementById('ldLightbox')?.remove();
+}
+
+function navLdLightbox(dir) {
+  const imgs = window._ldImages || [];
+  _ldLbIdx = (_ldLbIdx + dir + imgs.length) % imgs.length;
+  document.getElementById('ldLbImg').src = imgs[_ldLbIdx];
+  const count = document.getElementById('ldLbCount');
+  if (count) count.textContent = `${_ldLbIdx + 1} / ${imgs.length}`;
+}
+
+document.addEventListener('DOMContentLoaded', loadListing);
+</script>
+</body>
+</html>

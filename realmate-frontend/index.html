@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Realmate</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-main">
+    <div class="left-panel">
+      <div class="lp-glow-bottom"></div>
+
+      <div class="lp-brand">
+        <img src="images/realmate2.png" alt="Realmate">
+      </div>
+
+      <div class="lp-headline">
+        <h1>Where Real Estate<br>Professionals <span>Transact.</span></h1>
+        <p>A dedicated professional network engineered for the modern real estate specialist — now exclusively available to Alveo professionals.</p>
+      </div>
+
+      <div class="lp-features">
+        <div class="lp-card">
+          <div class="lp-card-icon"><i class="fas fa-chart-line"></i></div>
+          <h4>Market Pulse Intelligence</h4>
+          <p>A live pulse of active listings across your professional network, filtered by intent and category.</p>
+        </div>
+        <div class="lp-card">
+          <div class="lp-card-icon"><i class="fas fa-circle-nodes"></i></div>
+          <h4>AI Match Engine</h4>
+          <p>Proprietary algorithm that surfaces precise buyer–seller pairings based on unit type, location, and price range.</p>
+        </div>
+        <div class="lp-card">
+          <div class="lp-card-icon"><i class="fas fa-balance-scale"></i></div>
+          <h4>Fair Market Valuation</h4>
+          <p>Weighted comparable analysis with time-decay scoring to derive defensible market price estimates.</p>
+        </div>
+        <div class="lp-card">
+          <div class="lp-card-icon"><i class="fas fa-bullhorn"></i></div>
+          <h4>Professional Network</h4>
+          <p>A curated space for serious practitioners to exchange insights, collaborate, and close with confidence.</p>
+        </div>
+      </div>
+
+      <div class="lp-ticker-strip">
+        <div class="lp-ticker-dot"></div>
+        Active markets · <span>BGC</span> · <span>Makati</span> · <span>Ortigas</span> · <span>Alabang</span> · <span>Cebu</span>
+      </div>
+    </div>
+    <div class="right-panel">
+      <div class="container">
+        <img src="images/realmate2.png" class="logo">
+        <div class="subtitle">Connect. Match. Close Deals.</div>
+        <div class="input-group">
+          <label class="label">Email or Username</label>
+          <i class="fas fa-user left"></i>
+          <input type="text" id="loginIdentifier" placeholder="Email or Username">
+        </div>
+        <div class="input-group">
+          <label class="label">Password</label>
+          <i class="fas fa-lock left"></i>
+          <input type="password" id="password" placeholder="Enter password">
+          <i class="fas fa-eye right" onclick="togglePassword('password', this)"></i>
+        </div>
+        <div id="loginError" style="display:none; align-items:center; gap:10px; background:#fef2f2; border:1px solid #fecaca; border-left:4px solid #ef4444; border-radius:12px; padding:12px 16px; font-size:13px; font-weight:600; color:#dc2626; margin-bottom:4px; text-align:left;">
+          <i class="fas fa-circle-exclamation"></i>
+          <span></span>
+        </div>
+        <div id="loginSuccess" style="display:none; align-items:center; gap:10px; background:#f0fdf4; border:1px solid #bbf7d0; border-left:4px solid #22c55e; border-radius:12px; padding:12px 16px; font-size:13px; font-weight:600; color:#16a34a; margin-bottom:4px; text-align:left;">
+          <i class="fas fa-circle-check"></i>
+          <span>Login successful. Redirecting you now…</span>
+        </div>
+        <button class="btn" id="loginBtn" onclick="login()"><span id="loginBtnText">Sign In</span></button>
+        <div style="margin-top: 10px;"><span class="link" id="forgotLink" onclick="forgotPassword()">Forgot password?</span></div>
+        <div class="divider">or</div>
+        <button class="btn" style="background:#f1f5f9; color:#475569;" onclick="guestLogin()">Continue as Guest</button>
+        <div style="margin-top: 15px;">
+            <span style="font-size: 13px; color: #64748b; font-weight: 500;">Don't have an account?</span>
+            <span class="link" style="margin-top: 0; margin-left: 3px;" onclick="openRegister()">Create one</span>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="purpose-footer">
+    <span class="purpose-link" onclick="openPurpose()">Mission & Vision</span>
+</div>
+
+<div class="modal" id="purposeModal">
+    <div class="modal-content" style="max-width: 550px;">
+      <span class="close-btn" onclick="closePurpose()">&times;</span>
+      <h3 style="font-family: 'Playfair Display'; color: var(--primary);">Mission & Engineering Vision</h3>
+      <div class="purpose-body-text">
+          <p><strong>Realmate</strong> was pioneered by <strong>Reychan Bernaldez</strong> alongside an elite multi-disciplinary team: <strong>Jaztin Pumaren and Danniel Libor</strong> (Computer Engineers), <strong>Mark Hequibal</strong> (Marketing Manager), and <strong>Sean Sayson</strong> (Accountant & Financial Expert).</p>
+          <p>By integrating <strong>Advanced Artificial Intelligence</strong>, we have engineered a solution specifically for <strong>Alveo property specialists.</strong> We recognize that the modern real estate landscape demands more than manual effort; it requires algorithmic precision to handle complex reselling and portfolio management.</p>
+          <p>Our platform utilizes AI to analyze market data in real-time, helping specialists find the <strong>absolute closest match</strong> for their clients' property resale needs. We bridge the gap between financial strategy, technical engineering, and marketing expertise to ensure every transaction is optimized for success.</p>
+          <p style="text-align: center; font-style: italic; margin-top: 20px;">"Powered by AI. Built by Engineers. Trusted by Professionals."</p>
+      </div>
+    </div>
+</div>
+
+<div class="modal" id="termsModal">
+    <div class="modal-content" style="max-width: 800px; padding: 0; overflow: hidden;">
+        <div style="padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; background: #fff;">
+            <h3 style="margin: 0; font-family: 'Playfair Display'; color: var(--primary);">Full Legal Agreement</h3>
+            <span class="close-btn" onclick="closeTerms()" style="position: static;">&times;</span>
+        </div>
+        <iframe src="terms.html" style="width: 100%; height: 60vh; border: none;" id="termsFrame"></iframe>
+        <div style="padding: 20px; background: #f8fafc; border-top: 1px solid #eee; text-align: center;">
+            <button class="btn" style="width: auto; padding: 10px 30px;" onclick="closeTerms()">I Acknowledge and Accept All Sections</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="registerModal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeRegister()">&times;</span>
+    <h3>Create Account</h3>
+    <div class="input-group"><label class="label">Username</label><input id="regUsername" placeholder="Choose a unique username" onblur="checkUsernameAvailability()"><div class="error-text">Required</div><div id="usernameStatus" style="font-size:12px;font-weight:600;margin-top:4px;"></div></div>
+    <div class="input-group"><label class="label">First Name</label><input id="firstName" onblur="validateName(this)" placeholder="John"><div class="error-text">Invalid name</div></div>
+    <div class="input-group"><label class="label">Last Name</label><input id="lastName" onblur="validateName(this)" placeholder="Doe"><div class="error-text">Invalid name</div></div>
+    <div class="input-group"><label class="label">Phone Number</label><input id="phone" onblur="validatePhone(this)" placeholder="09123456789"><div class="error-text">Invalid phone</div></div>
+    <div class="input-group"><label class="label">Email Address</label><input id="regEmail" onblur="validateEmail(this)" placeholder="john.doe@email.com"><div class="error-text">Wrong email format</div></div>
+    <div class="input-group"><label class="label">Birthday</label><input type="date" id="birthday" onblur="validateBirthday(this)"><div class="error-text">Invalid birthday</div></div>
+    <div class="input-group"><label class="label">Gender</label><select id="gender"><option value="" disabled selected>Select Gender</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+    <div class="input-group"><label class="label">Alveo ID Number</label><input id="alveo" onblur="validateAlveo(this)" placeholder="Your broker ID"><div class="error-text">Required</div></div>
+    <div class="input-group">
+      <label class="label">Password</label>
+      <div style="position:relative;"><input type="password" id="regPassword" oninput="checkPassword()" onblur="validatePassword(this)" placeholder="••••••••"><i class="fas fa-eye right" style="top: 13px;" onclick="togglePassword('regPassword', this)"></i></div>
+      <div class="password-strength"><div class="password-bar" id="passwordBar"></div></div>
+      <div class="password-rules"><span id="rule1">8+ characters</span><span id="rule2">1 uppercase letter</span><span id="rule3">1 number</span></div>
+      <div class="error-text">Weak password</div>
+    </div>
+    <div class="checkbox-group locked" id="checkboxArea">
+        <input type="checkbox" id="termsCheckbox" onchange="toggleRegButton()" disabled>
+        <label id="checkboxLabel">You must <b onclick="openTerms()" style="color: var(--primary); text-decoration: underline; cursor: pointer;">Review the Legal Terms</b> first.</label>
+    </div>
+    <button class="btn" id="regBtn" onclick="registerUser()" disabled><span id="btnText">Create Account</span></button>
+  </div>
+</div>
+
+<div class="modal" id="updatePasswordModal">
+  <div class="modal-content">
+    <h3>Update Password</h3>
+    <p style="font-size: 13px; color: #64748b; margin-bottom: 25px; line-height: 1.4; font-weight: 500;">Secure your account by entering a strong new password below.</p>
+    <div class="input-group"><label class="label">New Password</label><div style="position:relative;"><input type="password" id="newPassword" placeholder="••••••••"><i class="fas fa-eye right" style="top: 13px;" onclick="togglePassword('newPassword', this)"></i></div></div>
+    <button class="btn" id="updateBtn" onclick="handleUpdatePassword()"><span id="updateBtnText">Save New Password</span></button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+</body>
+</html>

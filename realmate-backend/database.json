@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1779163300424,
+    "text": "BGC\n1BR\nALVEO\n60 SQM\nTWO MARIDIEN",
+    "image": "",
+    "category": "WILLING TO BUY",
+    "archived": false,
+    "pinned": false,
+    "userName": "Mark Zuckerberg",
+    "userJob": "Senior Regional Sales Director",
+    "userImg": "https://wmegpgrfrtprhuzmgjma.supabase.co/storage/v1/object/public/images/avatars/1778585626566_Brian-Chesky.jpeg"
+  },
+  {
+    "id": 1779163259888,
+    "text": "BGC\n1BR\nALVEO\n60 SQM\nTWO MARIDIEN",
+    "image": "",
+    "category": "FOR SALE",
+    "archived": false,
+    "pinned": false,
+    "userName": "Bobby Axelrod",
+    "userJob": "Senior Regional Sales Director",
+    "userImg": "https://wmegpgrfrtprhuzmgjma.supabase.co/storage/v1/object/public/images/avatars/1777918870653_bezos2.jpeg"
+  },
+  {
+    "id": 1778565283351,
+    "text": "dasdas",
+    "image": "",
+    "category": "FOR LEASE",
+    "archived": false,
+    "pinned": false,
+    "userName": "Bobby Axelrod",
+    "userJob": "Senior Regional Sales Director",
+    "userImg": "https://wmegpgrfrtprhuzmgjma.supabase.co/storage/v1/object/public/images/avatars/1777918870653_bezos2.jpeg"
+  },
+  {
+    "id": 1777224665225,
+    "text": "BGC \n1 BEDROOM\n13M",
+    "image": "",
+    "category": "WILLING TO BUY",
+    "archived": false,
+    "pinned": false,
+    "userName": "Reychan Bernaldez",
+    "userJob": null,
+    "userImg": "https://wmegpgrfrtprhuzmgjma.supabase.co/storage/v1/object/public/images/avatars/1777110397734_153056.jpeg"
+  },
+  {
+    "id": 1777224629489,
+    "text": "BGC \n1BR\n16M",
+    "image": "",
+    "category": "FOR SALE",
+    "archived": false,
+    "pinned": false,
+    "userName": "Mark Zuckerberg",
+    "userJob": "Area Sales Director",
+    "userImg": "https://wmegpgrfrtprhuzmgjma.supabase.co/storage/v1/object/public/images/avatars/1777110865352_Facebook-Founder-CEO-Mark-Zuckerberg-email-messaging-system-St-Regis.webp"
+  },
+  {
+    "id": 1777224341755,
+    "text": "asdasd",
+    "image": "",
+    "category": "FOR SALE",
+    "archived": false,
+    "pinned": false,
+    "userName": "Mark Zuckerberg",
+    "userJob": "Sales Manager",
+    "userImg": "https://wmegpgrfrtprhuzmgjma.supabase.co/storage/v1/object/public/images/avatars/1777110865352_Facebook-Founder-CEO-Mark-Zuckerberg-email-messaging-system-St-Regis.webp"
+  }
+]
