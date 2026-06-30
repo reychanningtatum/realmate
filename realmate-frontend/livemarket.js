@@ -532,7 +532,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
     const matchColor = matchPct >= 70 ? '#16a34a' : matchPct >= 45 ? '#2563eb' : matchPct >= 25 ? '#f59e0b' : '#94a3b8';
     const matchReasons = matchLabel?.matchReasons || [];
     const matchBanner = matchLabel ? `
-        <div class="match-banner">
+        <div class="match-banner" onclick="event.stopPropagation(); openMatchForListing('${listing.id}')" style="cursor:pointer;">
             <div style="display:flex;align-items:center;gap:5px;flex:1;min-width:0;">
                 <i class="fas fa-circle-nodes" style="color:#32cd32;"></i>
                 <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#94a3b8;">AI Match · <span style="color:#fff;">${matchLabel.myCategory}</span></span>
@@ -554,7 +554,6 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
                 ${catTag(listing.category)}
                 ${buildOfferBadge(listing)}
                 ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : ''}
-                ${matchLabel && myMatchCount === 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); openMatchForListing('${listing.id}')"><i class="fas fa-circle-nodes"></i> AI Match</button>` : ''}
                 <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
                 <div class="lc-menu-wrap" onclick="event.stopPropagation()">
                     <button class="lc-menu-btn" onclick="toggleCardMenu(this)"><i class="fas fa-ellipsis-vertical"></i></button>
