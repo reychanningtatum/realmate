@@ -437,16 +437,14 @@
   display: block;
 }
 
-.chat-msg-row.own .chat-msg-image-bubble {
-  background: transparent;
-  padding: 4px;
-}
-
+.chat-msg-row.own .chat-msg-image-bubble,
 .chat-msg-row.other .chat-msg-image-bubble {
   background: transparent;
-  border: none;
   padding: 4px;
+  position: relative;
+  display: inline-block;
 }
+
 
 /* File attachment */
 .chat-msg-file {
