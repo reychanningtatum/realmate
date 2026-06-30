@@ -75,9 +75,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         const openChatWith = sessionStorage.getItem('openChatWith');
         if (openChatWith) {
             try {
-                const { userId } = JSON.parse(openChatWith);
+                const { userId, name } = JSON.parse(openChatWith);
                 sessionStorage.removeItem('openChatWith');
-                if (userId) await openConversationWithUser(userId);
+                if (userId) {
+                    await openConversationWithUser(userId);
+                } else if (name) {
+                    // Fallback: find existing conversation by other user's name
+                    const byName = conversations.find(c => c.otherUser && c.otherUser.name === name);
+                    if (byName) await openConversation(byName.id);
+                    else {
+                        // Look up user id by name from listings table
+                        const res = await fetch(`${CHAT_URL}/rest/v1/listings?select=user_id&user_name=eq.${encodeURIComponent(name)}&limit=1`, { headers: { apikey: CHAT_KEY, Authorization: `Bearer ${CHAT_KEY}` } });
+                        const rows = await res.json();
+                        if (Array.isArray(rows) && rows[0]?.user_id) await openConversationWithUser(rows[0].user_id);
+                    }
+                }
             } catch {}
         } else {
             const lastConv = sessionStorage.getItem('chat_active_conv');
