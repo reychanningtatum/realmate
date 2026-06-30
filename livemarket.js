@@ -1081,17 +1081,49 @@ function extractLocations(text) {
     return [...found];
 }
 
+function levenshtein(a, b) {
+    const m = a.length, n = b.length;
+    const dp = Array.from({length: m+1}, (_, i) => Array.from({length: n+1}, (_, j) => i === 0 ? j : j === 0 ? i : 0));
+    for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++)
+        dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+    return dp[m][n];
+}
+
+function fuzzyMatchProject(text) {
+    const allProjects = [...KNOWN_PROJECTS, ...getLearnedProjects()];
+    const words = text.toLowerCase().split(/\s+/);
+    let bestProj = null, bestDist = Infinity;
+    for (const proj of allProjects) {
+        const projLower = proj.toLowerCase();
+        const projWords = projLower.split(/\s+/);
+        // Slide a window of same word-count as the project name across the text
+        for (let i = 0; i <= words.length - projWords.length; i++) {
+            const phrase = words.slice(i, i + projWords.length).join(' ');
+            const dist = levenshtein(phrase, projLower);
+            // Allow up to 2 edits per word in the project name (but min 2, max 4)
+            const threshold = Math.min(4, Math.max(2, Math.floor(projLower.length * 0.2)));
+            if (dist > 0 && dist <= threshold && dist < bestDist) {
+                bestDist = dist;
+                bestProj = proj;
+            }
+        }
+    }
+    return bestProj;
+}
+
 function extractProject(text) {
     const upper = text.toUpperCase();
     let earliest = Infinity, found = null;
-    for (const proj of KNOWN_PROJECTS) {
+    for (const proj of [...KNOWN_PROJECTS, ...getLearnedProjects()]) {
         const idx = upper.indexOf(proj.toUpperCase());
         if (idx !== -1 && idx < earliest) {
             earliest = idx;
             found = proj;
         }
     }
-    return found;
+    if (found) return found;
+    // Fuzzy fallback — catch misspellings like "two maridiem" → "Two Maridien"
+    return fuzzyMatchProject(text);
 }
 
 function extractFeatures(text) {
