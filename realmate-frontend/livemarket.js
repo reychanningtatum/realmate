@@ -450,8 +450,6 @@ function enhanceListingText(listing) {
         body = body.replace(/\b(?:budget|asking|price|php|₱)?\s*\d+\.?\d*\s*m?\s*(?:-|to|or)\s*\d+\.?\d*\s*m(?:illion)?\b/gi, '');
         // Remove leading price keywords left behind e.g. "BUDGET", "ASKING"
         body = body.replace(/\b(?:budget|asking price|asking)\b/gi, '');
-        // Remove standalone "OR" left after range extraction
-        body = body.replace(/\bor\b/gi, '');
         const pricePatterns = [
             /₱?\s*\d{1,3}(,\d{3})+(\.\d+)?\s*\w*/g,
             /(\d+\.?\d*)\s*[Mm](?:illion)?\s*\w*/gi,
@@ -485,6 +483,9 @@ function enhanceListingText(listing) {
     const sqm = _xSqm(raw);
     if (unitType) body = body.replace(/\b(residential\s*lot|commercial\s*lot|condo(?:minium)?|townhouse|house\s*(?:and|&)\s*lot|office\s*space|office)\b/gi, '');
     if (bedrooms) {
+        // Remove full range pattern first e.g. "2-BEDROOM OR 3-BEDROOM"
+        body = body.replace(/\d[\s-]*(?:br|bedroom\w*)\s+or\s+\d[\s-]*(?:br|bedroom\w*)/gi, '');
+        // Then remove any remaining single bedroom mentions
         body = body.replace(/\b(studio|1[\s-]*br|2[\s-]*br|3[\s-]*br|4[\s-]*br|\d+[\s-]*bedroom\w*|one\s*bedroom|two\s*bedroom|three\s*bedroom|four\s*bedroom)\b/gi, '');
     }
     if (sqm) body = body.replace(/\d[\d,.]*\s*(?:sqm|sq\.?\s*m|square\s*met\w*)/gi, '');
@@ -682,18 +683,21 @@ function extractPrice(text) {
 }
 
 function extractUnit(text) {
+    const lower = text.toLowerCase();
+    // Detect unit range: "2-BEDROOM OR 3-BEDROOM", "2BR or 3BR"
+    const rangeMatch = lower.match(/(\d)[\s-]*(?:br|bedroom)\s+or\s+(\d)[\s-]*(?:br|bedroom)/);
+    if (rangeMatch) return `${rangeMatch[1]}BR or ${rangeMatch[2]}BR`;
     const lines = text.split(/\n/).map(l => l.trim()).filter(Boolean);
     // Check each line — a line with just "1BR" or "1 BEDROOM" is definitive
     for (const line of lines) {
-        const lower = line.toLowerCase().trim();
-        if (lower.match(/^studio$/)) return 'Studio';
-        if (lower.match(/^1[\s-]*br$|^1[\s-]*bedroom$|^one\s*bedroom$/)) return '1BR';
-        if (lower.match(/^2[\s-]*br$|^2[\s-]*bedroom$|^two\s*bedroom$/)) return '2BR';
-        if (lower.match(/^3[\s-]*br$|^3[\s-]*bedroom$|^three\s*bedroom$/)) return '3BR';
-        if (lower.match(/^4[\s-]*br$|^4[\s-]*bedroom$|^four\s*bedroom$/)) return '4BR';
+        const lo = line.toLowerCase().trim();
+        if (lo.match(/^studio$/)) return 'Studio';
+        if (lo.match(/^1[\s-]*br$|^1[\s-]*bedroom$|^one\s*bedroom$/)) return '1BR';
+        if (lo.match(/^2[\s-]*br$|^2[\s-]*bedroom$|^two\s*bedroom$/)) return '2BR';
+        if (lo.match(/^3[\s-]*br$|^3[\s-]*bedroom$|^three\s*bedroom$/)) return '3BR';
+        if (lo.match(/^4[\s-]*br$|^4[\s-]*bedroom$|^four\s*bedroom$/)) return '4BR';
     }
     // Fallback: inline detection
-    const lower = text.toLowerCase();
     if (lower.match(/\bstudio\b/)) return 'Studio';
     if (lower.match(/\b1[\s-]*br\b|1[\s-]*bedroom|one\s*bedroom/)) return '1BR';
     if (lower.match(/\b2[\s-]*br\b|2[\s-]*bedroom|two\s*bedroom/)) return '2BR';
