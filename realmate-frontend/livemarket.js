@@ -2136,52 +2136,58 @@ function _ensureLockedPopup() {
 }
 
 function showSelfPopup() {
-    let popup = document.getElementById('selfPopupOverlay');
-    if (!popup) {
-        popup = document.createElement('div');
-        popup.id = 'selfPopupOverlay';
-        popup.innerHTML = `
-        <div class="seller-popup-sheet" id="selfPopupSheet">
-            <div class="sp-handle"></div>
-            <div class="sp-header">
-                <span class="sp-title">My Account</span>
-                <button class="sp-close-btn" onclick="closeSelfPopup()"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="sp-options">
-                <button class="sp-opt-btn" onclick="closeSelfPopup(); location.href='portfolio.html'">
-                    <span class="sp-opt-icon" style="background:linear-gradient(135deg,#0f172a,#1e3a5f);"><i class="fas fa-briefcase" style="color:#32cd32;"></i></span>
-                    <span class="sp-opt-text">
-                        <span class="sp-opt-title">My Portfolio</span>
-                        <span class="sp-opt-sub">View your listings & activity</span>
-                    </span>
-                    <i class="fas fa-chevron-right sp-opt-arrow"></i>
-                </button>
-                <button class="sp-opt-btn" onclick="closeSelfPopup(); location.href='profile.html'">
-                    <span class="sp-opt-icon" style="background:linear-gradient(135deg,#0f172a,#1e3a5f);"><i class="fas fa-user" style="color:#32cd32;"></i></span>
-                    <span class="sp-opt-text">
-                        <span class="sp-opt-title">My Profile</span>
-                        <span class="sp-opt-sub">Edit your profile & settings</span>
-                    </span>
-                    <i class="fas fa-chevron-right sp-opt-arrow"></i>
-                </button>
-            </div>
-        </div>`;
-        popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9999;display:flex;align-items:flex-end;justify-content:center;';
-        popup.addEventListener('click', e => { if (e.target === popup) closeSelfPopup(); });
-        document.body.appendChild(popup);
-    }
-    popup.style.display = 'flex';
-    requestAnimationFrame(() => {
+    if (!document.getElementById('selfPopupOverlay')) {
+        const el = document.createElement('div');
+        el.id = 'selfPopupOverlay';
+        el.innerHTML = `
+            <div id="selfPopupBackdrop" onclick="closeSelfPopup()"></div>
+            <div id="selfPopupSheet">
+                <div id="selfPopupHandle"></div>
+                <div id="selfPopupHeader">
+                    <div id="selfPopupTitle">My Account</div>
+                </div>
+                <div id="selfPopupOptions">
+                    <button onclick="closeSelfPopup(); location.href='portfolio.html'">
+                        <span class="sp-opt-icon"><i class="fas fa-briefcase"></i></span>
+                        <span class="sp-opt-text">
+                            <span class="sp-opt-title">My Portfolio</span>
+                            <span class="sp-opt-sub">View your listings &amp; activity</span>
+                        </span>
+                        <i class="fas fa-chevron-right sp-opt-arrow"></i>
+                    </button>
+                    <button onclick="closeSelfPopup(); location.href='profile.html'">
+                        <span class="sp-opt-icon sp-opt-icon-profile"><i class="fas fa-user"></i></span>
+                        <span class="sp-opt-text">
+                            <span class="sp-opt-title">My Profile</span>
+                            <span class="sp-opt-sub">Edit your profile &amp; settings</span>
+                        </span>
+                        <i class="fas fa-chevron-right sp-opt-arrow"></i>
+                    </button>
+                </div>
+                <button id="selfPopupCancel" onclick="closeSelfPopup()">Cancel</button>
+            </div>`;
+        document.body.appendChild(el);
         const sheet = document.getElementById('selfPopupSheet');
-        if (sheet) { sheet.style.transform = 'translateY(0)'; sheet.style.transition = 'transform 0.3s ease'; }
-    });
+        let startY = 0, curY = 0, dragging = false;
+        sheet.addEventListener('touchstart', e => {
+            if (e.target.closest('button')) return;
+            startY = e.touches[0].clientY; dragging = true; sheet.style.transition = '';
+        });
+        sheet.addEventListener('touchmove', e => {
+            if (!dragging) return;
+            curY = e.touches[0].clientY - startY;
+            if (curY > 0) sheet.style.transform = `translateY(${curY}px)`;
+        });
+        sheet.addEventListener('touchend', () => {
+            dragging = false; sheet.style.transition = '';
+            if (curY > 80) closeSelfPopup(); else { sheet.style.transition = 'transform 0.3s ease'; sheet.style.transform = ''; }
+        });
+    }
+    const overlay = document.getElementById('selfPopupOverlay');
+    overlay.classList.add('sp-open');
 }
 function closeSelfPopup() {
-    const popup = document.getElementById('selfPopupOverlay');
-    if (!popup) return;
-    const sheet = document.getElementById('selfPopupSheet');
-    if (sheet) { sheet.style.transform = 'translateY(100%)'; }
-    setTimeout(() => { popup.style.display = 'none'; }, 300);
+    document.getElementById('selfPopupOverlay')?.classList.remove('sp-open');
 }
 
 function showSellerPopup(userId, name, img, job) {
