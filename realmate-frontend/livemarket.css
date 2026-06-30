@@ -669,7 +669,7 @@ html[data-theme="dark"] .lc-menu-dropdown button:hover { background: #0f172a; }
 
 .listing-card-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 15px; }
 
-.listing-card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.listing-card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
 
 .cat-tag {
   display: inline-flex; align-items: center;
