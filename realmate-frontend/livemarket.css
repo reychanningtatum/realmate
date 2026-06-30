@@ -676,7 +676,7 @@ html[data-theme="dark"] .lc-menu-dropdown button:hover { background: #0f172a; }
   font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
   text-transform: uppercase; padding: 6px 14px;
   border-radius: 999px;
-  border: 1px solid #e5e7eb;
+  border: 1.5px solid #111827;
   background: #fff; color: #111827;
   font-family: 'Inter', sans-serif;
 }
@@ -1183,7 +1183,7 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
 }
 .lm-modal-header h3 { font-size: 16px; font-weight: 800; color: #111827; font-family: 'Inter', sans-serif; }
 .lm-modal-close {
-  background: transparent; border: 1px solid #e5e7eb; border-radius: 50%;
+  background: transparent; border: 1.5px solid #111827; border-radius: 50%;
   width: 30px; height: 30px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   color: #9ca3af; font-size: 13px; transition: all 0.15s;
@@ -1198,7 +1198,7 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
 }
 .lm-cat-btn {
   padding: 10px 8px; border-radius: 999px;
-  border: 1px solid #e5e7eb; background: #fff;
+  border: 1.5px solid #111827; background: #fff;
   font-size: 12px; font-weight: 600; cursor: pointer;
   transition: all 0.15s; font-family: 'Inter', sans-serif;
   color: #6b7280; text-align: center; letter-spacing: 0.01em;
@@ -1213,7 +1213,7 @@ html[data-theme="dark"] .mate-status-received { border-color: #60a5fa; color: #6
 .lm-cat-btn:not(.selected):hover { border-color: #9ca3af; color: #111827; }
 
 .lm-textarea {
-  width: 100%; border: 1px solid #e5e7eb; border-radius: 10px;
+  width: 100%; border: 1.5px solid #111827; border-radius: 10px;
   padding: 14px 16px; font-size: 14px; font-family: 'Inter', sans-serif;
   resize: vertical; min-height: 110px; outline: none;
   transition: border-color 0.15s; color: #111827;
