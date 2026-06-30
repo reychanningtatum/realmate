@@ -179,6 +179,9 @@ function buildStatusButtons(listing) {
     const isNeg = listing.status === 'negotiation';
     const isSold = listing.status === 'sold';
     return `<div class="listing-status-btns" onclick="event.stopPropagation();">
+        <button class="listing-view-btn" onclick="location.href='listing-detail.html?id=${listing.id}'">
+            <i class="fas fa-arrow-up-right-from-square"></i> View Listing
+        </button>
         <button class="status-btn ${isNeg ? 'active' : ''}" onclick="setListingStatus('${listing.id}', ${isNeg ? 'null' : "'negotiation'"}, this)">
             <i class="fas fa-comments-dollar"></i> ${isNeg ? 'Remove' : 'In Negotiation'}
         </button>
@@ -198,6 +201,9 @@ function buildOfferRow(listing) {
     const safeId  = listing.id;
     const safeUid = listing.user_id;
     return `<div class="listing-offer-row" onclick="event.stopPropagation()">
+        <button class="listing-view-btn" onclick="location.href='listing-detail.html?id=${safeId}'">
+            <i class="fas fa-arrow-up-right-from-square"></i> View Listing
+        </button>
         <button class="listing-offer-btn" onclick="showOfferPopup('${safeId}','${safeUid}','${safeN}','${safeI}','${safeCat}',this)">
             <i class="fas fa-handshake"></i> Send Offer
         </button>
@@ -581,14 +587,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
         });
     }
 
-    card.style.cursor = 'pointer';
-    card.addEventListener('click', (e) => {
-        if (matchLabel) {
-            showMatchView(matchLabel.myListing, [listing]);
-        } else {
-            location.href = `listing-detail.html?id=${listing.id}`;
-        }
-    });
+    card.style.cursor = 'default';
 
     return card;
 }

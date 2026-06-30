@@ -1922,14 +1922,27 @@ html[data-theme="dark"] #spLockedCancelBtn:hover { background: #162032; }
     display: flex; align-items: center; gap: 10px;
     padding: 10px 0 2px; border-top: 1px solid #f1f5f9; margin-top: 10px;
 }
+.listing-view-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 8px 14px; border-radius: 10px; flex: 1;
+    background: #f8fafc; color: #0f172a;
+    border: 1.5px solid #e2e8f0; font-size: 12px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+    transition: background 0.15s, border-color 0.15s; white-space: nowrap;
+}
+.listing-view-btn i { font-size: 11px; color: #64748b; }
+.listing-view-btn:hover { background: #f1f5f9; border-color: #cbd5e1; }
+html[data-theme="dark"] .listing-view-btn { background: #1e293b; color: #e2e8f0; border-color: #334155; }
+html[data-theme="dark"] .listing-view-btn:hover { background: #243044; }
+
 .listing-offer-btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 8px 18px; border-radius: 10px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 8px 14px; border-radius: 10px; flex: 1;
     background: #0f172a; color: #fff;
     border: none; font-size: 12px; font-weight: 700;
     cursor: pointer; font-family: inherit;
     transition: background 0.15s, transform 0.1s;
-    white-space: nowrap; width: 100%;
+    white-space: nowrap;
     justify-content: center;
 }
 .listing-offer-btn i { color: #32cd32; font-size: 12px; }
