@@ -341,7 +341,7 @@ async function confirmOffer() {
             const refPayload = JSON.stringify({ id: listingId, img, category, content: listingData?.content || '', created_at: listingData?.created_at || '' });
             await fetch(`${SUPA_URL}/rest/v1/messages`, {
                 method: 'POST', headers: h,
-                body: JSON.stringify({ conversation_id: convId, sender_id: myId, message_type: 'LISTING_REF', message_text: refPayload, is_read: false })
+                body: JSON.stringify({ conversation_id: convId, sender_id: myId, message_type: 'TEXT', message_text: `__LISTING_REF__${refPayload}`, is_read: false })
             });
         } catch(refErr) {
             console.warn('LISTING_REF insert error', refErr);

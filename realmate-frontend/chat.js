@@ -455,9 +455,10 @@ function addMsgBubble(container, m) {
 
     let bubble = '';
     const type = (m.message_type || 'TEXT').toUpperCase();
-    if (type === 'LISTING_REF') {
+    if (type === 'LISTING_REF' || (type === 'TEXT' && (m.message_text || '').startsWith('__LISTING_REF__'))) {
         try {
-            const ref = JSON.parse(m.message_text || '{}');
+            const rawText = (m.message_text || '').replace('__LISTING_REF__', '');
+            const ref = JSON.parse(rawText || '{}');
             const priceMatch = (ref.content || '').match(/(\d+\.?\d*)\s*[Mm](?:illion)?/);
             const price = priceMatch ? `₱${parseFloat(priceMatch[1])}M` : '';
             const catColors = { 'FOR SALE': '#16a34a', 'FOR RENT': '#2563eb', 'PRE-SELLING': '#d97706', 'RESALE': '#7c3aed' };
