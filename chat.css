@@ -709,13 +709,21 @@
 
 .chat-lightbox-close {
   position: absolute;
-  top: 20px;
-  right: 24px;
-  background: none;
+  top: max(20px, env(safe-area-inset-top, 20px));
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.6);
   border: none;
   color: #fff;
-  font-size: 28px;
+  font-size: 20px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ===== NEW CHAT MODAL ===== */
