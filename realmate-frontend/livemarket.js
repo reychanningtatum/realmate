@@ -339,9 +339,18 @@ async function confirmOffer() {
             }
 
             const refPayload = JSON.stringify({ id: listingId, img, category, content: listingData?.content || '', created_at: listingData?.created_at || '' });
+            // Insert LISTING_REF card first
             await fetch(`${SUPA_URL}/rest/v1/messages`, {
                 method: 'POST', headers: h,
                 body: JSON.stringify({ conversation_id: convId, sender_id: myId, message_type: 'TEXT', message_text: `__LISTING_REF__${refPayload}`, is_read: false })
+            });
+            // Automated offer message from the offerer
+            const localUser = JSON.parse(localStorage.getItem('user') || '{}');
+            const senderName = localUser.name || 'Someone';
+            const autoMsg = `Hi ${ownerName}! I'd like to make an offer on your ${category || 'property'} listing. Please let me know if you're open to discussing. 🤝`;
+            await fetch(`${SUPA_URL}/rest/v1/messages`, {
+                method: 'POST', headers: h,
+                body: JSON.stringify({ conversation_id: convId, sender_id: myId, message_type: 'TEXT', message_text: autoMsg, is_read: false })
             });
         } catch(refErr) {
             console.warn('LISTING_REF insert error', refErr);
