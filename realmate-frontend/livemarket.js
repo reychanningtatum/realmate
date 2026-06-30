@@ -143,6 +143,16 @@ async function setListingStatus(listingId, status, btn) {
     applyFilters();
 }
 
+async function deleteListing(listingId, btn) {
+    if (!confirm('Delete this listing? This cannot be undone.')) return;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+    const { error } = await _sb.from('listings').update({ archived: true }).eq('id', listingId);
+    if (error) { alert('Failed to delete listing'); btn.disabled = false; btn.innerHTML = '<i class="fas fa-trash"></i> Delete'; return; }
+    allListings = allListings.filter(l => String(l.id) !== String(listingId));
+    applyFilters();
+}
+
 function buildStatusBadge(listing) {
     if (listing.status === 'sold') return '';
     if (listing.status === 'negotiation') return '<span class="listing-status-badge negotiation"><i class="fas fa-comments-dollar"></i> In Negotiation</span>';
@@ -160,6 +170,9 @@ function buildStatusButtons(listing) {
         </button>
         <button class="status-btn sold-btn ${isSold ? 'active' : ''}" onclick="setListingStatus('${listing.id}', ${isSold ? 'null' : "'sold'"}, this)">
             <i class="fas fa-check-circle"></i> ${isSold ? 'Remove' : 'Sold'}
+        </button>
+        <button class="status-btn delete-btn" onclick="deleteListing('${listing.id}', this)">
+            <i class="fas fa-trash"></i> Delete
         </button>
     </div>`;
 }
