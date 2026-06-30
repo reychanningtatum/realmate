@@ -204,7 +204,7 @@ function buildOfferBadge(listing) {
     const n = window._offerCountMap[String(listing.id)] || 0;
     if (n === 0) return '';
     return `<span class="listing-offer-badge" onclick="event.stopPropagation()">
-        <i class="fas fa-handshake"></i> <span class="offer-count-num">${n}</span>
+        <i class="fas fa-handshake"></i> <span class="offer-count-num">${n}</span> Offer${n !== 1 ? 's' : ''}
     </span>`;
 }
 
