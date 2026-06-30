@@ -1173,12 +1173,16 @@ function computeMatchScore(mine, other) {
         details.project = { match: false, mine: mine.project, theirs: other.project };
     }
 
-    // 3. Unit type match — different unit type kills the match
+    // 3. Unit type match — split "2BR or 3BR" into arrays, match if any overlap
     if (mine.unit && other.unit) {
-        if (mine.unit === other.unit) {
+        const toArr = u => u.split(/\s+or\s+/i).map(s => s.trim().toLowerCase());
+        const mineUnits = toArr(mine.unit);
+        const otherUnits = toArr(other.unit);
+        const overlap = mineUnits.filter(u => otherUnits.includes(u));
+        if (overlap.length) {
             score += 25;
-            reasons.push(`Unit: ${mine.unit}`);
-            details.unit = { match: true, value: mine.unit, points: 25 };
+            reasons.push(`Unit: ${overlap.map(u => u.toUpperCase()).join(' or ')}`);
+            details.unit = { match: true, value: overlap.map(u => u.toUpperCase()).join(' or '), points: 25 };
         } else {
             return { score: 0, reasons: [], details: {} };
         }
