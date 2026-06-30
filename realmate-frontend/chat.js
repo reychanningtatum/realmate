@@ -326,25 +326,12 @@ async function openConversation(convId) {
     const container = document.getElementById('chatMessages');
     container.innerHTML = '';
 
-    // Show pinned listing reference card if coming from an Offer
-    const listingRefRaw = sessionStorage.getItem('chatListingRef');
-    if (listingRefRaw) {
-        try {
-            const ref = JSON.parse(listingRefRaw);
-            sessionStorage.removeItem('chatListingRef');
-            renderListingRefCard(container, ref);
-        } catch {}
-    }
-
     const msgs = await chatGet('messages', `select=*&conversation_id=eq.${convId}&order=created_at.asc`);
 
     if (activeConversationId !== convId) return;
 
-    const hasListingRef = !!container.querySelector('.chat-listing-ref');
     if (!msgs.length) {
-        if (!hasListingRef) {
-            container.insertAdjacentHTML('beforeend', '<div style="text-align:center;padding:40px;color:var(--chat-sub);font-size:13px;">No messages yet. Say hello! 👋</div>');
-        }
+        container.insertAdjacentHTML('beforeend', '<div style="text-align:center;padding:40px;color:var(--chat-sub);font-size:13px;">No messages yet. Say hello! 👋</div>');
     } else {
         let lastDate = '';
         msgs.forEach(m => {
@@ -468,7 +455,22 @@ function addMsgBubble(container, m) {
 
     let bubble = '';
     const type = (m.message_type || 'TEXT').toUpperCase();
-    if (type === 'TEXT') {
+    if (type === 'LISTING_REF') {
+        try {
+            const ref = JSON.parse(m.message_text || '{}');
+            const priceMatch = (ref.content || '').match(/(\d+\.?\d*)\s*[Mm](?:illion)?/);
+            const price = priceMatch ? `₱${parseFloat(priceMatch[1])}M` : '';
+            const catColors = { 'FOR SALE': '#16a34a', 'FOR RENT': '#2563eb', 'PRE-SELLING': '#d97706', 'RESALE': '#7c3aed' };
+            const catColor = catColors[ref.category] || '#64748b';
+            const imgHtml = ref.img ? `<img class="clr-img" src="${ref.img}" alt="" style="width:64px;height:64px;object-fit:cover;border-radius:8px;flex-shrink:0;">` : '';
+            const catHtml = ref.category ? `<span class="clr-cat" style="background:${catColor}15;color:${catColor};font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;">${ref.category}</span>` : '';
+            const priceHtml = price ? `<div class="clr-price" style="font-size:13px;font-weight:800;color:#0f172a;margin-top:4px;">${price}</div>` : '';
+            bubble = `<div class="chat-listing-ref" style="cursor:default;"><div class="clr-label"><i class="fas fa-handshake"></i> Offer Reference</div><div class="clr-body" style="display:flex;gap:10px;align-items:flex-start;">${imgHtml}<div class="clr-info">${catHtml}${priceHtml}</div></div><a class="clr-view-btn" href="listing-detail.html?id=${ref.id}" onclick="event.stopPropagation();" style="display:block;margin-top:10px;text-align:center;padding:8px;background:#0f172a;color:#fff;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;">View Listing</a></div>`;
+        } catch { bubble = `<div class="chat-msg-bubble">📋 Offer Reference</div>`; }
+        const html = `<div class="chat-msg-row ${side}" data-msg-id="${m.id}">${bubble}</div>`;
+        container.insertAdjacentHTML('beforeend', html);
+        return;
+    } else if (type === 'TEXT') {
         bubble = `<div class="chat-msg-bubble">${esc(m.message_text || '')}</div>`;
     } else if (type === 'IMAGE') {
         bubble = `<div class="chat-msg-bubble chat-msg-image-bubble"><img class="chat-msg-image" src="${m.file_url}" alt="Image" onclick="event.stopPropagation();openLightbox('${m.file_url}')" loading="lazy"></div>`;
