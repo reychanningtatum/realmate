@@ -646,8 +646,6 @@ html[data-theme="dark"] .lc-menu-dropdown button:hover { background: #0f172a; }
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: default;
   box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.02);
-  -webkit-clip-path: inset(0 round 16px);
-  clip-path: inset(0 round 16px);
 }
 .listing-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
 
