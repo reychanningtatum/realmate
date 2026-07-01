@@ -679,7 +679,7 @@ html[data-theme="dark"] .lc-menu-dropdown button:hover { background: #0f172a; }
 
 .cat-tag {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.04em;
   text-transform: uppercase;
   padding: 0;
   border: none; border-radius: 0; background: transparent;
