@@ -501,20 +501,22 @@ function enhanceListingText(listing) {
     // Remove price + attached words (e.g. "18M budget", "19M negotiable")
     let priceContext = '';
     if (price) {
-        // Remove range patterns first e.g. "BUDGET 30-40M", "ASKING 30 to 40M"
+        // Remove range patterns first e.g. "BUDGET 30-40M", "ASKING 30 to 40M", "BUDGET 100 TO 150K"
         body = body.replace(/\b(?:budget|asking|price|php|₱)?\s*\d+\.?\d*\s*m?\s*(?:-|to|or)\s*\d+\.?\d*\s*m(?:illion)?\b/gi, '');
+        body = body.replace(/\b(?:budget|asking|price|php|₱)?\s*\d+\.?\d*\s*k?\s*(?:-|to|or)\s*\d+\.?\d*\s*k\b/gi, '');
         // Remove leading price keywords left behind e.g. "BUDGET", "ASKING"
         body = body.replace(/\b(?:budget|asking price|asking)\b/gi, '');
         const pricePatterns = [
             /₱?\s*\d{1,3}(,\d{3})+(\.\d+)?\s*\w*/g,
             /(\d+\.?\d*)\s*[Mm](?:illion)?\s*\w*/gi,
+            /(\d+\.?\d*)\s*[Kk]\b\s*\w*/g,
             /\b\d{7,9}\s*\w*/g,
         ];
         for (const pat of pricePatterns) {
             const match = body.match(pat);
             if (match) {
                 match.forEach(m => {
-                    const extra = m.replace(/₱?\s*\d[\d,.]*\s*[Mm]?(?:illion)?/i, '').trim();
+                    const extra = m.replace(/₱?\s*\d[\d,.]*\s*[MmKk]?(?:illion)?/i, '').trim();
                     if (extra && !priceContext) priceContext = extra;
                     body = body.replace(m, '');
                 });
@@ -576,7 +578,7 @@ function enhanceListingText(listing) {
     if (developer) result += `<span class="lc-hl-developer">${developer}</span>`;
     if (project) result += `<span class="lc-hl-project">${project}</span>`;
     if (unitParts.length) result += `<span class="lc-hl-unit">${unitParts.join(' — ')}</span>`;
-    if (priceRange) result += `<span class="lc-hl-price">₱${priceRange.low}M – ₱${priceRange.high}M${priceContext ? ' ' + priceContext : ''}</span>`;
+    if (priceRange) result += `<span class="lc-hl-price">₱${priceRange.low}${priceRange.unit} – ₱${priceRange.high}${priceRange.unit}${priceContext ? ' ' + priceContext : ''}</span>`;
     else if (price) result += `<span class="lc-hl-price">₱${price.toLocaleString()}${priceContext ? ' ' + priceContext : ''}</span>`;
     if (extras.length) result += `<span class="lc-hl-extras">${extras.join('<br>')}</span>`;
     if (body) result += safeText(body);
@@ -727,7 +729,10 @@ const NON_PROJECT_TOKENS = new Set([
 function extractPriceRange(text) {
     const lower = text.toLowerCase();
     const rangeM = lower.match(/(\d+\.?\d*)\s*m?\s*(?:-|to|or)\s*(\d+\.?\d*)\s*m(?:illion)?/);
-    if (rangeM) return { low: parseFloat(rangeM[1]), high: parseFloat(rangeM[2]) };
+    if (rangeM) return { low: parseFloat(rangeM[1]), high: parseFloat(rangeM[2]), unit: 'M' };
+    // K-denominated range e.g. "100 to 150K", "100K-150K" (typical for rent/lease budgets)
+    const rangeK = lower.match(/(\d+\.?\d*)\s*k?\s*(?:-|to|or)\s*(\d+\.?\d*)\s*k\b/);
+    if (rangeK) return { low: parseFloat(rangeK[1]), high: parseFloat(rangeK[2]), unit: 'K' };
     return null;
 }
 
@@ -736,18 +741,25 @@ function extractPrice(text) {
     // Detect price range e.g. "30-40M", "30 to 40M", "30M-40M"
     const rangeM = lower.match(/(\d+\.?\d*)\s*m?\s*(?:-|to|or)\s*(\d+\.?\d*)\s*m(?:illion)?/);
     if (rangeM) return parseFloat(rangeM[2]) * 1_000_000; // use upper bound for matching
+    // Detect K-denominated range e.g. "100 to 150K", "100K-150K"
+    const rangeK = lower.match(/(\d+\.?\d*)\s*k?\s*(?:-|to|or)\s*(\d+\.?\d*)\s*k\b/);
+    if (rangeK) return parseFloat(rangeK[2]) * 1_000;
     const lines = text.split(/\n/).map(l => l.trim()).filter(Boolean);
     // Try each line first (price alone on a line is unambiguous)
     for (const line of lines) {
         const lo = line.toLowerCase();
         let m = lo.match(/^(?:php|₱|p)?\s*(\d+\.?\d*)\s*m(?:illion)?(?:\b|$)/);
         if (m) return parseFloat(m[1]) * 1_000_000;
+        m = lo.match(/^(?:php|₱|p)?\s*(\d+\.?\d*)\s*k\b/);
+        if (m) return parseFloat(m[1]) * 1_000;
         m = line.replace(/,/g, '').match(/^(\d{7,9})$/);
         if (m) return parseFloat(m[1]);
     }
     // Fallback: scan full text
     let m = lower.match(/(\d+\.?\d*)\s*m(?:illion)?(?:\b|$)/);
     if (m) return parseFloat(m[1]) * 1_000_000;
+    m = lower.match(/(\d+\.?\d*)\s*k\b/);
+    if (m) return parseFloat(m[1]) * 1_000;
     m = text.replace(/,/g, '').match(/\b(\d{7,9})\b/);
     if (m) return parseFloat(m[1]);
     return null;
