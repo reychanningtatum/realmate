@@ -671,7 +671,7 @@ html[data-theme="dark"] .lc-menu-dropdown button:hover { background: #0f172a; }
 
 .listing-card-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 15px; }
 
-.lc-card-header { background: #e9eef4; border-bottom: 1px solid #dde3ea; padding: 12px 18px 10px; display: flex; flex-direction: column; gap: 6px; }
+.lc-card-header { background: #f2f5f9; border-bottom: 1px solid #e5eaf0; padding: 12px 18px 10px; display: flex; flex-direction: column; gap: 6px; }
 .lc-row1 { display: flex; align-items: center; gap: 6px; }
 .lc-row1 .listing-card-date { margin-left: auto; }
 .lc-row2 { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
