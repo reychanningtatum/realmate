@@ -638,7 +638,7 @@ html[data-theme="dark"] .lc-menu-dropdown button:hover { background: #0f172a; }
 
 /* ── Single listing card ── */
 .listing-card {
-  background: white;
+  background: #e9eef4;
   border-radius: 16px;
   border: 1px solid #c8d3de;
   overflow: hidden; position: relative;
@@ -668,7 +668,7 @@ html[data-theme="dark"] .lc-menu-dropdown button:hover { background: #0f172a; }
   color: white; font-size: 20px; font-weight: 800;
 }
 
-.listing-card-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 15px; }
+.listing-card-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 15px; background: white; }
 
 .listing-card-top { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
 .lc-badges-row { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
