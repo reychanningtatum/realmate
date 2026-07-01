@@ -430,6 +430,7 @@ html[data-theme="dark"] .chip.active { background: rgba(50,205,50,0.15); color: 
   background: linear-gradient(90deg, #3b82f6, #32cd32, #3b82f6);
   background-size: 200% 100%;
   animation: aiGradientBar 4s linear infinite;
+  z-index: 2; pointer-events: none;
 }
 @keyframes aiGradientBar {
   0% { background-position: 0% 0; }
