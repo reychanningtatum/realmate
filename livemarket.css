@@ -673,7 +673,7 @@ html[data-theme="dark"] .lc-menu-dropdown button:hover { background: #0f172a; }
 .lc-badges-row { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
 .lc-badges-row > * { flex-shrink: 0; }
 .lc-meta-row { display: flex; align-items: center; gap: 6px; }
-.lc-row1 { display: flex; align-items: center; gap: 6px; padding: 12px 18px; margin: -16px -18px 0; background: #f8fafc; border-bottom: 1px solid #f1f5f9; border-radius: 12px 12px 0 0; }
+.lc-row1 { display: flex; align-items: center; gap: 6px; padding: 12px 18px; margin: -16px -18px 0; background: #e9eef4; border-bottom: 1px solid #dde3ea; border-radius: 12px 12px 0 0; }
 .lc-row1 .listing-card-date { margin-left: auto; }
 .lc-row2 { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; padding-top: 2px; }
 
