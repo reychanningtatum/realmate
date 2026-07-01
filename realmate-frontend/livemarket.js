@@ -600,7 +600,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
     const matchReasons = matchLabel?.matchReasons || [];
     const isDismissedByMe = getDismissedMatches().has(String(listing.id));
     const matchBanner = (matchLabel && !isDismissedByMe) ? `
-        <div class="match-banner" onclick="event.stopPropagation(); openMatchForListing('${listing.id}')" style="cursor:pointer;border-radius:15px 15px 0 0;">
+        <div class="match-banner" onclick="event.stopPropagation(); openMatchForListing('${listing.id}')" style="cursor:pointer;">
             <div style="display:flex;align-items:center;gap:5px;flex:1;min-width:0;">
                 <i class="fas fa-circle-nodes" style="color:#32cd32;"></i>
                 <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#94a3b8;">AI Match · <span style="color:#fff;">${matchLabel.myCategory}</span></span>

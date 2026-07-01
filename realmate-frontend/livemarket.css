@@ -381,7 +381,6 @@ html[data-theme="dark"] .chip.active { background: rgba(50,205,50,0.15); color: 
   padding: 8px 12px;
   position: relative;
   overflow: hidden;
-  border-radius: 15px 15px 0 0;
 }
 .match-banner::before {
   content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
