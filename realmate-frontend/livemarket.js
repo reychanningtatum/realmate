@@ -775,6 +775,17 @@ function _unitToken(str) {
     return null;
 }
 
+// Smaller-is-first ranking for unit sizes. Used to resolve a unit range
+// (e.g. "1BR or Studio") down to the single unit the stated price most
+// accurately reflects — a budget quoted for a range fits the smaller unit.
+const _UNIT_RANK = { 'Studio': 0, '1BR': 1, '2BR': 2, '3BR': 3, '4BR': 4 };
+function _unitRank(u) { return _UNIT_RANK[u] != null ? _UNIT_RANK[u] : 99; }
+function _smallerUnit(a, b) {
+    if (!a) return b;
+    if (!b) return a;
+    return _unitRank(a) <= _unitRank(b) ? a : b;
+}
+
 function extractUnit(text) {
     const lower = text.toLowerCase();
     // Detect unit range across any combo: "Studio or 1BR", "2-BEDROOM OR 3-BEDROOM", "1BR or 2 Bedroom"
@@ -783,7 +794,9 @@ function extractUnit(text) {
     if (rangeMatch) {
         const a = _unitToken(rangeMatch[1]);
         const b = _unitToken(rangeMatch[2]);
-        if (a && b) return `${a} or ${b}`;
+        // Resolve the range to the smaller unit — the stated price is a
+        // closer fit for it, so the ticker/FMV bucket by a single unit.
+        if (a || b) return _smallerUnit(a, b);
     }
     const lines = text.split(/\n/).map(l => l.trim()).filter(Boolean);
     // Check each line — a line with just "1BR" or "1 BEDROOM" is definitive
