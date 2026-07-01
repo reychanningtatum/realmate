@@ -158,10 +158,10 @@ function extractUnit(t) { const l=t.toLowerCase(); if(/\bstudio\b/.test(l)) retu
 function extractProject(t) { const u=t.toUpperCase(); let e=Infinity,f=null; for(const p of KNOWN_PROJECTS){const i=u.indexOf(p.toUpperCase()); if(i!==-1&&i<e){e=i;f=p;}} return f; }
 function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
 
-async function loadOverview() {
-  const { data: listings } = await _sb.from('listings').select('*').eq('archived', false);
-  if (!listings) { document.getElementById('moContent').innerHTML = '<p>Failed to load.</p>'; return; }
-
+// Build scored market items from listings, bucketed by the supplied key function.
+// keyFn(proj, unit) returns the bucket key (or null to skip). Bucket by project
+// for the summary sections, or by project+unit for the per-unit FMV watchlist.
+function computeItems(listings, keyFn) {
   const now = Date.now();
   const DAY = 86400000;
   const buckets = {};
@@ -177,7 +177,8 @@ async function loadOverview() {
     const isDemand = cat.startsWith('WILLING');
     if (!isSupply && !isDemand) return;
 
-    const pk = proj.toLowerCase();
+    const pk = keyFn(proj, unit);
+    if (pk == null) return;
     if (!buckets[pk]) buckets[pk] = { proj, prices: [], sqms: [], supply: 0, demand: 0, sold: 0, negotiation: 0, recent7d: 0, recent30d: 0, units: new Set() };
     if (price) buckets[pk].prices.push(price);
     const sqm = extractSqm(text);
@@ -192,7 +193,7 @@ async function loadOverview() {
     if (age < 30 * DAY) buckets[pk].recent30d++;
   });
 
-  const items = Object.values(buckets).map(b => {
+  return Object.values(buckets).map(b => {
     const total = b.supply + b.demand;
     const avg = b.prices.length ? b.prices.reduce((s,p)=>s+p,0)/b.prices.length : 0;
     const min = b.prices.length ? Math.min(...b.prices) : 0;
@@ -222,6 +223,17 @@ async function loadOverview() {
 
     return { ...b, avg, min, max, total, fmvUnit, fmvSqm, demandScore, supplyScore, liquidityScore, momentumScore, volatilityScore, compositeScore, sentiment, sentClass, confidence, unitCount: b.units.size };
   }).sort((a,b) => b.compositeScore - a.compositeScore);
+}
+
+async function loadOverview() {
+  const { data: listings } = await _sb.from('listings').select('*').eq('archived', false);
+  if (!listings) { document.getElementById('moContent').innerHTML = '<p>Failed to load.</p>'; return; }
+
+  // Project-level items power the summary sections (insights, gainers, top FMV).
+  const items = computeItems(listings, proj => proj.toLowerCase());
+  // Project + unit items give the watchlist a distinct FMV row per unit type.
+  const watchItems = computeItems(listings, (proj, unit) =>
+    proj.toLowerCase() + '||' + (unit ? unit.toLowerCase() : '_various'));
 
   const up = items.filter(i => i.sentClass === 'buy').length;
   const down = items.filter(i => i.sentClass === 'sell').length;
@@ -306,7 +318,7 @@ async function loadOverview() {
 
     <div class="mo-section-title"><i class="fas fa-list" style="color:#32cd32;"></i> Watchlist</div>
     <div class="mo-card-list">
-      ${items.map(i => {
+      ${watchItems.map(i => {
         const key = encodeURIComponent(`${i.proj}||${Array.from(i.units)[0]||''}||ownership`);
         return `<div class="mo-card-item" onclick="location.href='market-summary.html?key=${key}'">
           <div class="mo-card-left">
