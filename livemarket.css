@@ -329,7 +329,10 @@ h1,h2,h3 { font-family: 'Playfair Display', serif; }
   display: flex; gap: 6px;
   flex-wrap: nowrap; overflow-x: auto;
   scrollbar-width: none; -ms-overflow-style: none;
-  padding-bottom: 0;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
 }
 .filter-chips::-webkit-scrollbar { display: none; }
 
@@ -694,12 +697,7 @@ html[data-theme="dark"] .lc-menu-dropdown button:hover { background: #0f172a; }
 .cat-wrent .cat-dot  { background: #0891b2; }
 .cat-wlease .cat-dot { background: #db2777; }
 
-.cat-sale   { color: #15803d; }
-.cat-rent   { color: #1d4ed8; }
-.cat-lease  { color: #6d28d9; }
-.cat-wbuy   { color: #b45309; }
-.cat-wrent  { color: #0e7490; }
-.cat-wlease { color: #be185d; }
+.cat-sale, .cat-rent, .cat-lease, .cat-wbuy, .cat-wrent, .cat-wlease { color: #374151; }
 
 .listing-text {
   font-size: 13px; line-height: 1.6; color: #475569;
