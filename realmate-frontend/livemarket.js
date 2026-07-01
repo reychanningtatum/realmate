@@ -118,18 +118,12 @@ function getPinnedIds() {
 function togglePin(listingId, btn) {
     let pins = getPinnedIds();
     const id = String(listingId);
-    if (pins.includes(id)) {
-        pins = pins.filter(p => p !== id);
-        btn.innerHTML = '<i class="fas fa-thumbtack"></i>';
-        btn.title = 'Pin';
-        btn.classList.remove('pinned');
-    } else {
-        pins.push(id);
-        btn.innerHTML = '<i class="fas fa-thumbtack"></i>';
-        btn.title = 'Unpin';
-        btn.classList.add('pinned');
-    }
+    const pinning = !pins.includes(id);
+    if (pinning) pins.push(id); else pins = pins.filter(p => p !== id);
     localStorage.setItem('rm_pinned', JSON.stringify(pins));
+    if (btn) {
+        btn.innerHTML = `<i class="fas fa-thumbtack ${pinning ? 'pinned-icon' : ''}"></i><span>${pinning ? 'Unpin' : 'Pin'}</span>`;
+    }
 }
 
 // ── Listing status ──────────────────────────────
@@ -143,26 +137,80 @@ async function setListingStatus(listingId, status, btn) {
     applyFilters();
 }
 
-function toggleCardMenu(btn) {
-    const dropdown = btn.nextElementSibling;
-    const isOpen = dropdown.classList.contains('open');
-    // Close all open menus first
-    document.querySelectorAll('.lc-menu-dropdown.open').forEach(d => d.classList.remove('open'));
-    if (!isOpen) dropdown.classList.add('open');
+// ── Swipe-to-reveal card actions ──────────────────
+const SWIPE_BTN_WIDTH = 64;
+
+function resetSwipe(el) {
+    const content = el.closest('.listing-card')?.querySelector('.lc-swipe-content');
+    if (content) { content.style.transition = 'transform 0.2s ease'; content.style.transform = 'translateX(0)'; }
 }
-function closeCardMenu(el) {
-    el.closest('.lc-menu-dropdown')?.classList.remove('open');
+
+function closeAllSwipes(except = null) {
+    document.querySelectorAll('.lc-swipe-content').forEach(c => {
+        if (c !== except) { c.style.transition = 'transform 0.2s ease'; c.style.transform = 'translateX(0)'; }
+    });
 }
-document.addEventListener('click', () => {
-    document.querySelectorAll('.lc-menu-dropdown.open').forEach(d => d.classList.remove('open'));
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.lc-swipe-content') && !e.target.closest('.lc-swipe-actions')) closeAllSwipes();
 });
+
+function attachSwipeHandlers(card) {
+    const content = card.querySelector('.lc-swipe-content');
+    const actions = card.querySelector('.lc-swipe-actions');
+    if (!content || !actions) return;
+    const maxSwipe = actions.querySelectorAll('.lc-swipe-btn').length * SWIPE_BTN_WIDTH;
+    if (maxSwipe === 0) return;
+
+    let startX = 0, startY = 0, currentX = 0, dragging = false, decided = false, isHorizontal = false;
+
+    content.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('a,button,input,textarea')) return;
+        startX = e.clientX; startY = e.clientY;
+        const match = /translateX\((-?\d+(?:\.\d+)?)px\)/.exec(content.style.transform || '');
+        currentX = match ? parseFloat(match[1]) : 0;
+        dragging = true; decided = false; isHorizontal = false;
+        content.style.transition = 'none';
+    });
+
+    content.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        if (!decided) {
+            if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+            decided = true;
+            isHorizontal = Math.abs(dx) > Math.abs(dy);
+            if (isHorizontal) content.setPointerCapture(e.pointerId);
+        }
+        if (!isHorizontal) return;
+        e.preventDefault();
+        let next = currentX + dx;
+        next = Math.max(-maxSwipe, Math.min(0, next));
+        content.style.transform = `translateX(${next}px)`;
+    });
+
+    function endDrag(e) {
+        if (!dragging) return;
+        dragging = false;
+        if (!isHorizontal) return;
+        const dx = e.clientX - startX;
+        const match = /translateX\((-?\d+(?:\.\d+)?)px\)/.exec(content.style.transform || '');
+        const current = match ? parseFloat(match[1]) : 0;
+        content.style.transition = 'transform 0.2s ease';
+        const shouldOpen = current < -maxSwipe / 3 || dx < -40;
+        content.style.transform = shouldOpen ? `translateX(${-maxSwipe}px)` : 'translateX(0)';
+        if (shouldOpen) closeAllSwipes(content);
+    }
+    content.addEventListener('pointerup', endDrag);
+    content.addEventListener('pointercancel', endDrag);
+}
 
 async function deleteListing(listingId, btn) {
     if (!confirm('Delete this listing? This cannot be undone.')) return;
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i><span>Delete</span>';
     const { error } = await _sb.from('listings').update({ archived: true }).eq('id', listingId);
-    if (error) { alert('Failed to delete listing'); btn.disabled = false; btn.innerHTML = '<i class="fas fa-trash"></i> Delete'; return; }
+    if (error) { alert('Failed to delete listing'); btn.disabled = false; btn.innerHTML = '<i class="fas fa-trash"></i><span>Delete</span>'; return; }
     allListings = allListings.filter(l => String(l.id) !== String(listingId));
     applyFilters();
 }
@@ -563,28 +611,35 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
         ? `<div class="sold-ribbon"><span>SOLD</span></div>`
         : '';
 
-    card.innerHTML = `${soldRibbon}${matchBanner}${imagesHtml(listing)}
+    const isPinned = getPinnedIds().includes(String(listing.id));
+    const isOwner = localUser && listing.user_name === localUser.name;
+    const canDismiss = matchLabel && localUser && listing.user_name !== localUser.name;
+
+    const swipeActions = `
+        <div class="lc-swipe-actions">
+            <button class="lc-swipe-btn lc-swipe-pin" onclick="event.stopPropagation(); togglePin('${listing.id}', this); resetSwipe(this)">
+                <i class="fas fa-thumbtack ${isPinned ? 'pinned-icon' : ''}"></i>
+                <span>${isPinned ? 'Unpin' : 'Pin'}</span>
+            </button>
+            ${canDismiss ? `
+            <button class="lc-swipe-btn lc-swipe-dismiss" onclick="event.stopPropagation(); resetSwipe(this); confirmDismissMatch('${listing.id}')">
+                <i class="fas fa-circle-xmark"></i>
+                <span>Dismiss</span>
+            </button>` : ''}
+            ${isOwner ? `
+            <button class="lc-swipe-btn lc-swipe-delete" onclick="event.stopPropagation(); deleteListing('${listing.id}', this)">
+                <i class="fas fa-trash"></i>
+                <span>Delete</span>
+            </button>` : ''}
+        </div>`;
+
+    card.innerHTML = `${swipeActions}
+        <div class="lc-swipe-content">
+        ${soldRibbon}${matchBanner}${imagesHtml(listing)}
         <div class="lc-card-header">
             <div class="lc-row1">
                 ${catTag(listing.category)}
                 <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
-                <div class="lc-menu-wrap" onclick="event.stopPropagation()">
-                <button class="lc-menu-btn" onclick="toggleCardMenu(this)"><i class="fas fa-ellipsis-vertical"></i></button>
-                <div class="lc-menu-dropdown">
-                    <button onclick="togglePin('${listing.id}', this); closeCardMenu(this)">
-                        <i class="fas fa-thumbtack ${getPinnedIds().includes(String(listing.id)) ? 'pinned-icon' : ''}"></i>
-                        ${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}
-                    </button>
-                    ${localUser && listing.user_name === localUser.name ? `
-                    <button class="lc-menu-delete" onclick="deleteListing('${listing.id}', this)">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>` : ''}
-                    ${matchLabel && localUser && listing.user_name !== localUser.name ? `
-                    <button class="lc-menu-delete" onclick="closeCardMenu(this); confirmDismissMatch('${listing.id}')">
-                        <i class="fas fa-times-circle"></i> Dismiss Match
-                    </button>` : ''}
-                </div>
-                </div>
             </div>
         </div>
         ${(() => {
@@ -616,7 +671,9 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
             ${buildStatusButtons(listing)}
             ${buildOfferRow(listing)}
         </div>
+        </div>
     `;
+    attachSwipeHandlers(card);
 
     // Wire up image lightbox clicks
     const imgWrap = card.querySelector('.listing-card-images[data-lbkey]');

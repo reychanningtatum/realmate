@@ -501,42 +501,26 @@ html[data-theme="dark"] .chip.active { background: rgba(50,205,50,0.15); color: 
 .pin-btn.pinned { color: #f59e0b; }
 .pin-btn.pinned:hover { color: #d97706; }
 
-/* ── Card menu (⋮ top-right) ── */
-.lc-menu-wrap {
-    position: relative; flex-shrink: 0;
+/* ── Card swipe-to-reveal actions ── */
+.lc-swipe-actions {
+    position: absolute; top: 0; right: 0; bottom: 0;
+    display: flex; z-index: 0;
 }
-.lc-menu-btn {
-    width: 28px; height: 28px; border-radius: 50%;
-    border: none; background: rgba(255,255,255,0.9);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
-    color: #64748b; font-size: 13px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s, color 0.15s;
+.lc-swipe-btn {
+    width: 64px; height: 100%; border: none; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; font-size: 11px; font-weight: 600; color: #fff;
+    font-family: inherit;
 }
-.lc-menu-btn:hover { background: #fff; color: #0f172a; }
-.lc-menu-dropdown {
-    display: none; position: absolute; top: 34px; right: 0;
-    background: #fff; border: 1px solid #e2e8f0;
-    border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-    min-width: 140px; overflow: hidden; z-index: 100;
+.lc-swipe-btn i { font-size: 16px; }
+.lc-swipe-pin { background: #f59e0b; }
+.lc-swipe-dismiss { background: #64748b; }
+.lc-swipe-delete { background: #ef4444; }
+.lc-swipe-content {
+    position: relative; z-index: 1; background: #fff;
+    display: flex; flex-direction: column;
+    touch-action: pan-y; will-change: transform;
 }
-.lc-menu-dropdown.open { display: block; }
-.lc-menu-dropdown button {
-    width: 100%; padding: 11px 14px; border: none; background: transparent;
-    font-size: 13px; font-weight: 600; color: #0f172a;
-    text-align: left; cursor: pointer; display: flex; align-items: center; gap: 9px;
-    font-family: inherit; transition: background 0.12s;
-}
-.lc-menu-dropdown button:hover { background: #f8fafc; }
-.lc-menu-dropdown button i { font-size: 12px; color: #64748b; width: 14px; }
-.lc-menu-dropdown button i.pinned-icon { color: #f59e0b; }
-.lc-menu-delete { color: #ef4444 !important; }
-.lc-menu-delete i { color: #ef4444 !important; }
-.lc-menu-delete:hover { background: #fef2f2 !important; }
-html[data-theme="dark"] .lc-menu-btn { background: rgba(15,23,42,0.85); color: #94a3b8; }
-html[data-theme="dark"] .lc-menu-dropdown { background: #1e293b; border-color: #334155; }
-html[data-theme="dark"] .lc-menu-dropdown button { color: #e2e8f0; }
-html[data-theme="dark"] .lc-menu-dropdown button:hover { background: #0f172a; }
 
 /* ── Listing status badge ── */
 .listing-status-badge {
