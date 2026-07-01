@@ -2160,7 +2160,7 @@ renderMarketReportPdf();
                 playerVars: { autoplay: 1, mute: 1, rel: 0, modestbranding: 1, playsinline: 1 },
                 events: {
                     onReady: function(e) {
-                        const autoMute = localStorage.getItem('rm_automute_video') === '1';
+                        const autoMute = localStorage.getItem('rm_automute_video') !== '0';
                         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
                         if (autoMute || isMobile) {
                             _ytMuted = true;
