@@ -563,35 +563,36 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
         ? `<div class="sold-ribbon"><span>SOLD</span></div>`
         : '';
 
-    card.innerHTML = `${soldRibbon}${matchBanner}${imagesHtml(listing)}<div class="listing-card-body">
-            <div class="listing-card-top">
-                <div class="lc-row1">
-                    ${catTag(listing.category)}
-                    <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
-                    <div class="lc-menu-wrap" onclick="event.stopPropagation()">
-                    <button class="lc-menu-btn" onclick="toggleCardMenu(this)"><i class="fas fa-ellipsis-vertical"></i></button>
-                    <div class="lc-menu-dropdown">
-                        <button onclick="togglePin('${listing.id}', this); closeCardMenu(this)">
-                            <i class="fas fa-thumbtack ${getPinnedIds().includes(String(listing.id)) ? 'pinned-icon' : ''}"></i>
-                            ${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}
-                        </button>
-                        ${localUser && listing.user_name === localUser.name ? `
-                        <button class="lc-menu-delete" onclick="deleteListing('${listing.id}', this)">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>` : ''}
-                        ${matchLabel && localUser && listing.user_name !== localUser.name ? `
-                        <button class="lc-menu-delete" onclick="closeCardMenu(this); confirmDismissMatch('${listing.id}')">
-                            <i class="fas fa-times-circle"></i> Dismiss Match
-                        </button>` : ''}
-                    </div>
-                    </div>
+    card.innerHTML = `${soldRibbon}${matchBanner}${imagesHtml(listing)}
+        <div class="lc-card-header">
+            <div class="lc-row1">
+                ${catTag(listing.category)}
+                <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
+                <div class="lc-menu-wrap" onclick="event.stopPropagation()">
+                <button class="lc-menu-btn" onclick="toggleCardMenu(this)"><i class="fas fa-ellipsis-vertical"></i></button>
+                <div class="lc-menu-dropdown">
+                    <button onclick="togglePin('${listing.id}', this); closeCardMenu(this)">
+                        <i class="fas fa-thumbtack ${getPinnedIds().includes(String(listing.id)) ? 'pinned-icon' : ''}"></i>
+                        ${getPinnedIds().includes(String(listing.id)) ? 'Unpin' : 'Pin'}
+                    </button>
+                    ${localUser && listing.user_name === localUser.name ? `
+                    <button class="lc-menu-delete" onclick="deleteListing('${listing.id}', this)">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>` : ''}
+                    ${matchLabel && localUser && listing.user_name !== localUser.name ? `
+                    <button class="lc-menu-delete" onclick="closeCardMenu(this); confirmDismissMatch('${listing.id}')">
+                        <i class="fas fa-times-circle"></i> Dismiss Match
+                    </button>` : ''}
                 </div>
-                ${(() => {
-                    const offerBadge = buildOfferBadge(listing);
-                    const matchBadge = myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : '';
-                    return (offerBadge || matchBadge) ? `<div class="lc-row2">${offerBadge}${matchBadge}</div>` : '';
-                })()}
+                </div>
             </div>
+            ${(() => {
+                const offerBadge = buildOfferBadge(listing);
+                const matchBadge = myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : '';
+                return (offerBadge || matchBadge) ? `<div class="lc-row2">${offerBadge}${matchBadge}</div>` : '';
+            })()}
+        </div>
+        <div class="listing-card-body">
             ${buildStatusBadge(listing)}
             <p class="listing-text">${enhanceListingText(listing)}</p>
             ${buildFMVBadge(fmvResult)}
