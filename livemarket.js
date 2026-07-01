@@ -124,6 +124,8 @@ function togglePin(listingId, btn) {
     if (btn) {
         btn.innerHTML = `<i class="fas fa-thumbtack ${pinning ? 'pinned-icon' : ''}"></i><span>${pinning ? 'Unpin' : 'Pin'}</span>`;
     }
+    // On the Pinned tab, re-render immediately so the card appears/disappears without a refresh
+    if (typeof activeCategory !== 'undefined' && activeCategory === 'PINNED') applyFilters();
 }
 
 // ── Listing status ──────────────────────────────
