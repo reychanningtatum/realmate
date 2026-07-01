@@ -256,7 +256,8 @@ async function loadOverview() {
   if (topFmv[0]) insights.push(`${topFmv[0].proj} commands the highest FMV at ${fmtP(topFmv[0].fmvUnit)} per unit.`);
   if (topFmv[0] && topFmv[0].demandScore > 60) insights.push(`Demand growth is supporting upward FMV pressure on ${topFmv[0].proj}.`);
 
-  const fmvRanked = topFmv.slice(0, 5);
+  // Rank highest FMV per project + unit so each unit type ranks on its own.
+  const fmvRanked = [...watchItems].filter(i => i.fmvUnit > 0).sort((a,b) => b.fmvUnit - a.fmvUnit).slice(0, 5);
 
   function heatColor(score) {
     if (score >= 70) return '#15803d';
