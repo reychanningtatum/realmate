@@ -951,7 +951,7 @@ function onSearchInput() {
 }
 
 function selectMarketCat(btn) {
-    document.querySelectorAll('#marketCatFilters .cat-nav-item').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('#marketCatFilters .chip').forEach(c => c.classList.remove('active'));
     btn.classList.add('active');
     marketCat = btn.dataset.cat;
     activeCategory = marketCat;
@@ -964,7 +964,7 @@ function selectCat(btn) {
 }
 
 function selectSubCat(btn) {
-    document.querySelectorAll('.cat-nav-item').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.chip-sub').forEach(c => c.classList.remove('active'));
     btn.classList.add('active');
     myListingsSubCat = btn.dataset.sub;
     applyFilters();
@@ -1409,7 +1409,7 @@ function applyFilters() {
 }
 
 function selectCatByName(catName) {
-    const chip = document.querySelector(`.cat-nav-item[data-cat="${catName}"]`);
+    const chip = document.querySelector(`.chip[data-cat="${catName}"]`);
     if (chip) selectCat(chip);
 }
 

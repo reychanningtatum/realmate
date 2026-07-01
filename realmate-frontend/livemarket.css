@@ -325,69 +325,49 @@ h1,h2,h3 { font-family: 'Playfair Display', serif; }
 .seg-tab:hover { color: var(--text-main); }
 .seg-tab.active { color: #32cd32; border-bottom-color: #32cd32; }
 
-/* ── Category Nav (enterprise segmented bar) ── */
-.cat-nav {
-  display: flex;
-  background: #fff;
-  border-bottom: 1px solid #f1f5f9;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  flex-shrink: 0;
+.filter-chips {
+  display: flex; gap: 6px;
+  flex-wrap: nowrap; overflow-x: auto;
+  scrollbar-width: none; -ms-overflow-style: none;
+  padding-bottom: 0;
 }
-.cat-nav::-webkit-scrollbar { display: none; }
+.filter-chips::-webkit-scrollbar { display: none; }
 
-.cat-nav-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 11px 16px;
-  border: none;
-  border-bottom: 2px solid transparent;
-  background: transparent;
-  color: #64748b;
-  font-size: 12px;
-  font-weight: 500;
-  font-family: inherit;
+.chip {
+  padding: 7px 16px; border-radius: 50px; flex-shrink: 0;
+  border: 1.5px solid var(--border); background: white;
+  font-size: 12px; font-weight: 600; color: var(--text-sub);
+  cursor: pointer; transition: all 0.15s; font-family: inherit;
   white-space: nowrap;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: color 0.15s, border-color 0.15s, background 0.15s;
-  position: relative;
-  letter-spacing: 0.01em;
 }
-.cat-nav-item i {
-  font-size: 12px;
-  color: #94a3b8;
-  transition: color 0.15s;
-}
-.cat-nav-item:hover {
-  color: #1e293b;
-  background: #f8fafc;
-}
-.cat-nav-item:hover i { color: #475569; }
-.cat-nav-item.active {
-  color: #111827;
-  font-weight: 600;
-  background: #f7fbf7;
-  border-bottom-color: #32cd32;
-}
-.cat-nav-item.active i { color: #32cd32; }
+.chip:hover { border-color: var(--primary); color: var(--primary); }
+.chip.active { background: var(--primary); border-color: var(--primary); color: white; box-shadow: 0 2px 8px rgba(50,205,50,0.2); }
 
-/* sub-filter row (slightly smaller) */
-.cat-nav-sub { border-top: 1px solid #f1f5f9; }
-.cat-nav-sub .cat-nav-item { padding: 9px 14px; font-size: 11.5px; }
+.chip.chip-match { border-color: rgba(50,205,50,0.3); color: #32cd32; background: linear-gradient(135deg, #0f172a, #1e3a5f); }
+.chip.chip-match:hover { background: linear-gradient(135deg, #0f172a, #16a34a); color: #fff; border-color: #32cd32; }
+.chip.chip-match.active { background: linear-gradient(135deg, #0f172a, #16a34a) !important; border-color: #32cd32 !important; color: #fff !important; box-shadow: 0 0 12px rgba(50,205,50,0.3); }
 
-/* chip-match & chip-mine variants preserved for JS usage */
-.chip-match { background: linear-gradient(135deg, #0f172a, #1e3a5f); color: #32cd32; border: 1px solid rgba(50,205,50,0.3); border-radius: 8px; }
-.chip-match.active { background: linear-gradient(135deg, #0f172a, #16a34a) !important; }
-.chip-mine { color: #16a34a; }
+.chip-mine { border-color: #86efac; color: #16a34a; }
+.chip-mine:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-soft); }
+.chip-mine.active { background: var(--primary); border-color: var(--primary); color: white; }
 
-html[data-theme="dark"] .cat-nav { background: #0f172a; border-bottom-color: #1e293b; }
-html[data-theme="dark"] .cat-nav-item { color: #64748b; }
-html[data-theme="dark"] .cat-nav-item:hover { background: #1e293b; color: #cbd5e1; }
-html[data-theme="dark"] .cat-nav-item.active { background: rgba(50,205,50,0.06); color: #e2e8f0; border-bottom-color: #32cd32; }
-html[data-theme="dark"] .cat-nav-item.active i { color: #32cd32; }
+.my-listings-subfilter {
+  margin-top: 6px; padding: 10px 14px;
+  background: var(--primary-soft); border-radius: 12px; border: none;
+}
+.chip-sub {
+  font-size: 12px; padding: 7px 16px;
+  background: white; border-color: var(--border); color: var(--text-sub);
+}
+.chip-sub:hover { border-color: var(--primary); color: var(--primary); }
+.chip-sub.active { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 2px 6px rgba(50,205,50,0.2); }
+
+html[data-theme="dark"] .my-listings-subfilter { background: rgba(50,205,50,0.08); }
+html[data-theme="dark"] .chip-sub { background: #1e293b; border-color: #334155; color: #86efac; }
+html[data-theme="dark"] .chip-sub.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+html[data-theme="dark"] .chip { background: #1e293b; color: #94a3b8; border-color: #334155; }
+html[data-theme="dark"] .chip:hover { background: #243044; color: #cbd5e1; }
+html[data-theme="dark"] .chip.active { background: rgba(50,205,50,0.15); color: #32cd32; border-color: #32cd32; }
 
 /* ── Match banner on card ── */
 .match-banner {
