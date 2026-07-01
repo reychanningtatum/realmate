@@ -381,8 +381,7 @@ html[data-theme="dark"] .chip.active { background: rgba(50,205,50,0.15); color: 
   padding: 8px 12px;
   position: relative;
   overflow: hidden;
-  border-radius: 16px 16px 0 0;
-  margin: -1px -1px 0;
+  border-radius: 15px 15px 0 0;
 }
 .match-banner::before {
   content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
@@ -647,8 +646,7 @@ html[data-theme="dark"] .lc-menu-dropdown button:hover { background: #0f172a; }
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: default;
   box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.02);
-  -webkit-mask-image: -webkit-radial-gradient(white, black);
-  transform: translateZ(0);
+  isolation: isolate;
 }
 .listing-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
 
