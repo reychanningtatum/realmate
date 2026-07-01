@@ -50,33 +50,49 @@
         </button>
       </div>
       <!-- 2. Category Filters (right below tabs) -->
-      <div class="filter-chips" id="marketCatFilters">
-        <button class="chip active" data-cat="ALL" onclick="selectMarketCat(this)">All</button>
-        <button class="chip" data-cat="PINNED" onclick="selectMarketCat(this)"><i class="fas fa-thumbtack"></i> Pinned</button>
-        <button class="chip" data-cat="FOR SALE" onclick="selectMarketCat(this)">For Sale</button>
-        <button class="chip" data-cat="FOR RENT" onclick="selectMarketCat(this)">For Rent</button>
-        <button class="chip" data-cat="FOR LEASE" onclick="selectMarketCat(this)">For Lease</button>
-        <button class="chip" data-cat="WILLING TO BUY" onclick="selectMarketCat(this)">Willing to Buy</button>
-        <button class="chip" data-cat="WILLING TO RENT" onclick="selectMarketCat(this)">Willing to Rent</button>
-        <button class="chip" data-cat="WILLING TO LEASE" onclick="selectMarketCat(this)">Willing to Lease</button>
+      <div class="cat-nav" id="marketCatFilters">
+        <button class="cat-nav-item active" data-cat="ALL" onclick="selectMarketCat(this)">
+          <i class="far fa-layer-group"></i><span>All</span>
+        </button>
+        <button class="cat-nav-item" data-cat="PINNED" onclick="selectMarketCat(this)">
+          <i class="far fa-bookmark"></i><span>Pinned</span>
+        </button>
+        <button class="cat-nav-item" data-cat="FOR SALE" onclick="selectMarketCat(this)">
+          <i class="far fa-tag"></i><span>For Sale</span>
+        </button>
+        <button class="cat-nav-item" data-cat="FOR RENT" onclick="selectMarketCat(this)">
+          <i class="far fa-calendar-check"></i><span>For Rent</span>
+        </button>
+        <button class="cat-nav-item" data-cat="FOR LEASE" onclick="selectMarketCat(this)">
+          <i class="far fa-file-contract"></i><span>For Lease</span>
+        </button>
+        <button class="cat-nav-item" data-cat="WILLING TO BUY" onclick="selectMarketCat(this)">
+          <i class="far fa-hand-holding-usd"></i><span>Willing to Buy</span>
+        </button>
+        <button class="cat-nav-item" data-cat="WILLING TO RENT" onclick="selectMarketCat(this)">
+          <i class="far fa-key"></i><span>Willing to Rent</span>
+        </button>
+        <button class="cat-nav-item" data-cat="WILLING TO LEASE" onclick="selectMarketCat(this)">
+          <i class="far fa-pen-to-square"></i><span>Willing to Lease</span>
+        </button>
       </div>
-      <div class="filter-chips" id="portfolioSubfilter" style="display:none;">
-        <button class="chip chip-sub active" data-sub="ALL" onclick="selectSubCat(this)">All</button>
-        <button class="chip chip-sub" data-sub="FOR SALE" onclick="selectSubCat(this)">For Sale</button>
-        <button class="chip chip-sub" data-sub="FOR RENT" onclick="selectSubCat(this)">For Rent</button>
-        <button class="chip chip-sub" data-sub="FOR LEASE" onclick="selectSubCat(this)">For Lease</button>
-        <button class="chip chip-sub" data-sub="WILLING TO BUY" onclick="selectSubCat(this)">Willing to Buy</button>
-        <button class="chip chip-sub" data-sub="WILLING TO RENT" onclick="selectSubCat(this)">Willing to Rent</button>
-        <button class="chip chip-sub" data-sub="WILLING TO LEASE" onclick="selectSubCat(this)">Willing to Lease</button>
+      <div class="cat-nav cat-nav-sub" id="portfolioSubfilter" style="display:none;">
+        <button class="cat-nav-item active" data-sub="ALL" onclick="selectSubCat(this)"><span>All</span></button>
+        <button class="cat-nav-item" data-sub="FOR SALE" onclick="selectSubCat(this)"><span>For Sale</span></button>
+        <button class="cat-nav-item" data-sub="FOR RENT" onclick="selectSubCat(this)"><span>For Rent</span></button>
+        <button class="cat-nav-item" data-sub="FOR LEASE" onclick="selectSubCat(this)"><span>For Lease</span></button>
+        <button class="cat-nav-item" data-sub="WILLING TO BUY" onclick="selectSubCat(this)"><span>Willing to Buy</span></button>
+        <button class="cat-nav-item" data-sub="WILLING TO RENT" onclick="selectSubCat(this)"><span>Willing to Rent</span></button>
+        <button class="cat-nav-item" data-sub="WILLING TO LEASE" onclick="selectSubCat(this)"><span>Willing to Lease</span></button>
       </div>
-      <div class="filter-chips" id="myListingsSubfilter" style="display:none;">
-        <button class="chip chip-sub active" data-sub="ALL" onclick="selectSubCat(this)">All</button>
-        <button class="chip chip-sub" data-sub="FOR SALE" onclick="selectSubCat(this)">For Sale</button>
-        <button class="chip chip-sub" data-sub="FOR RENT" onclick="selectSubCat(this)">For Rent</button>
-        <button class="chip chip-sub" data-sub="FOR LEASE" onclick="selectSubCat(this)">For Lease</button>
-        <button class="chip chip-sub" data-sub="WILLING TO BUY" onclick="selectSubCat(this)">Willing to Buy</button>
-        <button class="chip chip-sub" data-sub="WILLING TO RENT" onclick="selectSubCat(this)">Willing to Rent</button>
-        <button class="chip chip-sub" data-sub="WILLING TO LEASE" onclick="selectSubCat(this)">Willing to Lease</button>
+      <div class="cat-nav cat-nav-sub" id="myListingsSubfilter" style="display:none;">
+        <button class="cat-nav-item active" data-sub="ALL" onclick="selectSubCat(this)"><span>All</span></button>
+        <button class="cat-nav-item" data-sub="FOR SALE" onclick="selectSubCat(this)"><span>For Sale</span></button>
+        <button class="cat-nav-item" data-sub="FOR RENT" onclick="selectSubCat(this)"><span>For Rent</span></button>
+        <button class="cat-nav-item" data-sub="FOR LEASE" onclick="selectSubCat(this)"><span>For Lease</span></button>
+        <button class="cat-nav-item" data-sub="WILLING TO BUY" onclick="selectSubCat(this)"><span>Willing to Buy</span></button>
+        <button class="cat-nav-item" data-sub="WILLING TO RENT" onclick="selectSubCat(this)"><span>Willing to Rent</span></button>
+        <button class="cat-nav-item" data-sub="WILLING TO LEASE" onclick="selectSubCat(this)"><span>Willing to Lease</span></button>
       </div>
       <!-- 3. Search -->
       <div style="display:flex; gap:8px; align-items:center; flex-wrap:nowrap; padding:0 6px;">
