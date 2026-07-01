@@ -588,6 +588,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
                             <i class="fas fa-times-circle"></i> Dismiss Match
                         </button>` : ''}
                     </div>
+                    </div>
                 </div>
                 ${(() => {
                     const offerBadge = buildOfferBadge(listing);
