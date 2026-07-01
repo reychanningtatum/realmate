@@ -669,7 +669,10 @@ html[data-theme="dark"] .lc-menu-dropdown button:hover { background: #0f172a; }
 
 .listing-card-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 15px; }
 
-.listing-card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.listing-card-top { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.lc-badges-row { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; overflow: hidden; min-width: 0; }
+.lc-badges-row > * { flex-shrink: 0; }
+.lc-meta-row { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
 
 .cat-tag {
   display: inline-flex; align-items: center;
@@ -721,7 +724,7 @@ html[data-theme="dark"] .lc-hl-extras { color: #94a3b8; }
 .listing-card-user-name { font-size: 13px; font-weight: 700; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .listing-card-user-job  { font-size: 10px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.listing-card-date { font-size: 10px; color: #94a3b8; margin-left: auto; white-space: nowrap; flex-shrink: 0; }
+.listing-card-date { font-size: 10px; color: #94a3b8; white-space: nowrap; flex-shrink: 0; }
 
 /* ── FMV Badge ── */
 .fmv-badge {

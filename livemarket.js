@@ -569,11 +569,14 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
         ${imagesHtml(listing)}
         <div class="listing-card-body">
             <div class="listing-card-top">
-                ${catTag(listing.category)}
-                ${buildOfferBadge(listing)}
-                ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : ''}
-                <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
-                <div class="lc-menu-wrap" onclick="event.stopPropagation()">
+                <div class="lc-badges-row">
+                    ${catTag(listing.category)}
+                    ${buildOfferBadge(listing)}
+                    ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : ''}
+                </div>
+                <div class="lc-meta-row">
+                    <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
+                    <div class="lc-menu-wrap" onclick="event.stopPropagation()">
                     <button class="lc-menu-btn" onclick="toggleCardMenu(this)"><i class="fas fa-ellipsis-vertical"></i></button>
                     <div class="lc-menu-dropdown">
                         <button onclick="togglePin('${listing.id}', this); closeCardMenu(this)">
@@ -589,6 +592,7 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
                             <i class="fas fa-times-circle"></i> Dismiss Match
                         </button>` : ''}
                     </div>
+                </div>
                 </div>
             </div>
             ${buildStatusBadge(listing)}
