@@ -669,10 +669,13 @@ html[data-theme="dark"] .lc-menu-dropdown button:hover { background: #0f172a; }
 
 .listing-card-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 15px; }
 
-.listing-card-top { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; margin-bottom: 8px; }
-.lc-badges-row { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; overflow: hidden; }
+.listing-card-top { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.lc-badges-row { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
 .lc-badges-row > * { flex-shrink: 0; }
-.lc-meta-row { display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: auto; }
+.lc-meta-row { display: flex; align-items: center; gap: 6px; }
+.lc-row1 { display: flex; align-items: center; gap: 6px; }
+.lc-row1 .listing-card-date { margin-left: auto; }
+.lc-row2 { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
 
 .cat-tag {
   display: inline-flex; align-items: center;

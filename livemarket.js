@@ -569,12 +569,8 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
         ${imagesHtml(listing)}
         <div class="listing-card-body">
             <div class="listing-card-top">
-                <div class="lc-badges-row">
+                <div class="lc-row1">
                     ${catTag(listing.category)}
-                    ${buildOfferBadge(listing)}
-                    ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : ''}
-                </div>
-                <div class="lc-meta-row">
                     <span class="listing-card-date">${timeAgo(listing.created_at)}</span>
                     <div class="lc-menu-wrap" onclick="event.stopPropagation()">
                     <button class="lc-menu-btn" onclick="toggleCardMenu(this)"><i class="fas fa-ellipsis-vertical"></i></button>
@@ -593,7 +589,11 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
                         </button>` : ''}
                     </div>
                 </div>
-                </div>
+                ${buildOfferBadge(listing) || myMatchCount > 0 ? `
+                <div class="lc-row2">
+                    ${buildOfferBadge(listing)}
+                    ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : ''}
+                </div>` : ''}
             </div>
             ${buildStatusBadge(listing)}
             <p class="listing-text">${enhanceListingText(listing)}</p>
