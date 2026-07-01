@@ -589,11 +589,11 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
                         </button>` : ''}
                     </div>
                 </div>
-                ${buildOfferBadge(listing) || myMatchCount > 0 ? `
-                <div class="lc-row2">
-                    ${buildOfferBadge(listing)}
-                    ${myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : ''}
-                </div>` : ''}
+                ${(() => {
+                    const offerBadge = buildOfferBadge(listing);
+                    const matchBadge = myMatchCount > 0 ? `<button class="ai-match-badge has-matches" onclick="event.stopPropagation(); showAllMatches('${listing.id}');"><i class="fas fa-circle-nodes"></i> ${myMatchCount} Match${myMatchCount !== 1 ? 'es' : ''} Found</button>` : '';
+                    return (offerBadge || matchBadge) ? `<div class="lc-row2">${offerBadge}${matchBadge}</div>` : '';
+                })()}
             </div>
             ${buildStatusBadge(listing)}
             <p class="listing-text">${enhanceListingText(listing)}</p>
