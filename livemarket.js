@@ -563,6 +563,8 @@ function buildListingCard(listing, matchLabel = null, fmvResult = null, myMatchC
         ? `<div class="sold-ribbon"><span>SOLD</span></div>`
         : '';
 
+    if (matchBanner) card.style.background = 'linear-gradient(to bottom, #0f172a 42px, #fff 42px)';
+
     card.innerHTML = `
         ${soldRibbon}
         ${matchBanner}
