@@ -675,20 +675,31 @@ html[data-theme="dark"] .lc-menu-dropdown button:hover { background: #0f172a; }
 .lc-row2 { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
 
 .cat-tag {
-  display: inline-flex; align-items: center;
-  font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
-  text-transform: uppercase; padding: 6px 14px;
-  border-radius: 999px;
-  border: 1.5px solid #111827;
-  background: #fff; color: #111827;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0;
+  border: none; border-radius: 0; background: transparent;
+  color: #374151;
   font-family: 'Inter', sans-serif;
 }
-.cat-sale    {}
-.cat-rent    {}
-.cat-lease   {}
-.cat-wbuy    {}
-.cat-wrent   {}
-.cat-wlease  {}
+.cat-dot {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  background: #94a3b8;
+}
+.cat-sale .cat-dot   { background: #16a34a; }
+.cat-rent .cat-dot   { background: #2563eb; }
+.cat-lease .cat-dot  { background: #7c3aed; }
+.cat-wbuy .cat-dot   { background: #d97706; }
+.cat-wrent .cat-dot  { background: #0891b2; }
+.cat-wlease .cat-dot { background: #db2777; }
+
+.cat-sale   { color: #15803d; }
+.cat-rent   { color: #1d4ed8; }
+.cat-lease  { color: #6d28d9; }
+.cat-wbuy   { color: #b45309; }
+.cat-wrent  { color: #0e7490; }
+.cat-wlease { color: #be185d; }
 
 .listing-text {
   font-size: 13px; line-height: 1.6; color: #475569;
@@ -1376,13 +1387,14 @@ html[data-theme="dark"] .listing-status-btns { border-color: #334155; }
 html[data-theme="dark"] .status-btn { background: #0f172a; border-color: #334155; color: #94a3b8; }
 html[data-theme="dark"] .pin-btn { color: #475569; }
 
-/* DARK MODE — category tags (desaturate light pastels) */
-html[data-theme="dark"] .cat-sale  { background: rgba(5,150,105,0.15);  color: #34d399; }
-html[data-theme="dark"] .cat-rent  { background: rgba(37,99,235,0.15);  color: #60a5fa; }
-html[data-theme="dark"] .cat-lease { background: rgba(124,58,237,0.15); color: #a78bfa; }
-html[data-theme="dark"] .cat-wbuy  { background: rgba(234,88,12,0.15);  color: #fb923c; }
-html[data-theme="dark"] .cat-wrent { background: rgba(162,28,175,0.15); color: #e879f9; }
-html[data-theme="dark"] .cat-wlease { background: rgba(202,138,4,0.15); color: #fbbf24; }
+/* DARK MODE — category labels */
+html[data-theme="dark"] .cat-tag { color: #94a3b8; }
+html[data-theme="dark"] .cat-sale   { color: #34d399; }
+html[data-theme="dark"] .cat-rent   { color: #60a5fa; }
+html[data-theme="dark"] .cat-lease  { color: #a78bfa; }
+html[data-theme="dark"] .cat-wbuy   { color: #fb923c; }
+html[data-theme="dark"] .cat-wrent  { color: #22d3ee; }
+html[data-theme="dark"] .cat-wlease { color: #f472b6; }
 
 /* DARK MODE — modal close button */
 html[data-theme="dark"] .lm-modal-close { background: #0f172a; color: #94a3b8; }

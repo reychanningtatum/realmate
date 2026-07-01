@@ -15,7 +15,7 @@ const CAT_CLASS = {
 };
 
 function catTag(cat) {
-    return `<span class="cat-tag ${CAT_CLASS[cat] || ''}">${cat}</span>`;
+    return `<span class="cat-tag ${CAT_CLASS[cat] || ''}"><span class="cat-dot"></span>${cat}</span>`;
 }
 
 function buildFMVBadge(fmvResult) {
