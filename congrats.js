@@ -364,15 +364,57 @@
         ctx.restore();
     }
 
-    function drawPill(ctx, cx, cy, text) {
-        ctx.font = '700 34px Inter, Arial, sans-serif';
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        const tw = ctx.measureText(text).width;
-        const w = Math.min(tw + 80, 900), h = 78;
-        rr(ctx, cx - w / 2, cy - h / 2, w, h, h / 2);
-        ctx.fillStyle = 'rgba(50,205,50,0.14)'; ctx.fill();
-        ctx.strokeStyle = 'rgba(50,205,50,0.5)'; ctx.lineWidth = 2; ctx.stroke();
-        ctx.fillStyle = '#32cd32'; ctx.fillText(text, cx, cy + 2);
+    // A premium "deal closed" block: SOLD status chip → unit label → hero price.
+    function drawSoldBlock(ctx, cx, topY, what, amount) {
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        // SOLD chip with a checkmark
+        ctx.font = '800 26px Inter, Arial, sans-serif';
+        const label = 'SOLD';
+        const lw = ctx.measureText(label).width;
+        const chipH = 50, chipW = lw + 96, chipY = topY;
+        rr(ctx, cx - chipW / 2, chipY, chipW, chipH, chipH / 2);
+        ctx.fillStyle = '#16a34a'; ctx.fill();
+        // check mark to the left of the label
+        const ck = cx - lw / 2 - 20, cm = chipY + chipH / 2;
+        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        ctx.beginPath(); ctx.moveTo(ck - 9, cm + 1); ctx.lineTo(ck - 2, cm + 8); ctx.lineTo(ck + 10, cm - 8); ctx.stroke();
+        ctx.fillStyle = '#ffffff'; ctx.fillText(label, cx + 14, cm + 1);
+
+        let y = chipY + chipH + 50;
+
+        // unit label (secondary)
+        if (what) {
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '600 32px Inter, Arial, sans-serif';
+            const unit = what.length > 34 ? what : spacedCaps(what);
+            ctx.fillText(unit, cx, y);
+            y += 84;
+        } else {
+            y += 30;
+        }
+
+        // hero price with flanking gold rules
+        if (amount) {
+            ctx.fillStyle = '#f5c542';
+            ctx.font = '800 84px Inter, Arial, sans-serif';
+            ctx.fillText(amount, cx, y);
+            const pw = ctx.measureText(amount).width;
+            const gap = pw / 2 + 40, len = 74;
+            ctx.strokeStyle = 'rgba(245,197,66,0.5)'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+            ctx.beginPath(); ctx.moveTo(cx - gap, y); ctx.lineTo(cx - gap - len, y); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cx + gap, y); ctx.lineTo(cx + gap + len, y); ctx.stroke();
+            // small diamond accents at the outer ends
+            ctx.fillStyle = 'rgba(245,197,66,0.7)';
+            [cx - gap - len, cx + gap + len].forEach(dx => {
+                ctx.save(); ctx.translate(dx, y); ctx.rotate(Math.PI / 4); ctx.fillRect(-5, -5, 10, 10); ctx.restore();
+            });
+        }
+    }
+
+    function spacedCaps(s) {
+        return s.toUpperCase().split('').join(' '); // hair-space between letters
     }
 
     async function drawCongratsCard() {
@@ -430,17 +472,15 @@
         ctx.fillStyle = '#ffffff'; ctx.font = '600 66px Inter, Arial, sans-serif';
         ctx.fillText(cgUser.name, cx, cy + r + 132);
 
-        // SOLD pill
+        // SOLD status + unit + hero price
         const what = document.getElementById('cgWhat').value.trim();
         const amount = document.getElementById('cgAmount').value.trim();
-        const parts = ['SOLD'];
-        if (what) parts.push(what);
-        if (amount) parts.push(amount);
-        drawPill(ctx, cx, cy + r + 216, parts.join('    ·    '));
+        drawSoldBlock(ctx, cx, cy + r + 166, what, amount);
 
         // wordmark
-        ctx.fillStyle = '#64748b'; ctx.font = '600 36px Inter, Arial, sans-serif';
-        ctx.fillText('realmate.', cx, H - 76);
+        ctx.fillStyle = '#64748b'; ctx.font = '600 34px Inter, Arial, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('realmate.', cx, H - 50);
     }
 
     // ---------- Celebration chime (Web Audio, no assets) ----------
