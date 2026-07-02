@@ -154,7 +154,9 @@
     .so-willing-to-buy   { background:#f0fdf4; color:#166534; }
     .so-willing-to-rent  { background:#eff6ff; color:#1e40af; }
     .so-willing-to-lease { background:#fefce8; color:#854d0e; }
+    .so-forum { background:#ede9fe; color:#6d28d9; }
     .so-lcontent { font-size: 12px; color: #334155; font-weight: 500; line-height: 1.4; }
+    .so-fsubject { font-size: 13px; color: #0f172a; font-weight: 700; line-height: 1.35; margin-bottom: 2px; }
     .so-lposter  { font-size: 11px; color: #94a3b8; font-weight: 600; margin-top: 3px; }
 
     @media (max-width: 768px) {
@@ -164,35 +166,42 @@
     `;
     document.head.appendChild(style);
 
-    // inject HTML — skip FAB on home page (has its own search bar)
-    const isHomePage = location.pathname.endsWith('home.html') || location.pathname === '/';
-    if (!isHomePage) {
-        const fab = document.createElement('button');
-        fab.id = 'searchFab';
-        fab.setAttribute('aria-label', 'Search');
-        fab.innerHTML = '<i class="fas fa-magnifying-glass"></i>';
-        fab.onclick = openOverlay;
-        document.body.appendChild(fab);
+    // inject HTML once the body exists (this script may be loaded in <head>)
+    let overlay;
+    function init() {
+        if (overlay) return;
+        // skip FAB on home page (has its own search bar)
+        const isHomePage = location.pathname.endsWith('home.html') || location.pathname === '/';
+        if (!isHomePage) {
+            const fab = document.createElement('button');
+            fab.id = 'searchFab';
+            fab.setAttribute('aria-label', 'Search');
+            fab.innerHTML = '<i class="fas fa-magnifying-glass"></i>';
+            fab.onclick = openOverlay;
+            document.body.appendChild(fab);
+        }
+
+        overlay = document.createElement('div');
+        overlay.id = 'searchOverlay';
+        overlay.innerHTML = `
+            <div class="so-box">
+                <div class="so-input-row">
+                    <i class="fas fa-magnifying-glass"></i>
+                    <input id="soInput" type="text" placeholder="Search people, listings, forum…" autocomplete="off">
+                    <span class="so-esc" onclick="window.__closeSearchOverlay()">ESC</span>
+                </div>
+                <div id="soResults">
+                    <div class="so-empty"><i class="fas fa-magnifying-glass"></i><span>Start typing to search.</span></div>
+                </div>
+            </div>`;
+        overlay.addEventListener('click', e => { if (e.target === overlay) closeOverlay(); });
+        document.body.appendChild(overlay);
+
+        document.getElementById('soInput').addEventListener('input', onInput);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay(); });
     }
-
-    const overlay = document.createElement('div');
-    overlay.id = 'searchOverlay';
-    overlay.innerHTML = `
-        <div class="so-box">
-            <div class="so-input-row">
-                <i class="fas fa-magnifying-glass"></i>
-                <input id="soInput" type="text" placeholder="Search people, listings…" autocomplete="off">
-                <span class="so-esc" onclick="window.__closeSearchOverlay()">ESC</span>
-            </div>
-            <div id="soResults">
-                <div class="so-empty"><i class="fas fa-magnifying-glass"></i><span>Start typing to search.</span></div>
-            </div>
-        </div>`;
-    overlay.addEventListener('click', e => { if (e.target === overlay) closeOverlay(); });
-    document.body.appendChild(overlay);
-
-    document.getElementById('soInput').addEventListener('input', onInput);
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay(); });
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
 
     window.__closeSearchOverlay = closeOverlay;
 
@@ -223,19 +232,23 @@
         _lastQ = q;
         const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         const pat = `%${q}%`;
-        const [pr, lr] = await Promise.all([
+        const [pr, lr, fr] = await Promise.all([
             sb.from('profiles').select('id,full_name,avatar_url,job_title,division')
               .or(`full_name.ilike.${pat},job_title.ilike.${pat},division.ilike.${pat}`).limit(6),
             sb.from('listings').select('id,content,category,user_name,user_id,created_at')
               .or(`content.ilike.${pat},category.ilike.${pat},user_name.ilike.${pat}`)
-              .eq('archived', false).order('created_at', { ascending: false }).limit(10)
+              .eq('archived', false).order('created_at', { ascending: false }).limit(10),
+            sb.from('forum_posts').select('id,subject,content,user_name,user_img,created_at,is_anonymous')
+              .or(`subject.ilike.${pat},content.ilike.${pat},user_name.ilike.${pat}`)
+              .or('source.eq.forum,source.is.null')
+              .order('created_at', { ascending: false }).limit(8)
         ]);
-        renderResults(pr.data || [], lr.data || []);
+        renderResults(pr.data || [], lr.data || [], fr.data || []);
     }
 
-    function renderResults(people, listings) {
+    function renderResults(people, listings, forum) {
         const el = document.getElementById('soResults');
-        if (!people.length && !listings.length) {
+        if (!people.length && !listings.length && !forum.length) {
             el.innerHTML = '<div class="so-empty"><i class="fas fa-circle-xmark"></i><span>No results found.</span></div>';
             return;
         }
@@ -266,8 +279,32 @@
                 </a>`;
             });
         }
+        if (forum.length) {
+            html += `<div class="so-section" style="margin-top:${(people.length||listings.length)?'8px':'0'}">Forum</div>`;
+            forum.forEach(f => {
+                const subject = esc((f.subject || '').slice(0, 80));
+                const content = esc((f.content || '').slice(0, 100));
+                const poster  = esc(f.is_anonymous ? 'Anonymous' : (f.user_name || ''));
+                html += `<div class="so-listing" onclick="window.__openForumPost('${f.id}')">
+                    <span class="so-lbadge so-forum"><i class="fas fa-comments" style="font-size:9px;"></i> Forum</span>
+                    ${subject ? `<div class="so-fsubject">${subject}</div>` : ''}
+                    ${content ? `<div class="so-lcontent">${content}${(f.content||'').length>100?'…':''}</div>` : ''}
+                    ${poster ? `<div class="so-lposter">${poster}</div>` : ''}
+                </div>`;
+            });
+        }
         el.innerHTML = html;
     }
+
+    // Deep-link into a forum post: forum.html reads these on load to scroll + highlight it.
+    window.__openForumPost = function(postId) {
+        try {
+            localStorage.setItem('route_target_post_id', String(postId));
+            localStorage.setItem('route_target_anchor_id', 'post-' + postId);
+        } catch (e) {}
+        closeOverlay();
+        window.location.href = 'forum.html';
+    };
 
     function esc(s) {
         return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
