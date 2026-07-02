@@ -227,9 +227,36 @@
         // Enter (or the mobile keyboard "search"/return key) runs the search immediately.
         soInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); searchNow(); } });
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay(); });
+
+        wireUniversalInputs();
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
+
+    // Any general-purpose page search bar opens the universal overlay when focused/clicked,
+    // carrying over whatever the user already typed. Contextual bars (e.g. chat conversation
+    // search) are intentionally left alone.
+    const UNIVERSAL_INPUT_SELECTORS = '#searchInput, #homeSearchInput, #globalSearchInput';
+    function wireUniversalInputs() {
+        document.querySelectorAll(UNIVERSAL_INPUT_SELECTORS).forEach(inp => {
+            if (inp.dataset.universalWired) return;
+            inp.dataset.universalWired = '1';
+            inp.setAttribute('readonly', 'readonly');
+            inp.style.cursor = 'pointer';
+            const open = (e) => {
+                if (e) e.preventDefault();
+                const val = (inp.value || '').trim();
+                inp.blur();
+                openOverlay();
+                if (val) {
+                    const so = document.getElementById('soInput');
+                    if (so) { so.value = val; searchNow(); }
+                }
+            };
+            inp.addEventListener('focus', open);
+            inp.addEventListener('click', open);
+        });
+    }
 
     // Force an immediate search, bypassing the debounce (used by Enter / the Enter button).
     function searchNow() {
