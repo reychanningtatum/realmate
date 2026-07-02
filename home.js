@@ -539,6 +539,7 @@ function buildHomePostCard(post, likeCount, userLiked, commentCount) {
         </div>
         ${post.subject === 'Achievement' ? `<div style="margin:6px 0 4px;"><span style="display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:4px 10px;border-radius:50px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;"><i class="fas fa-trophy" style="color:#f59e0b;margin-right:5px;"></i>Achievement</span></div>`
             : post.subject === 'Thought' ? `<div style="margin:6px 0 4px;"><span style="display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:4px 10px;border-radius:50px;background:#eef2ff;border:1px solid #c7d2fe;color:#3730a3;"><i class="fas fa-lightbulb" style="color:#6366f1;margin-right:5px;"></i>Thought</span></div>`
+            : post.subject === 'Congratulations' ? `<div style="margin:6px 0 4px;"><span style="display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:4px 10px;border-radius:50px;background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;"><i class="fas fa-champagne-glasses" style="color:#16a34a;margin-right:5px;"></i>Congratulations</span></div>`
             : post.subject ? `<div class="hf-post-subject">${safeText(post.subject)}</div>` : ''}
         ${post.content ? `<div class="hf-post-text">${safeText(post.content)}</div>` : ''}
         ${mediaHtml}

@@ -88,11 +88,8 @@
               <i class="fas fa-image" style="color:#45b649;"></i> Photo / Video
             </label>
             <input type="file" id="homePostMedia" hidden accept="image/*,video/*" multiple onchange="previewHomeMedia(this)">
-            <button class="create-post-media-btn" onclick="setPostType('achievement')">
-              <i class="fas fa-trophy" style="color:#f59e0b;"></i> Achievement
-            </button>
-            <button class="create-post-media-btn" onclick="setPostType('thought')">
-              <i class="fas fa-lightbulb" style="color:#6366f1;"></i> Thought
+            <button class="create-post-media-btn" onclick="openCongratsBuilder()">
+              <i class="fas fa-champagne-glasses" style="color:#16a34a;"></i> Congratulate
             </button>
           </div>
           <div class="create-post-actions">
@@ -104,8 +101,7 @@
         </div>
         <div class="create-post-shortcuts">
           <button onclick="expandCreatePost('photo')"><i class="fas fa-image" style="color:#45b649;"></i> Photo/Video</button>
-          <button onclick="expandCreatePost('achievement')"><i class="fas fa-trophy" style="color:#f59e0b;"></i> Achievement</button>
-          <button onclick="expandCreatePost('thought')"><i class="fas fa-lightbulb" style="color:#6366f1;"></i> Thought</button>
+          <button onclick="openCongratsBuilder()"><i class="fas fa-champagne-glasses" style="color:#16a34a;"></i> Congratulate</button>
         </div>
       </div>
 
@@ -165,12 +161,56 @@
   </div>
 </div>
 
+<!-- Congratulate builder modal -->
+<div id="congratsModal">
+  <div class="cg-box">
+    <div class="cg-head">
+      <span><i class="fas fa-champagne-glasses" style="color:#16a34a;margin-right:6px;"></i> Congratulate a colleague</span>
+      <button class="cg-close" onclick="closeCongratsBuilder()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="cg-body">
+      <label class="cg-label">Who are you congratulating?</label>
+      <div id="cgSelected" class="cg-selected"></div>
+      <div id="cgSearchWrap">
+        <input id="cgUserSearch" class="cg-input" placeholder="Search a name…" autocomplete="off" oninput="cgSearchUsers(this.value)">
+        <div id="cgUserResults" class="cg-results"></div>
+      </div>
+      <div class="cg-row">
+        <div style="flex:2;">
+          <label class="cg-label">What was sold?</label>
+          <input id="cgWhat" class="cg-input" placeholder="e.g. Two Maridien 1BR" oninput="cgMaybeRefresh()">
+        </div>
+        <div style="flex:1;">
+          <label class="cg-label">Sale amount</label>
+          <input id="cgAmount" class="cg-input" placeholder="₱17.5M" oninput="cgMaybeRefresh()">
+        </div>
+      </div>
+      <div id="cgPreviewWrap" style="display:none;">
+        <label class="cg-label">Preview</label>
+        <canvas id="cgCanvas" class="cg-canvas" width="1080" height="1080"></canvas>
+        <label class="cg-label" style="margin-top:12px;">Caption</label>
+        <textarea id="cgCaption" class="cg-input cg-caption" rows="3" placeholder="Write a caption, or auto-generate one…"></textarea>
+        <div class="cg-caption-actions">
+          <button class="cg-chip" onclick="cgAutoCaption()"><i class="fas fa-wand-magic-sparkles"></i> Auto-generate caption</button>
+          <button class="cg-chip cg-chip-ghost" onclick="cgAutoCaption()"><i class="fas fa-rotate"></i> Try another</button>
+        </div>
+      </div>
+    </div>
+    <div class="cg-foot">
+      <button class="cg-btn-ghost" onclick="closeCongratsBuilder()">Cancel</button>
+      <button id="cgGenerateBtn" class="cg-btn-primary" onclick="cgGenerate()"><i class="fas fa-wand-magic-sparkles"></i> Generate preview</button>
+      <button id="cgPostBtn" class="cg-btn-primary" style="display:none;" onclick="cgSubmit()"><i class="fas fa-paper-plane"></i> Post to feed</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="compress.js"></script>
 <script src="search-overlay.js"></script>
 <script src="auth-guard.js"></script>
 <script src="top-producers.js"></script>
 <script src="home.js"></script>
+<script src="congrats.js"></script>
 <script src="notif-badge.js"></script>
 <!-- Mobile Bottom Navigation -->
 <nav class="mobile-bottom-nav">
