@@ -161,6 +161,10 @@
   text-overflow: ellipsis;
   margin-top: 2px;
 }
+.chat-conv-last.chat-conv-match {
+  color: var(--chat-accent, #16a34a);
+  font-style: italic;
+}
 
 .chat-conv-meta {
   display: flex;

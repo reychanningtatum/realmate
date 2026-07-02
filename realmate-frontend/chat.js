@@ -17,6 +17,7 @@ let currentUser = null;
 let activeConversationId = null;
 let activeOtherUser = null;
 let conversations = [];
+let msgTextByConv = {}; // convId -> [{ text, created_at }] of visible TEXT messages, for search
 let attachedFile = null;
 let typingTimeout = null;
 let typingChannel = null;
@@ -225,6 +226,18 @@ async function loadConversations() {
     const lastMsgMap = {};
     msgs.forEach(m => { if (!lastMsgMap[m.conversation_id]) lastMsgMap[m.conversation_id] = m; });
 
+    // Index visible text messages per conversation so search can match message content.
+    msgTextByConv = {};
+    msgs.forEach(m => {
+        if (m.is_unsent) return;
+        if (m.message_type !== 'TEXT') return;
+        const text = m.message_text || '';
+        if (!text || text.startsWith('__LISTING_REF__')) return;
+        const cutoff = deletedMap[m.conversation_id];
+        if (cutoff && new Date(m.created_at) <= new Date(cutoff)) return;
+        (msgTextByConv[m.conversation_id] = msgTextByConv[m.conversation_id] || []).push({ text, created_at: m.created_at });
+    });
+
     conversations = ids.map(cid => {
         const other = allParts.find(p => p.conversation_id === cid && p.user_id !== currentUser.id);
         const prof = other ? profileMap[other.user_id] : null;
@@ -261,8 +274,25 @@ async function loadConversations() {
 // ===== RENDER CONVERSATION LIST =====
 function renderConvList(filter) {
     const list = document.getElementById('chatConvList');
-    const lf = (filter || '').toLowerCase();
-    const items = lf ? conversations.filter(c => c.otherUser.name.toLowerCase().includes(lf)) : conversations;
+    const lf = (filter || '').toLowerCase().trim();
+    // When searching, match on the person's name OR on any message content in the
+    // conversation. If a message matched (but the name didn't), surface that message
+    // as the preview so the user sees why the chat came up.
+    let items = conversations;
+    if (lf) {
+        items = [];
+        conversations.forEach(c => {
+            const nameHit = c.otherUser.name.toLowerCase().includes(lf);
+            let msgHit = null;
+            const msgs = msgTextByConv[c.id] || [];
+            for (const m of msgs) {
+                if (m.text.toLowerCase().includes(lf)) { msgHit = m; break; }
+            }
+            if (nameHit || msgHit) items.push({ conv: c, matchMsg: (!nameHit && msgHit) ? msgHit : null });
+        });
+    } else {
+        items = conversations.map(c => ({ conv: c, matchMsg: null }));
+    }
 
     if (!items.length) {
         list.innerHTML = lf
@@ -271,12 +301,17 @@ function renderConvList(filter) {
         return;
     }
 
-    list.innerHTML = items.map(c => {
+    list.innerHTML = items.map(({ conv: c, matchMsg }) => {
         const active = c.id === activeConversationId ? ' active' : '';
         const online = (c.otherUser.show_active_status && isUserOnline(c.otherUser.id)) ? '<div class="online-dot"></div>' : '';
         const lm = c.lastMessage;
         let preview = '';
-        if (lm) {
+        let previewCls = 'chat-conv-last';
+        if (matchMsg) {
+            // Show the matched message (centered on the hit) so the user sees why it matched.
+            preview = matchSnippet(matchMsg.text, lf);
+            previewCls += ' chat-conv-match';
+        } else if (lm) {
             if (lm.is_unsent) {
                 preview = lm.sender_id === currentUser.id ? 'You unsent a message' : 'Message unsent';
             } else {
@@ -292,13 +327,22 @@ function renderConvList(filter) {
                 <div class="chat-conv-avatar"><img src="${c.otherUser.image}" alt="">${online}</div>
                 <div class="chat-conv-info">
                     <div class="chat-conv-name">${esc(c.otherUser.name)}</div>
-                    <div class="chat-conv-last">${esc(preview.length > 40 ? preview.slice(0, 40) + '…' : preview)}</div>
+                    <div class="${previewCls}">${esc(preview.length > 44 ? preview.slice(0, 44) + '…' : preview)}</div>
                 </div>
                 <div class="chat-conv-meta"><span class="chat-conv-time">${time}</span>${badge}</div>
             </div>
             <div class="chat-conv-swipe-action" onclick="promptDeleteChat('${c.id}')"><i class="fas fa-trash-can"></i><span>Delete</span></div>
         </div>`;
     }).join('');
+}
+
+// Return a snippet of text centered on the search hit, prefixed with a chat glyph.
+function matchSnippet(text, q) {
+    const idx = text.toLowerCase().indexOf(q);
+    if (idx < 0) return '💬 ' + text;
+    const start = Math.max(0, idx - 12);
+    const prefix = start > 0 ? '…' : '';
+    return '💬 ' + prefix + text.slice(start);
 }
 
 function searchConversations(v) {
