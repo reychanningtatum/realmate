@@ -155,6 +155,30 @@
     .so-willing-to-rent  { background:#eff6ff; color:#1e40af; }
     .so-willing-to-lease { background:#fefce8; color:#854d0e; }
     .so-forum { background:#ede9fe; color:#6d28d9; }
+    .so-enter {
+        font-size: 11px;
+        font-weight: 700;
+        color: #16a34a;
+        background: #f0fdf4;
+        padding: 3px 8px;
+        border-radius: 6px;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+    .so-enter:hover { background: #dcfce7; }
+    .so-cat {
+        display: inline-block;
+        font-size: 9px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #64748b;
+        background: #f1f5f9;
+        padding: 1px 8px;
+        border-radius: 20px;
+        margin-top: 4px;
+    }
+    .so-cat-people { color: #0369a1; background: #e0f2fe; }
     .so-lcontent { font-size: 12px; color: #334155; font-weight: 500; line-height: 1.4; }
     .so-fsubject { font-size: 13px; color: #0f172a; font-weight: 700; line-height: 1.35; margin-bottom: 2px; }
     .so-lposter  { font-size: 11px; color: #94a3b8; font-weight: 600; margin-top: 3px; }
@@ -187,7 +211,8 @@
             <div class="so-box">
                 <div class="so-input-row">
                     <i class="fas fa-magnifying-glass"></i>
-                    <input id="soInput" type="text" placeholder="Search people, listings, forum…" autocomplete="off">
+                    <input id="soInput" type="text" enterkeyhint="search" placeholder="Search people, listings, forum…" autocomplete="off">
+                    <span class="so-enter" onclick="window.__searchEnter()">↵ Enter</span>
                     <span class="so-esc" onclick="window.__closeSearchOverlay()">ESC</span>
                 </div>
                 <div id="soResults">
@@ -197,13 +222,28 @@
         overlay.addEventListener('click', e => { if (e.target === overlay) closeOverlay(); });
         document.body.appendChild(overlay);
 
-        document.getElementById('soInput').addEventListener('input', onInput);
+        const soInput = document.getElementById('soInput');
+        soInput.addEventListener('input', onInput);
+        // Enter (or the mobile keyboard "search"/return key) runs the search immediately.
+        soInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); searchNow(); } });
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay(); });
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
 
+    // Force an immediate search, bypassing the debounce (used by Enter / the Enter button).
+    function searchNow() {
+        const q = (document.getElementById('soInput')?.value || '').trim();
+        clearTimeout(_timer);
+        if (!q) return;
+        _lastQ = '';
+        document.getElementById('soResults').innerHTML =
+            '<div class="so-loading"><i class="fas fa-spinner fa-spin"></i><span>Searching…</span></div>';
+        runSearch(q);
+    }
+
     window.__closeSearchOverlay = closeOverlay;
+    window.__searchEnter = searchNow;
 
     function openOverlay() {
         overlay.classList.add('open');
@@ -261,7 +301,7 @@
                 const avatar = p.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.full_name||'?')}&background=0f172a&color=32cd32`;
                 html += `<a href="dashboard.html?user_id=${p.id}" class="so-person" onclick="window.__closeSearchOverlay()">
                     <img src="${avatar}" class="so-avatar" onerror="this.src='https://ui-avatars.com/api/?name=?&background=0f172a&color=32cd32'">
-                    <div><div class="so-pname">${name}</div>${job ? `<div class="so-pjob">${job}</div>` : ''}</div>
+                    <div><div class="so-pname">${name}</div>${job ? `<div class="so-pjob">${job}</div>` : ''}<span class="so-cat so-cat-people">People</span></div>
                 </a>`;
             });
         }
